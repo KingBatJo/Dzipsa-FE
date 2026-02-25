@@ -20,3 +20,6 @@
 
 - [ ] 후속 작업 1
 - [ ] 후속 작업 2
+
+## Related Issue
+Closes #issue_number
