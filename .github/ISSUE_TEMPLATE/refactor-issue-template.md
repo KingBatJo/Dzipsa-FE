@@ -1,3 +1,11 @@
+---
+name: Refactor report
+about: 리팩토링 이슈 템플릿
+title: '[refactor]'
+labels: 'refactor'
+assignees: ''
+---
+
 ## refactor 하는 이유
 
 > 왜 리팩토링이 필요한지 배경이나 문제점을 설명
