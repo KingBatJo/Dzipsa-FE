@@ -21,7 +21,13 @@ const SocialLoginButton = ({
       type="button"
       className={`flex h-12 w-full max-w-92 items-center justify-center gap-2 rounded-xl ${providerStyles[provider]} hover:brightness-95 active:brightness-90`}
     >
-      <img alt={`${provider} 로고`} className="h-4 w-4" src={iconSrc} />
+      <img
+        alt={`${provider} 로고`}
+        className="h-4 w-4"
+        src={iconSrc}
+        draggable={false}
+        onContextMenu={(e) => e.preventDefault()}
+      />
       <span className="text-base font-medium">{label}</span>
     </button>
   );
