@@ -20,6 +20,9 @@ const SocialLoginButton = ({
     <button
       type="button"
       className={`flex h-12 w-full max-w-92 items-center justify-center gap-2 rounded-xl ${providerStyles[provider]} hover:brightness-95 active:brightness-90`}
+      onClick={() => {
+        window.location.href = `/oauth2/authorization/${provider}`;
+      }}
     >
       <img
         alt={`${provider} 로고`}
