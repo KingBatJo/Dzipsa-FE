@@ -6,7 +6,9 @@ import { Link } from 'react-router-dom';
 
 const Header = () => {
   return (
-    <header className={`fixed top-0 z-10 w-full ${MOBILE_MAX_WIDTH} `}>
+    <header
+      className={`fixed top-0 z-10 w-full ${MOBILE_MAX_WIDTH} backdrop-blur-xl`}
+    >
       <div
         className={`flex items-center justify-between ${HEADER_HEIGHT} px-4`}
       >
