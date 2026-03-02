@@ -1,6 +1,5 @@
+import { MOBILE_MAX_WIDTH } from '@/constants/layout';
 import { Outlet } from 'react-router-dom';
-
-const MOBILE_MAX_WIDTH = 'max-w-[420px]'; // 임시
 
 const RootLayout = () => {
   return (

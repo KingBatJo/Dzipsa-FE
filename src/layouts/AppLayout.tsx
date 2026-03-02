@@ -1,11 +1,12 @@
+import Header from '@/components/common/Header';
 import { Outlet } from 'react-router-dom';
 
 const AppLayout = () => {
   return (
     <>
-      <header>헤더</header>
+      <Header />
 
-      <main className="p-4">
+      <main className="pt-14">
         <Outlet />
       </main>
     </>

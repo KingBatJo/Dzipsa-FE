@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 const HomePage = () => {
   return (
-    <div>
+    <div className="px-4">
       <p>HomePage</p>
 
       <Link
