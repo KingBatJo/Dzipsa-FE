@@ -7,7 +7,7 @@ type Member = {
 
 const HomeMembersSection = ({ members }: { members: Member[] }) => {
   return (
-    <section className="flex gap-2">
+    <section className="scrollbar-hide mx-1 flex gap-2 overflow-x-auto">
       {members.map((member) => (
         <Button
           key={member.id}
