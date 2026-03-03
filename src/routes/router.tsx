@@ -4,6 +4,7 @@ import AppLayout from '@/layouts/AppLayout';
 import AuthCallbackPage from '@/pages/AuthCallbackPage';
 import HomePage from '@/pages/HomePage';
 import LoginPage from '@/pages/login/LoginPage';
+import NotFoundPage from '@/pages/NotFoundPage';
 import RootLayout from '@/layouts/RootLayout';
 
 const Router = () => {
@@ -18,6 +19,9 @@ const Router = () => {
         {/* 헤더 미포함 */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/auth/callback/:provider" element={<AuthCallbackPage />} />
+
+        {/* 404 페이지 */}
+        <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
   );
