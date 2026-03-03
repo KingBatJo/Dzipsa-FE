@@ -19,19 +19,27 @@ const Header = () => {
 
         <div className="flex items-center gap-2">
           {/* 알림 */}
-          <img src={Bell} alt="알림" className="h-8 w-8" />
+          <Link to="/notifications" aria-label="알림" className="group">
+            <img
+              src={Bell}
+              alt="알림"
+              className="h-8 w-8 group-hover:scale-105"
+            />
+          </Link>
 
           {/* 프로필 */}
-          <Avatar className="h-8 w-8">
-            <AvatarImage
-              src="https://github.com/shadcn.png" // 임시
-              alt="프로필"
-              className="grayscale"
-            />
-            <AvatarFallback className="bg-inherit">
-              <CircleUserRound className="h-8 w-8 text-[#9C9C9C]" />
-            </AvatarFallback>
-          </Avatar>
+          <Link to="/mypage" aria-label="마이페이지" className="group">
+            <Avatar className="h-8 w-8 group-hover:scale-105">
+              <AvatarImage
+                src="https://github.com/shadcn.png" // 임시
+                alt="프로필"
+                className="grayscale"
+              />
+              <AvatarFallback className="bg-inherit">
+                <CircleUserRound className="h-8 w-8 text-[#9C9C9C]" />
+              </AvatarFallback>
+            </Avatar>
+          </Link>
         </div>
       </div>
     </header>
