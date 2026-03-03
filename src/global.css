@@ -1,8 +1,9 @@
 @import 'tailwindcss';
 
 @plugin 'tailwindcss-animate';
+@plugin 'tailwind-scrollbar-hide';
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&: is(.dark *));
 
 @layer base {
   body {
