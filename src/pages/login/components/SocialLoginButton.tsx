@@ -28,7 +28,6 @@ const SocialLoginButton = ({
         alt={`${provider} 로고`}
         className="h-4 w-4"
         src={iconSrc}
-        draggable={false}
         onContextMenu={(e) => e.preventDefault()}
       />
       <span className="text-base font-medium">{label}</span>
