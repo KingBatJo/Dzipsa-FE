@@ -1,9 +1,9 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { HEADER_HEIGHT, MOBILE_MAX_WIDTH } from '@/constants/layout';
 
 import Bell from '@/assets/bell.svg';
-import { CircleUserRound } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { PROFILE_IMAGE } from '@/mocks/mockData';
+import UserAvatar from '@/components/common/UserAvatar';
 
 const Header = () => {
   return (
@@ -19,26 +19,17 @@ const Header = () => {
 
         <div className="flex items-center gap-2">
           {/* 알림 */}
-          <Link to="/notifications" aria-label="알림" className="group">
-            <img
-              src={Bell}
-              alt="알림"
-              className="h-8 w-8 group-hover:scale-105"
-            />
+          <Link to="/notifications" aria-label="알림">
+            <img src={Bell} alt="알림" className="h-8 w-8 hover:scale-105" />
           </Link>
 
           {/* 프로필 */}
-          <Link to="/mypage" aria-label="마이페이지" className="group">
-            <Avatar className="h-8 w-8 group-hover:scale-105">
-              <AvatarImage
-                src="https://github.com/shadcn.png" // 임시
-                alt="프로필"
-                className="grayscale"
-              />
-              <AvatarFallback className="bg-inherit">
-                <CircleUserRound className="h-8 w-8 text-[#9C9C9C]" />
-              </AvatarFallback>
-            </Avatar>
+          <Link to="/mypage" aria-label="마이페이지">
+            <UserAvatar
+              src={PROFILE_IMAGE}
+              size="md"
+              className="transition-transform hover:scale-105"
+            />
           </Link>
         </div>
       </div>

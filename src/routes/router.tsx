@@ -2,7 +2,7 @@ import { Route, Routes } from 'react-router-dom';
 
 import AppLayout from '@/layouts/AppLayout';
 import AuthCallbackPage from '@/pages/AuthCallbackPage';
-import HomePage from '@/pages/HomePage';
+import HomePage from '@/pages/home/HomePage';
 import LoginPage from '@/pages/login/LoginPage';
 import MyPage from '@/pages/mypage/MyPage';
 import NotFoundPage from '@/pages/NotFoundPage';
