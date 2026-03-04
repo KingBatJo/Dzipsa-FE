@@ -1,3 +1,4 @@
+import DashboardSection from '@/pages/home/components/DashboardSection';
 import type { Member } from '@/types/member';
 import MembersSection from '@/pages/home/components/MembersSection';
 import MottoSection from '@/pages/home/components/MottoSection';
@@ -19,6 +20,7 @@ const HomePage = () => {
     <div className="space-y-2 px-4">
       <MottoSection motto={motto} />
       <MembersSection members={mockMembers} />
+      <DashboardSection />
     </div>
   );
 };
