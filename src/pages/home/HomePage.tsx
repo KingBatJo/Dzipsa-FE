@@ -12,7 +12,7 @@ const HomePage = () => {
   const motto = '깨끗하게 살자!';
 
   return (
-    <div className="space-y-3 px-4">
+    <div className="space-y-4 p-4">
       <MottoSection motto={motto} />
       <MembersSection members={mockMembers} />
       <DashboardSection />
