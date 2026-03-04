@@ -25,7 +25,7 @@ const Header = () => {
           {/* 프로필 */}
           <Link to="/mypage" aria-label="마이페이지">
             <UserAvatar
-              src=""
+              src="https://github.com/shadcn.png"
               size="md"
               className="transition-transform hover:scale-105"
             />

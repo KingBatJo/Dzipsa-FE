@@ -5,14 +5,14 @@ import { cn } from '@/lib/utils';
 
 type UserAvatarProps = {
   src?: string;
-  size?: 'sm' | 'md';
+  size?: 'sm' | 'md' | 'lg';
   className?: string;
 };
 
 const avatarSizes = {
   sm: 'h-6 w-6',
   md: 'h-8 w-8',
-  lg: 'h-10 w-10',
+  lg: 'h-11 w-11',
 };
 
 const UserAvatar = ({ src, size = 'sm', className }: UserAvatarProps) => {
