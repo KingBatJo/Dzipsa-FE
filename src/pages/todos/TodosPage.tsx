@@ -1,6 +1,9 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import CompletedTodosTab from './components/CompletedTodosTab';
+import HouseTodosTab from './components/HouseTodosTab';
+import MyTodosTab from './components/MyTodosTab';
 import { TODO_TABS } from '@/constants/todos';
 
 const TABS = [
@@ -28,9 +31,20 @@ const TodosPage = () => {
           ))}
         </TabsList>
 
-        <TabsContent value={TODO_TABS.MY}>my</TabsContent>
-        <TabsContent value={TODO_TABS.HOUSE}>house</TabsContent>
-        <TabsContent value={TODO_TABS.COMPLETED}>completed</TabsContent>
+        {/* 나의 할 일 */}
+        <TabsContent value={TODO_TABS.MY}>
+          <MyTodosTab />
+        </TabsContent>
+
+        {/* 우리 집 할 일 */}
+        <TabsContent value={TODO_TABS.HOUSE}>
+          <HouseTodosTab />
+        </TabsContent>
+
+        {/* 완료된 할 일 */}
+        <TabsContent value={TODO_TABS.COMPLETED}>
+          <CompletedTodosTab />
+        </TabsContent>
       </Tabs>
     </div>
   );
