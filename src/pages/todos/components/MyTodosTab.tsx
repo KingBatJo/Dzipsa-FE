@@ -15,7 +15,7 @@ const TodoItemActions = () => {
         onClick={() => {
           console.log('사진 첨부 버튼 클릭!');
         }}
-        className="hover:bg-accent active:bg-accent-foreground/10 rounded-full p-1 transition-colors"
+        className="hover:bg-accent-foreground/5 active:bg-accent-foreground/10 rounded-full p-1 transition-colors"
       >
         <Camera className="h-6 w-6" />
       </button>
@@ -26,7 +26,7 @@ const TodoItemActions = () => {
         onClick={() => {
           console.log('할 일 완료 버튼 클릭!');
         }}
-        className="hover:bg-accent active:bg-accent-foreground/10 rounded-full p-1 transition-colors"
+        className="hover:bg-accent-foreground/5 active:bg-accent-foreground/10 rounded-full p-1 transition-colors"
       >
         <CheckCircle2 className="h-6 w-6" />
       </button>
