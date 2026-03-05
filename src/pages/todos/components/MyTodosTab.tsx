@@ -3,26 +3,6 @@ import { Camera, CheckCircle2 } from 'lucide-react';
 import ListItemCard from '@/components/common/ListItemCard';
 import ListSection from '@/components/common/ListSection';
 
-const MyTodosTab = () => {
-  return (
-    <div className="space-y-8">
-      <ListSection title="오늘 할 일">
-        <ListItemCard
-          title="안녕"
-          subtitle="오늘 오전 9:00"
-          right={<TodoItemActions />}
-        />
-      </ListSection>
-
-      <ListSection title="예정된 할 일">
-        <ListItemCard title="안녕" right={<TodoItemActions />} />
-      </ListSection>
-    </div>
-  );
-};
-
-export default MyTodosTab;
-
 // Todo 카드 우측 액션 버튼 영역 (사진 첨부, 완료 처리)
 const TodoItemActions = () => {
   return (
@@ -51,3 +31,23 @@ const TodoItemActions = () => {
     </div>
   );
 };
+
+const MyTodosTab = () => {
+  return (
+    <div className="space-y-8">
+      <ListSection title="오늘 할 일">
+        <ListItemCard
+          title="안녕"
+          subtitle="오늘 오전 9:00"
+          right={<TodoItemActions />}
+        />
+      </ListSection>
+
+      <ListSection title="예정된 할 일">
+        <ListItemCard title="안녕" right={<TodoItemActions />} />
+      </ListSection>
+    </div>
+  );
+};
+
+export default MyTodosTab;

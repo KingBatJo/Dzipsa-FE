@@ -3,21 +3,6 @@ import { AlertTriangle, House, User2Icon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 
-const DashboardSection = () => {
-  return (
-    <section className="grid grid-cols-[1.4fr_1fr] gap-3">
-      <HouseStatusCard />
-
-      <div className="grid grid-rows-2 gap-3">
-        <MissedTodoCard />
-        <WarningRulesCard />
-      </div>
-    </section>
-  );
-};
-
-export default DashboardSection;
-
 // 집 상태 카드
 const HouseStatusCard = () => {
   return (
@@ -69,3 +54,18 @@ const WarningRulesCard = () => {
     </Card>
   );
 };
+
+const DashboardSection = () => {
+  return (
+    <section className="grid grid-cols-[1.4fr_1fr] gap-3">
+      <HouseStatusCard />
+
+      <div className="grid grid-rows-2 gap-3">
+        <MissedTodoCard />
+        <WarningRulesCard />
+      </div>
+    </section>
+  );
+};
+
+export default DashboardSection;
