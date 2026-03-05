@@ -8,6 +8,8 @@ import MyPage from '@/pages/mypage/MyPage';
 import NotFoundPage from '@/pages/NotFoundPage';
 import NotificationPage from '@/pages/notification/NotificationPage';
 import RootLayout from '@/layouts/RootLayout';
+import RulesPage from '@/pages/rules/RulesPage';
+import TodosPage from '@/pages/todos/TodosPage';
 
 const Router = () => {
   return (
@@ -16,6 +18,8 @@ const Router = () => {
         {/* 헤더 포함 */}
         <Route element={<AppLayout />}>
           <Route path="/" element={<HomePage />} />
+          <Route path="/todos" element={<TodosPage />} />
+          <Route path="/rules" element={<RulesPage />} />
         </Route>
 
         {/* 헤더 미포함 */}
