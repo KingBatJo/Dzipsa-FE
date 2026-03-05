@@ -6,7 +6,7 @@ import ListSection from '@/components/common/ListSection';
 import MembersSection from '@/pages/home/components/MembersSection';
 import MottoSection from '@/pages/home/components/MottoSection';
 import UserAvatar from '@/components/common/UserAvatar';
-import { formatDueDate } from '@/utils/date';
+import { formatDueAt } from '@/utils/date';
 
 const HomePage = () => {
   const motto = '깨끗하게 살자!';
@@ -21,7 +21,7 @@ const HomePage = () => {
           <ListItemCard
             key={todo.id}
             title={todo.title}
-            subtitle={formatDueDate(todo.dueDate)}
+            subtitle={formatDueAt(todo.dueAt)}
             right={<UserAvatar src={PROFILE_IMAGE} />}
             onClick={() => {}}
           />

@@ -1,7 +1,9 @@
+import { formatDueAt, toLocalDateTime } from '@/utils/date';
+import { mockMembers, mockTodoList } from '@/mocks/mockData';
+
 import { Card } from '@/components/ui/card';
 import ListItemCard from '@/components/common/ListItemCard';
 import ListSection from '@/components/common/ListSection';
-import { PROFILE_IMAGE } from '@/mocks/mockData';
 import { User2 } from 'lucide-react';
 import UserAvatar from '@/components/common/UserAvatar';
 
@@ -52,30 +54,84 @@ const HouseTodosSummary = ({
 };
 
 const HouseTodosTab = () => {
+  // 임시
+  const myId = '1';
+  const today = '2026-03-06';
+
+  const myName = mockMembers.find((m) => m.id === myId)?.name ?? '나';
+  const membersById = new Map(mockMembers.map((m) => [m.id, m]));
+
+  const todos = mockTodoList.map((t) => ({
+    ...t,
+    local: toLocalDateTime(t.dueAt),
+  }));
+
+  const missedTodos = todos.filter((t) => t.local.date < today && !t.completed);
+  const todayTodos = todos.filter((t) => t.local.date === today);
+  const upcomingTodos = todos.filter((t) => t.local.date > today);
+
+  const total = todayTodos.length;
+  const completed = todayTodos.filter((t) => t.completed).length;
+  const myRemaining = todayTodos.filter(
+    (t) => t.assigneeId === myId && !t.completed
+  ).length;
+
   return (
     <div className="space-y-8">
+      {missedTodos.length > 0 && (
+        <ListSection title="놓친 할 일이 있어요!">
+          {missedTodos.map((todo) => (
+            <ListItemCard
+              key={todo.id}
+              title={todo.title}
+              subtitle={formatDueAt(todo.dueAt)}
+              right={
+                <UserAvatar
+                  src={membersById.get(todo.assigneeId)?.profileImage}
+                />
+              }
+              className="bg-destructive/10"
+            />
+          ))}
+        </ListSection>
+      )}
+
       <ListSection title="오늘 할 일">
         <HouseTodosSummary
-          total={6}
-          completed={3}
-          myRemaining={1}
-          userName="짱구"
+          total={total}
+          completed={completed}
+          myRemaining={myRemaining}
+          userName={myName}
           message="오늘 하루 정말 수고하셨어요!"
         />
 
-        <ListItemCard
-          title="주방 가전용품 청소"
-          subtitle="오늘 오전 9:00"
-          right={<UserAvatar src={PROFILE_IMAGE} />}
-        />
+        {todayTodos.map((todo) => (
+          <ListItemCard
+            key={todo.id}
+            title={todo.title}
+            subtitle={formatDueAt(todo.dueAt)}
+            right={
+              <UserAvatar
+                src={membersById.get(todo.assigneeId)?.profileImage}
+              />
+            }
+          />
+        ))}
       </ListSection>
 
       <ListSection title="우리 집 모든 할 일">
-        <ListItemCard
-          title="주방 가전용품 청소"
-          subtitle="오늘 오전 9:00"
-          right={<UserAvatar src={PROFILE_IMAGE} />}
-        />
+        {upcomingTodos.map((todo) => (
+          <ListItemCard
+            key={todo.id}
+            title={todo.title}
+            subtitle={formatDueAt(todo.dueAt)}
+            right={
+              <UserAvatar
+                src={membersById.get(todo.assigneeId)?.profileImage}
+              />
+            }
+          />
+        ))}
       </ListSection>
     </div>
   );

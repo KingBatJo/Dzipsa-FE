@@ -1,7 +1,8 @@
 export type Todo = {
   id: string;
   title: string;
-  dueDate: string;
+  dueAt: string;
   assigneeId: string;
   memo?: string;
+  completed: boolean;
 };

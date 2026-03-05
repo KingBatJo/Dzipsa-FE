@@ -25,25 +25,73 @@ export const mockMembers: Member[] = [
 ];
 
 export const mockTodoList: Todo[] = [
+  // 오늘
   {
-    id: '1',
+    id: 't1',
     title: '주방 가전용품 청소',
-    dueDate: '2026-03-05T09:00:00',
+    dueAt: '2026-03-06T09:00:00',
     assigneeId: '1',
     memo: '전자레인지 안쪽까지 청소',
+    completed: true,
   },
   {
-    id: '2',
+    id: 't2',
+    title: '분리수거',
+    dueAt: '2026-03-06T10:30:00',
+    assigneeId: '2',
+    memo: '플라스틱/캔 분리',
+    completed: true,
+  },
+  {
+    id: 't3',
     title: '화장실 청소',
-    dueDate: '2026-03-05T15:00:00',
-    assigneeId: '1',
+    dueAt: '2026-03-06T15:00:00',
+    assigneeId: '3',
     memo: '',
+    completed: false,
   },
   {
-    id: '3',
-    title: '할 일이 어마어마어마어마어마어마어마어마하게 많아요',
-    dueDate: '2026-03-05T18:00:00',
+    id: 't4',
+    title: '거실 바닥 물걸레',
+    dueAt: '2026-03-06T18:00:00',
+    assigneeId: '4',
+    memo: '',
+    completed: true,
+  },
+
+  // 예정
+  {
+    id: 't5',
+    title: '식자재 장보기',
+    dueAt: '2026-03-07T19:00:00',
+    assigneeId: '1',
+    memo: '우유/계란/과일',
+    completed: false,
+  },
+  {
+    id: 't6',
+    title: '세탁기 필터 청소',
+    dueAt: '2026-03-08T11:00:00',
+    assigneeId: '2',
+    memo: '',
+    completed: false,
+  },
+
+  // 지난 (놓친 할 일)
+  {
+    id: 't7',
+    title: '현관 신발 정리',
+    dueAt: '2026-03-04T19:00:00',
+    assigneeId: '3',
+    memo: '',
+    completed: false,
+  },
+  {
+    id: 't8',
+    title: '화분에 물 주기',
+    dueAt: '2026-03-05T10:00:00',
     assigneeId: '1',
     memo: '',
+    completed: false,
   },
 ];
