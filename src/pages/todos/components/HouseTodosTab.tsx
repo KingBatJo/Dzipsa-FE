@@ -72,13 +72,17 @@ const HouseTodosTab = () => {
   }));
 
   // 오늘 할 일 (완료 포함 - 요약용)
-  const todayTodos = todos.filter((t) => t.local.date === today);
+  const todayTodos = todos
+    .filter((t) => t.local.date === today)
+    .sort((a, b) => a.dueAt.localeCompare(b.dueAt)); // 오래된 순
   // 놓친 할 일 (미완료만)
-  const missedTodos = todos.filter((t) => t.local.date < today && !t.completed);
+  const missedTodos = todos
+    .filter((t) => t.local.date < today && !t.completed)
+    .sort((a, b) => b.dueAt.localeCompare(a.dueAt)); // 최신순
   // 예정 된 할 일 (미완료만)
-  const upcomingTodos = todos.filter(
-    (t) => t.local.date > today && !t.completed
-  );
+  const upcomingTodos = todos
+    .filter((t) => t.local.date > today && !t.completed)
+    .sort((a, b) => a.dueAt.localeCompare(b.dueAt)); // 오래된 순
 
   // todayTodos 돌면서 통계 계산
   const { total, completed, myRemaining } = todayTodos.reduce(

@@ -48,15 +48,15 @@ const MyTodosTab = () => {
   const myTodos = todos.filter((t) => t.assigneeId === myId);
 
   // 할 일 섹션 분류 (미완료만)
-  const todayTodos = myTodos.filter(
-    (t) => t.local.date === today && !t.completed
-  );
-  const missedTodos = myTodos.filter(
-    (t) => t.local.date < today && !t.completed
-  );
-  const upcomingTodos = myTodos.filter(
-    (t) => t.local.date > today && !t.completed
-  );
+  const todayTodos = myTodos
+    .filter((t) => t.local.date === today && !t.completed)
+    .sort((a, b) => a.dueAt.localeCompare(b.dueAt)); // 오래된 순
+  const missedTodos = myTodos
+    .filter((t) => t.local.date < today && !t.completed)
+    .sort((a, b) => b.dueAt.localeCompare(a.dueAt)); // 최신순
+  const upcomingTodos = myTodos
+    .filter((t) => t.local.date > today && !t.completed)
+    .sort((a, b) => a.dueAt.localeCompare(b.dueAt)); // 오래된 순
 
   return (
     <div className="space-y-8">
