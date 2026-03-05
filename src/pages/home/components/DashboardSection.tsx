@@ -3,6 +3,10 @@ import { AlertTriangle, House, User2Icon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 
+type DashboardSectionProps = {
+  missedCount: number;
+};
+
 // 집 상태 카드
 const HouseStatusCard = () => {
   return (
@@ -29,12 +33,12 @@ const HouseStatusCard = () => {
 };
 
 // 놓친 할 일 카드
-const MissedTodoCard = () => {
+const MissedTodoCard = ({ count }: { count: number }) => {
   return (
     <Card className="border-none bg-[#EEEEEE] p-4">
       <p className="text-base font-semibold">놓친 할 일</p>
 
-      <p className="mt-2 text-2xl font-semibold">3건</p>
+      <p className="mt-2 text-2xl font-semibold">{count}건</p>
     </Card>
   );
 };
@@ -55,13 +59,13 @@ const WarningRulesCard = () => {
   );
 };
 
-const DashboardSection = () => {
+const DashboardSection = ({ missedCount }: DashboardSectionProps) => {
   return (
     <section className="grid grid-cols-[1.4fr_1fr] gap-3">
       <HouseStatusCard />
 
       <div className="grid grid-rows-2 gap-3">
-        <MissedTodoCard />
+        <MissedTodoCard count={missedCount} />
         <WarningRulesCard />
       </div>
     </section>

@@ -24,15 +24,16 @@ const HomePage = () => {
   const todos = addLocalToTodos(mockTodoList);
   const myTodos = todos.filter((t) => t.assigneeId === myId);
 
-  const { todayTodos } = getTodoSections(myTodos, today);
+  const { todayTodos, missedTodos } = getTodoSections(myTodos, today);
 
   const visibleTodayTodos = todayTodos.filter((t) => !t.completed);
+  const missedCount = missedTodos.length;
 
   return (
     <div className="space-y-4 p-4">
       <MottoSection motto={motto} />
       <MembersSection members={mockMembers} />
-      <DashboardSection />
+      <DashboardSection missedCount={missedCount} />
       <ListSection title="오늘 할 일">
         {visibleTodayTodos.map((todo) => (
           <ListItemCard
