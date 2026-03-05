@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
 import AppLayout from '@/layouts/AppLayout';
 import AuthCallbackPage from '@/pages/AuthCallbackPage';
@@ -18,7 +18,11 @@ const Router = () => {
         {/* 헤더 포함 */}
         <Route element={<AppLayout />}>
           <Route path="/" element={<HomePage />} />
-          <Route path="/todos" element={<TodosPage />} />
+          <Route
+            path="/todos"
+            element={<Navigate to={'/todos/my'} replace />}
+          />
+          <Route path="/todos/:tab" element={<TodosPage />} />
           <Route path="/rules" element={<RulesPage />} />
         </Route>
 
