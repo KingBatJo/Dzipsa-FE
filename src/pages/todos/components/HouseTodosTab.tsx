@@ -1,5 +1,10 @@
+import {
+  MOCK_MY_ID,
+  MOCK_TODAY,
+  mockMembers,
+  mockTodoList,
+} from '@/mocks/mockData';
 import { formatDueAt, toLocalDateTime } from '@/utils/date';
-import { mockMembers, mockTodoList } from '@/mocks/mockData';
 
 import { Card } from '@/components/ui/card';
 import ListItemCard from '@/components/common/ListItemCard';
@@ -55,8 +60,8 @@ const HouseTodosSummary = ({
 
 const HouseTodosTab = () => {
   // 임시
-  const myId = '1';
-  const today = '2026-03-06';
+  const myId = MOCK_MY_ID;
+  const today = MOCK_TODAY;
 
   const myName = mockMembers.find((m) => m.id === myId)?.name ?? '나';
   const membersById = new Map(mockMembers.map((m) => [m.id, m]));

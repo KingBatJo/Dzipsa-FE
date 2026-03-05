@@ -1,9 +1,9 @@
 import { Camera, CheckCircle2 } from 'lucide-react';
+import { MOCK_MY_ID, MOCK_TODAY, mockTodoList } from '@/mocks/mockData';
 import { formatDueAt, toLocalDateTime } from '@/utils/date';
 
 import ListItemCard from '@/components/common/ListItemCard';
 import ListSection from '@/components/common/ListSection';
-import { mockTodoList } from '@/mocks/mockData';
 
 // Todo 카드 우측 액션 버튼 영역 (사진 첨부, 완료 처리)
 const TodoItemActions = () => {
@@ -36,8 +36,8 @@ const TodoItemActions = () => {
 
 const MyTodosTab = () => {
   // 임시
-  const myId = '1';
-  const today = '2026-03-06';
+  const myId = MOCK_MY_ID;
+  const today = MOCK_TODAY;
 
   const todos = mockTodoList.map((t) => ({
     ...t,

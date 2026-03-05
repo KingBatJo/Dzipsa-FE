@@ -1,6 +1,9 @@
 import type { Member } from '@/types/member';
 import type { Todo } from '@/types/todo';
 
+export const MOCK_MY_ID = '1';
+export const MOCK_TODAY = '2026-03-06';
+
 export const PROFILE_IMAGE = 'https://github.com/shadcn.png'; // 임시
 
 export const mockMembers: Member[] = [
