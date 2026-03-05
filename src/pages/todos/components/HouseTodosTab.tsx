@@ -7,6 +7,7 @@ import {
 import { addLocalToTodos, getTodoSections } from '@/utils/todos';
 
 import { Card } from '@/components/ui/card';
+import EmptyState from '@/components/common/EmptyState';
 import ListItemCard from '@/components/common/ListItemCard';
 import ListSection from '@/components/common/ListSection';
 import { User2 } from 'lucide-react';
@@ -118,33 +119,41 @@ const HouseTodosTab = () => {
           message="오늘 하루 정말 수고하셨어요!"
         />
 
-        {visibleTodayTodos.map((todo) => (
-          <ListItemCard
-            key={todo.id}
-            title={todo.title}
-            subtitle={formatDueAt(todo.dueAt)}
-            right={
-              <UserAvatar
-                src={membersById.get(todo.assigneeId)?.profileImage}
-              />
-            }
-          />
-        ))}
+        {visibleTodayTodos.length === 0 ? (
+          <EmptyState message="오늘 할 일이 없어요" />
+        ) : (
+          visibleTodayTodos.map((todo) => (
+            <ListItemCard
+              key={todo.id}
+              title={todo.title}
+              subtitle={formatDueAt(todo.dueAt)}
+              right={
+                <UserAvatar
+                  src={membersById.get(todo.assigneeId)?.profileImage}
+                />
+              }
+            />
+          ))
+        )}
       </ListSection>
 
       <ListSection title="예정된 모든 할 일">
-        {upcomingTodos.map((todo) => (
-          <ListItemCard
-            key={todo.id}
-            title={todo.title}
-            subtitle={formatDueAt(todo.dueAt)}
-            right={
-              <UserAvatar
-                src={membersById.get(todo.assigneeId)?.profileImage}
-              />
-            }
-          />
-        ))}
+        {upcomingTodos.length === 0 ? (
+          <EmptyState message="예정된 할 일이 없어요" />
+        ) : (
+          upcomingTodos.map((todo) => (
+            <ListItemCard
+              key={todo.id}
+              title={todo.title}
+              subtitle={formatDueAt(todo.dueAt)}
+              right={
+                <UserAvatar
+                  src={membersById.get(todo.assigneeId)?.profileImage}
+                />
+              }
+            />
+          ))
+        )}
       </ListSection>
     </div>
   );

@@ -2,6 +2,7 @@ import { Camera, CheckCircle2 } from 'lucide-react';
 import { MOCK_MY_ID, MOCK_TODAY, mockTodoList } from '@/mocks/mockData';
 import { addLocalToTodos, getTodoSections } from '@/utils/todos';
 
+import EmptyState from '@/components/common/EmptyState';
 import ListItemCard from '@/components/common/ListItemCard';
 import ListSection from '@/components/common/ListSection';
 import { formatDueAt } from '@/utils/date';
@@ -72,9 +73,7 @@ const MyTodosTab = () => {
 
       <ListSection title="오늘 할 일">
         {visibleTodayTodos.length === 0 ? (
-          <p className="text-muted-foreground px-1 text-sm">
-            오늘 할 일이 없어요
-          </p>
+          <EmptyState message="오늘 할 일이 없어요" />
         ) : (
           visibleTodayTodos.map((todo) => (
             <ListItemCard
@@ -89,9 +88,7 @@ const MyTodosTab = () => {
 
       <ListSection title="예정된 할 일">
         {upcomingTodos.length === 0 ? (
-          <p className="text-muted-foreground px-1 text-sm">
-            예정된 할 일이 없어요
-          </p>
+          <EmptyState message="예정된 할 일이 없어요" />
         ) : (
           upcomingTodos.map((todo) => (
             <ListItemCard

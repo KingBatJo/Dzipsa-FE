@@ -8,6 +8,7 @@ import {
 import { addLocalToTodos, getTodoSections } from '@/utils/todos';
 
 import DashboardSection from '@/pages/home/components/DashboardSection';
+import EmptyState from '@/components/common/EmptyState';
 import ListItemCard from '@/components/common/ListItemCard';
 import ListSection from '@/components/common/ListSection';
 import MembersSection from '@/pages/home/components/MembersSection';
@@ -35,15 +36,19 @@ const HomePage = () => {
       <MembersSection members={mockMembers} />
       <DashboardSection missedCount={missedCount} />
       <ListSection title="오늘 할 일">
-        {visibleTodayTodos.map((todo) => (
-          <ListItemCard
-            key={todo.id}
-            title={todo.title}
-            subtitle={formatDueAt(todo.dueAt)}
-            right={<UserAvatar src={PROFILE_IMAGE} />}
-            onClick={() => {}}
-          />
-        ))}
+        {visibleTodayTodos.length === 0 ? (
+          <EmptyState message="오늘 할 일이 없어요" />
+        ) : (
+          visibleTodayTodos.map((todo) => (
+            <ListItemCard
+              key={todo.id}
+              title={todo.title}
+              subtitle={formatDueAt(todo.dueAt)}
+              right={<UserAvatar src={PROFILE_IMAGE} />}
+              onClick={() => {}}
+            />
+          ))
+        )}
       </ListSection>
     </div>
   );
