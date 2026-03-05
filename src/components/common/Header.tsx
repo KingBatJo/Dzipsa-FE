@@ -1,4 +1,4 @@
-import { HEADER_HEIGHT, MOBILE_MAX_WIDTH } from '@/constants/layout';
+import { HEADER_HEIGHT_CLASS, MOBILE_MAX_WIDTH } from '@/constants/layout';
 
 import Bell from '@/assets/bell.svg';
 import { Link } from 'react-router-dom';
@@ -11,7 +11,7 @@ const Header = () => {
       className={`fixed top-0 z-10 w-full ${MOBILE_MAX_WIDTH} backdrop-blur-xl`}
     >
       <div
-        className={`flex items-center justify-between ${HEADER_HEIGHT} px-4`}
+        className={`flex items-center justify-between ${HEADER_HEIGHT_CLASS} px-4`}
       >
         <h1 className="text-xl font-semibold">
           <Link to="/">Dzipsa</Link>
