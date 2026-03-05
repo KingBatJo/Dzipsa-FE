@@ -66,15 +66,28 @@ const HouseTodosTab = () => {
     local: toLocalDateTime(t.dueAt),
   }));
 
-  const missedTodos = todos.filter((t) => t.local.date < today && !t.completed);
+  // 오늘 할 일 (완료 포함 - 요약용)
   const todayTodos = todos.filter((t) => t.local.date === today);
-  const upcomingTodos = todos.filter((t) => t.local.date > today);
+  // 놓친 할 일 (미완료만)
+  const missedTodos = todos.filter((t) => t.local.date < today && !t.completed);
+  // 예정 된 할 일 (미완료만)
+  const upcomingTodos = todos.filter(
+    (t) => t.local.date > today && !t.completed
+  );
 
-  const total = todayTodos.length;
-  const completed = todayTodos.filter((t) => t.completed).length;
-  const myRemaining = todayTodos.filter(
-    (t) => t.assigneeId === myId && !t.completed
-  ).length;
+  // todayTodos 돌면서 통계 계산
+  const { total, completed, myRemaining } = todayTodos.reduce(
+    (acc, t) => {
+      acc.total += 1;
+      if (t.completed) acc.completed += 1;
+      if (t.assigneeId === myId && !t.completed) acc.myRemaining += 1;
+      return acc;
+    },
+    { total: 0, completed: 0, myRemaining: 0 }
+  );
+
+  // 놓친 할 일 (미완료만 - 렌더링용)
+  const visibleTodayTodos = todayTodos.filter((t) => !t.completed);
 
   return (
     <div className="space-y-8">
@@ -105,7 +118,7 @@ const HouseTodosTab = () => {
           message="오늘 하루 정말 수고하셨어요!"
         />
 
-        {todayTodos.map((todo) => (
+        {visibleTodayTodos.map((todo) => (
           <ListItemCard
             key={todo.id}
             title={todo.title}
@@ -119,7 +132,7 @@ const HouseTodosTab = () => {
         ))}
       </ListSection>
 
-      <ListSection title="우리 집 모든 할 일">
+      <ListSection title="예정된 모든 할 일">
         {upcomingTodos.map((todo) => (
           <ListItemCard
             key={todo.id}
