@@ -17,7 +17,7 @@ const TodosPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="px-4 pt-6">
+    <div className="p-4">
       <Tabs value={tab} onValueChange={(value) => navigate(`/todos/${value}`)}>
         <TabsList className="grid h-12 w-full grid-cols-3 gap-1 p-1.5">
           {TABS.map((tab) => (
