@@ -9,6 +9,7 @@ import NotFoundPage from '@/pages/NotFoundPage';
 import NotificationPage from '@/pages/notification/NotificationPage';
 import RootLayout from '@/layouts/RootLayout';
 import RulesPage from '@/pages/rules/RulesPage';
+import { TODO_TABS } from '@/constants/todos';
 import TodosPage from '@/pages/todos/TodosPage';
 
 const Router = () => {
@@ -20,7 +21,7 @@ const Router = () => {
           <Route path="/" element={<HomePage />} />
           <Route
             path="/todos"
-            element={<Navigate to={'/todos/my'} replace />}
+            element={<Navigate to={`/todos/${TODO_TABS.MY}`} replace />}
           />
           <Route path="/todos/:tab" element={<TodosPage />} />
           <Route path="/rules" element={<RulesPage />} />
