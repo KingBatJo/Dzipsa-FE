@@ -5,7 +5,7 @@ import ListSection from '@/components/common/ListSection';
 
 const MyTodosTab = () => {
   return (
-    <div>
+    <div className="space-y-8">
       <ListSection title="오늘 할 일">
         <ListItemCard
           title="안녕"
@@ -14,7 +14,7 @@ const MyTodosTab = () => {
         />
       </ListSection>
 
-      <ListSection title="예정된 할 일" className="pt-8">
+      <ListSection title="예정된 할 일">
         <ListItemCard title="안녕" right={<TodoItemActions />} />
       </ListSection>
     </div>
