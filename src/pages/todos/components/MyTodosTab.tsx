@@ -1,9 +1,10 @@
 import { Camera, CheckCircle2 } from 'lucide-react';
 import { MOCK_MY_ID, MOCK_TODAY, mockTodoList } from '@/mocks/mockData';
-import { formatDueAt, toLocalDateTime } from '@/utils/date';
+import { addLocalToTodos, getTodoSections } from '@/utils/todos';
 
 import ListItemCard from '@/components/common/ListItemCard';
 import ListSection from '@/components/common/ListSection';
+import { formatDueAt } from '@/utils/date';
 
 // Todo 카드 우측 액션 버튼 영역 (사진 첨부, 완료 처리)
 const TodoItemActions = () => {
@@ -39,24 +40,19 @@ const MyTodosTab = () => {
   const myId = MOCK_MY_ID;
   const today = MOCK_TODAY;
 
-  const todos = mockTodoList.map((t) => ({
-    ...t,
-    local: toLocalDateTime(t.dueAt),
-  }));
+  const todos = addLocalToTodos(mockTodoList);
 
   // 내 할 일만
   const myTodos = todos.filter((t) => t.assigneeId === myId);
 
-  // 할 일 섹션 분류 (미완료만)
-  const todayTodos = myTodos
-    .filter((t) => t.local.date === today && !t.completed)
-    .sort((a, b) => a.dueAt.localeCompare(b.dueAt)); // 오래된 순
-  const missedTodos = myTodos
-    .filter((t) => t.local.date < today && !t.completed)
-    .sort((a, b) => b.dueAt.localeCompare(a.dueAt)); // 최신순
-  const upcomingTodos = myTodos
-    .filter((t) => t.local.date > today && !t.completed)
-    .sort((a, b) => a.dueAt.localeCompare(b.dueAt)); // 오래된 순
+  // 할 일 섹션 분류
+  const { todayTodos, missedTodos, upcomingTodos } = getTodoSections(
+    myTodos,
+    today
+  );
+
+  // 놓친 할 일 (미완료만 - 렌더링용)
+  const visibleTodayTodos = todayTodos.filter((t) => !t.completed);
 
   return (
     <div className="space-y-8">
@@ -75,12 +71,12 @@ const MyTodosTab = () => {
       )}
 
       <ListSection title="오늘 할 일">
-        {todayTodos.length === 0 ? (
+        {visibleTodayTodos.length === 0 ? (
           <p className="text-muted-foreground px-1 text-sm">
             오늘 할 일이 없어요
           </p>
         ) : (
-          todayTodos.map((todo) => (
+          visibleTodayTodos.map((todo) => (
             <ListItemCard
               key={todo.id}
               title={todo.title}

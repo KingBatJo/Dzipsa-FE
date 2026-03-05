@@ -4,13 +4,14 @@ import {
   mockMembers,
   mockTodoList,
 } from '@/mocks/mockData';
-import { formatDueAt, toLocalDateTime } from '@/utils/date';
+import { addLocalToTodos, getTodoSections } from '@/utils/todos';
 
 import { Card } from '@/components/ui/card';
 import ListItemCard from '@/components/common/ListItemCard';
 import ListSection from '@/components/common/ListSection';
 import { User2 } from 'lucide-react';
 import UserAvatar from '@/components/common/UserAvatar';
+import { formatDueAt } from '@/utils/date';
 
 type HouseTodosSummaryProps = {
   total: number;
@@ -66,23 +67,13 @@ const HouseTodosTab = () => {
   const myName = mockMembers.find((m) => m.id === myId)?.name ?? '나';
   const membersById = new Map(mockMembers.map((m) => [m.id, m]));
 
-  const todos = mockTodoList.map((t) => ({
-    ...t,
-    local: toLocalDateTime(t.dueAt),
-  }));
+  const todos = addLocalToTodos(mockTodoList);
 
-  // 오늘 할 일 (완료 포함 - 요약용)
-  const todayTodos = todos
-    .filter((t) => t.local.date === today)
-    .sort((a, b) => a.dueAt.localeCompare(b.dueAt)); // 오래된 순
-  // 놓친 할 일 (미완료만)
-  const missedTodos = todos
-    .filter((t) => t.local.date < today && !t.completed)
-    .sort((a, b) => b.dueAt.localeCompare(a.dueAt)); // 최신순
-  // 예정 된 할 일 (미완료만)
-  const upcomingTodos = todos
-    .filter((t) => t.local.date > today && !t.completed)
-    .sort((a, b) => a.dueAt.localeCompare(b.dueAt)); // 오래된 순
+  // 할 일 섹션 분류
+  const { todayTodos, missedTodos, upcomingTodos } = getTodoSections(
+    todos,
+    today
+  );
 
   // todayTodos 돌면서 통계 계산
   const { total, completed, myRemaining } = todayTodos.reduce(
