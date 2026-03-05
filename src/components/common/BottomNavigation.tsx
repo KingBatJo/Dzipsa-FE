@@ -22,7 +22,6 @@ const BottomNavigation = () => {
       >
         {navigationItems.map((item) => {
           const Icon = item.icon;
-          // const isActive = location.pathname === item.path;
           const isActive =
             item.path === '/'
               ? location.pathname === '/'
