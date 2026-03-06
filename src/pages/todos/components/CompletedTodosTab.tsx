@@ -14,7 +14,9 @@ type CompletedTodoFeedCardProps = {
   isDelayed?: boolean;
 };
 
-type CompletedTodoFeedItemProps = CompletedTodoFeedCardProps;
+type CompletedTodoFeedItemProps = CompletedTodoFeedCardProps & {
+  profileImage?: string;
+};
 
 const CompletedTodoFeedCard = ({
   userName,
@@ -52,11 +54,14 @@ const CompletedTodoFeedCard = ({
   );
 };
 
-const CompletedTodoFeedItem = (props: CompletedTodoFeedItemProps) => {
+const CompletedTodoFeedItem = ({
+  profileImage,
+  ...props
+}: CompletedTodoFeedItemProps) => {
   return (
     <div className="flex gap-4">
       <div className="pt-1">
-        <UserAvatar />
+        <UserAvatar src={profileImage} />
       </div>
 
       <CompletedTodoFeedCard {...props} />
@@ -79,6 +84,7 @@ const CompletedTodosTab = () => {
             <CompletedTodoFeedItem
               key={todo.id}
               userName={member?.name ?? '알 수 없음'}
+              profileImage={member?.profileImage}
               todoTitle={todo.title}
               dueDate={todo.local.dueDate} // 임시 포맷
               isDelayed={
