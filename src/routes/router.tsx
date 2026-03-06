@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
 import AppLayout from '@/layouts/AppLayout';
 import AuthCallbackPage from '@/pages/AuthCallbackPage';
@@ -9,6 +9,7 @@ import NotFoundPage from '@/pages/NotFoundPage';
 import NotificationPage from '@/pages/notification/NotificationPage';
 import RootLayout from '@/layouts/RootLayout';
 import RulesPage from '@/pages/rules/RulesPage';
+import { TODO_TABS } from '@/constants/todos';
 import TodosPage from '@/pages/todos/TodosPage';
 
 const Router = () => {
@@ -18,7 +19,11 @@ const Router = () => {
         {/* 헤더 포함 */}
         <Route element={<AppLayout />}>
           <Route path="/" element={<HomePage />} />
-          <Route path="/todos" element={<TodosPage />} />
+          <Route
+            path="/todos"
+            element={<Navigate to={`/todos/${TODO_TABS.MY}`} replace />}
+          />
+          <Route path="/todos/:tab" element={<TodosPage />} />
           <Route path="/rules" element={<RulesPage />} />
         </Route>
 
