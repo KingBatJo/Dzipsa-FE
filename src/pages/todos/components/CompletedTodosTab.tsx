@@ -1,3 +1,6 @@
+import { MOCK_TODAY, mockMembers, mockTodoList } from '@/mocks/mockData';
+import { addLocalToTodos, getTodoSections } from '@/utils/todos';
+
 import { Card } from '@/components/ui/card';
 import ListSection from '@/components/common/ListSection';
 import RoundedBadge from '@/components/common/RoundedBadge';
@@ -62,33 +65,30 @@ const CompletedTodoFeedItem = (props: CompletedTodoFeedItemProps) => {
 };
 
 const CompletedTodosTab = () => {
+  const todosWithLocal = addLocalToTodos(mockTodoList);
+
+  const { completedTodos } = getTodoSections(todosWithLocal, MOCK_TODAY);
+
   return (
     <ListSection title="Today">
       <div className="flex flex-col gap-8 pt-3">
-        <CompletedTodoFeedItem
-          userName="짱구"
-          todoTitle="빨래하기"
-          dueDate="2026.03.04"
-          proofImageUrl="temp"
-        />
-        <CompletedTodoFeedItem
-          userName="짱아"
-          todoTitle="세탁기 필터 청소"
-          dueDate="2026.03.03"
-          isDelayed
-        />
-        <CompletedTodoFeedItem
-          userName="철수"
-          todoTitle="현관 바닥 청소"
-          dueDate="2026.03.03"
-        />
-        <CompletedTodoFeedItem
-          userName="맹구"
-          todoTitle="전등 교체"
-          dueDate="2026.03.03"
-          proofImageUrl="temp"
-          isDelayed
-        />
+        {completedTodos.map((todo) => {
+          const member = mockMembers.find((m) => m.id === todo.assigneeId);
+
+          return (
+            <CompletedTodoFeedItem
+              key={todo.id}
+              userName={member?.name ?? '알 수 없음'}
+              todoTitle={todo.title}
+              dueDate={todo.local.dueDate} // 임시 포맷
+              isDelayed={
+                !!todo.completedAt &&
+                new Date(todo.completedAt) > new Date(todo.dueAt)
+              }
+              proofImageUrl={todo.proofImageUrl}
+            />
+          );
+        })}
       </div>
     </ListSection>
   );

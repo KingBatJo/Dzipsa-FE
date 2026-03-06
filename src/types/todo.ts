@@ -5,4 +5,6 @@ export type Todo = {
   assigneeId: string;
   memo?: string;
   completed: boolean;
+  completedAt?: string;
+  proofImageUrl?: string;
 };

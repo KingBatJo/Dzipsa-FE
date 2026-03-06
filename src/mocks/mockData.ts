@@ -36,6 +36,8 @@ export const mockTodoList: Todo[] = [
     assigneeId: '1',
     memo: '전자레인지 안쪽까지 청소',
     completed: true,
+    completedAt: '2026-03-06T08:40:00',
+    proofImageUrl: 'test',
   },
   {
     id: 't2',
@@ -44,6 +46,7 @@ export const mockTodoList: Todo[] = [
     assigneeId: '2',
     memo: '플라스틱/캔 분리',
     completed: true,
+    completedAt: '2026-03-06T10:10:00',
   },
   {
     id: 't3',
@@ -60,6 +63,7 @@ export const mockTodoList: Todo[] = [
     assigneeId: '4',
     memo: '',
     completed: true,
+    completedAt: '2026-03-06T17:20:00',
   },
   {
     id: 't5',
@@ -92,6 +96,7 @@ export const mockTodoList: Todo[] = [
     assigneeId: '1',
     memo: '',
     completed: true,
+    completedAt: '2026-03-06T08:25:00',
   },
   {
     id: 't19',
@@ -280,5 +285,73 @@ export const mockTodoList: Todo[] = [
     assigneeId: '1',
     memo: '',
     completed: false,
+  },
+
+  // 추가 완료 데이터 (피드 테스트용)
+
+  {
+    id: 't32',
+    title: '욕실 거울 닦기',
+    dueAt: '2026-03-06T07:30:00',
+    assigneeId: '2',
+    memo: '',
+    completed: true,
+    completedAt: '2026-03-06T07:10:00',
+  },
+  {
+    id: 't33',
+    title: '베란다 정리',
+    dueAt: '2026-03-05T18:00:00',
+    assigneeId: '1',
+    memo: '',
+    completed: true,
+    completedAt: '2026-03-06T09:30:00', // 지연 완료
+  },
+  {
+    id: 't34',
+    title: '전자레인지 외부 청소',
+    dueAt: '2026-03-04T09:00:00',
+    assigneeId: '3',
+    memo: '',
+    completed: true,
+    completedAt: '2026-03-06T11:00:00', // 지연 완료
+  },
+  {
+    id: 't35',
+    title: '현관 신발장 정리',
+    dueAt: '2026-03-06T14:30:00',
+    assigneeId: '4',
+    memo: '',
+    completed: true,
+    completedAt: '2026-03-06T14:10:00',
+  },
+  {
+    id: 't36',
+    title: '주방 수납장 정리',
+    dueAt: '2026-03-05T20:00:00',
+    assigneeId: '2',
+    memo: '',
+    completed: true,
+    completedAt: '2026-03-06T12:20:00', // 지연 완료
+    proofImageUrl: 'test',
+  },
+  {
+    id: 't37',
+    title: '창틀 먼지 제거',
+    dueAt: '2026-03-03T11:00:00',
+    assigneeId: '1',
+    memo: '',
+    completed: true,
+    completedAt: '2026-03-06T15:40:00', // 지연 완료
+  },
+  {
+    id: 't38',
+    title: '세탁실 정리',
+    dueAt: '2026-03-06T17:00:00',
+    assigneeId: '3',
+    memo: '',
+    completed: true,
+    completedAt: '2026-03-06T16:45:00',
+    proofImageUrl: 'test',
   },
 ];
