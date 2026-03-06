@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card';
 import ListSection from '@/components/common/ListSection';
 import RoundedBadge from '@/components/common/RoundedBadge';
 import UserAvatar from '@/components/common/UserAvatar';
+import { toLocalDateTime } from '@/utils/date';
 
 type CompletedTodoFeedCardProps = {
   userName: string;
@@ -89,7 +90,8 @@ const CompletedTodosTab = () => {
               dueDate={todo.local.dueDate} // 임시 포맷
               isDelayed={
                 !!todo.completedAt &&
-                new Date(todo.completedAt) > new Date(todo.dueAt)
+                toLocalDateTime(todo.completedAt).date >
+                  toLocalDateTime(todo.dueAt).date
               }
               proofImageUrl={todo.proofImageUrl}
             />

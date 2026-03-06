@@ -292,11 +292,11 @@ export const mockTodoList: Todo[] = [
   {
     id: 't32',
     title: '욕실 거울 닦기',
-    dueAt: '2026-03-06T07:30:00',
+    dueAt: '2026-03-05T07:30:00',
     assigneeId: '2',
     memo: '',
     completed: true,
-    completedAt: '2026-03-06T07:10:00',
+    completedAt: '2026-03-06T07:50:00', // 지연 완료
   },
   {
     id: 't33',
@@ -314,7 +314,7 @@ export const mockTodoList: Todo[] = [
     assigneeId: '3',
     memo: '',
     completed: true,
-    completedAt: '2026-03-06T11:00:00', // 지연 완료
+    completedAt: '2026-03-04T11:00:00',
   },
   {
     id: 't35',
