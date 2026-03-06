@@ -37,7 +37,7 @@ const HouseStatusCard = () => {
 const MissedTodoCard = ({ count }: { count: number }) => {
   return (
     <Link to={'/todos/my'}>
-      <Card className="hover:bg-primary/10 active:bg-primary/15 cursor-pointer border-none bg-[#EEEEEE] p-4">
+      <Card className="hover:bg-primary/10 active:bg-primary/15 h-full cursor-pointer border-none bg-[#EEEEEE] p-4">
         <p className="text-base font-semibold">놓친 할 일</p>
 
         <p className="mt-2 text-2xl font-semibold">{count}건</p>
