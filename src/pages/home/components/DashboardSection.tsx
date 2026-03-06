@@ -2,6 +2,7 @@ import { AlertTriangle, House, User2Icon } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
+import { Link } from 'react-router-dom';
 
 type DashboardSectionProps = {
   missedCount: number;
@@ -35,11 +36,13 @@ const HouseStatusCard = () => {
 // 놓친 할 일 카드
 const MissedTodoCard = ({ count }: { count: number }) => {
   return (
-    <Card className="border-none bg-[#EEEEEE] p-4">
-      <p className="text-base font-semibold">놓친 할 일</p>
+    <Link to={'/todos/my'}>
+      <Card className="hover:bg-primary/10 active:bg-primary/15 cursor-pointer border-none bg-[#EEEEEE] p-4">
+        <p className="text-base font-semibold">놓친 할 일</p>
 
-      <p className="mt-2 text-2xl font-semibold">{count}건</p>
-    </Card>
+        <p className="mt-2 text-2xl font-semibold">{count}건</p>
+      </Card>
+    </Link>
   );
 };
 
