@@ -2,6 +2,7 @@ import { MOTTO, mockRulesList } from '@/mocks/mockData';
 
 import { AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import EmptyState from '@/components/common/EmptyState';
 import ListItemCard from '@/components/common/ListItemCard';
 import ListSection from '@/components/common/ListSection';
 import MottoSection from '@/pages/home/components/MottoSection';
@@ -87,18 +88,22 @@ const RulesPage = () => {
           </Button>
         }
       >
-        {rules.map((rule) => (
-          <ListItemCard
-            key={rule.id}
-            title={rule.title}
-            right={
-              <RuleNotifyButton
-                disabled={rule.disabled}
-                onClick={() => handleNotify(rule.id)}
-              />
-            }
-          />
-        ))}
+        {rules.length === 0 ? (
+          <EmptyState message="등록된 규칙이 없어요. 규칙을 추가해주세요!" />
+        ) : (
+          rules.map((rule) => (
+            <ListItemCard
+              key={rule.id}
+              title={rule.title}
+              right={
+                <RuleNotifyButton
+                  disabled={rule.disabled}
+                  onClick={() => handleNotify(rule.id)}
+                />
+              }
+            />
+          ))
+        )}
       </ListSection>
     </div>
   );
