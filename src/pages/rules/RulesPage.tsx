@@ -44,12 +44,17 @@ const RulesPage = () => {
   const navigate = useNavigate();
   const [rules, setRules] = useState(mockRulesList);
 
-  const warningRules = rules.filter((rule) => rule.disabled);
+  const warningRules = rules
+    .filter((rule) => rule.disabled && rule.warnedAt)
+    .sort((a, b) => (b.warnedAt ?? 0) - (a.warnedAt ?? 0))
+    .slice(0, 3);
 
   const handleNotify = (ruleId: number) => {
     setRules((prev) =>
       prev.map((rule) =>
-        rule.id === ruleId ? { ...rule, disabled: true } : rule
+        rule.id === ruleId
+          ? { ...rule, disabled: true, warnedAt: Date.now() }
+          : rule
       )
     );
   };
@@ -58,15 +63,17 @@ const RulesPage = () => {
     <div className="space-y-4 p-4">
       <MottoSection motto={MOTTO} />
 
-      <ListSection title="최근 경고 요인">
-        {warningRules.map((rule) => (
-          <ListItemCard
-            key={rule.id}
-            title={rule.title}
-            left={<AlertTriangle className="h-8 w-8 text-yellow-400" />}
-          />
-        ))}
-      </ListSection>
+      {warningRules.length > 0 && (
+        <ListSection title="최근 경고 요인">
+          {warningRules.map((rule) => (
+            <ListItemCard
+              key={rule.id}
+              title={rule.title}
+              left={<AlertTriangle className="h-8 w-8 text-yellow-400" />}
+            />
+          ))}
+        </ListSection>
+      )}
 
       <ListSection
         title="우리집 규칙 리스트"
