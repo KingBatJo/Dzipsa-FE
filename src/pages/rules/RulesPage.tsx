@@ -1,4 +1,5 @@
 import { AlertTriangle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import ListItemCard from '@/components/common/ListItemCard';
 import ListSection from '@/components/common/ListSection';
 import { MOTTO } from '@/mocks/mockData';
@@ -54,7 +55,17 @@ const RulesPage = () => {
         />
       </ListSection>
 
-      <ListSection title="우리집 규칙 리스트">
+      <ListSection
+        title="우리집 규칙 리스트"
+        right={
+          <Button
+            variant="link"
+            className="hover:bg-accent-foreground/5 active:bg-accent-foreground/10 h-fit px-2 py-1 hover:no-underline"
+          >
+            규칙 추가하기
+          </Button>
+        }
+      >
         <ListItemCard
           title="월요일은 다 먹는 날"
           right={<RuleNotifyButton disabled />}
