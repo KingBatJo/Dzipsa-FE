@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 type ListItemCardProps = {
   title: string;
   subtitle?: string;
+  left?: React.ReactNode;
   right?: React.ReactNode;
   onClick?: () => void;
   className?: string;
@@ -12,6 +13,7 @@ type ListItemCardProps = {
 const ListItemCard = ({
   title,
   subtitle,
+  left,
   right,
   onClick,
   className,
@@ -25,13 +27,20 @@ const ListItemCard = ({
       className
     )}
   >
-    <div className="min-w-0">
-      <p className="truncate text-base font-medium">{title}</p>
-      {subtitle && (
-        <p className="text-muted-foreground text-xs font-normal">{subtitle}</p>
-      )}
+    <div className="flex items-center gap-4">
+      {left && <div className="shrink-0">{left}</div>}
+
+      <div className="min-w-0">
+        <p className="truncate text-base font-medium">{title}</p>
+        {subtitle && (
+          <p className="text-muted-foreground text-xs font-normal">
+            {subtitle}
+          </p>
+        )}
+      </div>
     </div>
-    {right && <div className="shrink-0 pl-3">{right}</div>}
+
+    {right && <div className="shrink-0">{right}</div>}
   </Card>
 );
 
