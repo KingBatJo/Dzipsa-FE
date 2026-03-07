@@ -1,6 +1,8 @@
 import type { Member } from '@/types/member';
 import type { Todo } from '@/types/todo';
 
+export const MOTTO = '깨끗하게 살자!';
+
 export const MOCK_MY_ID = '1';
 export const MOCK_TODAY = '2026-03-06';
 

@@ -1,6 +1,7 @@
 import {
   MOCK_MY_ID,
   MOCK_TODAY,
+  MOTTO,
   PROFILE_IMAGE,
   mockMembers,
   mockTodoList,
@@ -17,8 +18,6 @@ import UserAvatar from '@/components/common/UserAvatar';
 import { formatDueAt } from '@/utils/date';
 
 const HomePage = () => {
-  const motto = '깨끗하게 살자!';
-
   const myId = MOCK_MY_ID;
   const today = MOCK_TODAY;
 
@@ -32,7 +31,7 @@ const HomePage = () => {
 
   return (
     <div className="space-y-4 p-4">
-      <MottoSection motto={motto} />
+      <MottoSection motto={MOTTO} />
       <MembersSection members={mockMembers} />
       <DashboardSection missedCount={missedCount} />
       <ListSection title="오늘 할 일">
