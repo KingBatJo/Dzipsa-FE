@@ -1,25 +1,29 @@
+import { MOTTO, mockRulesList } from '@/mocks/mockData';
+
 import { AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ListItemCard from '@/components/common/ListItemCard';
 import ListSection from '@/components/common/ListSection';
-import { MOTTO } from '@/mocks/mockData';
 import MottoSection from '@/pages/home/components/MottoSection';
 import RoundedBadge from '@/components/common/RoundedBadge';
 import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
 type RoundedButtonProps = {
   disabled?: boolean;
+  onClick?: () => void;
 };
 
-const RuleNotifyButton = ({ disabled = false }: RoundedButtonProps) => {
+const RuleNotifyButton = ({
+  disabled = false,
+  onClick,
+}: RoundedButtonProps) => {
   return (
     <button
       type="button"
       disabled={disabled}
-      onClick={() => {
-        console.log('클릭!');
-      }}
+      onClick={onClick}
       className="rounded-full disabled:cursor-default"
     >
       <RoundedBadge
@@ -38,24 +42,30 @@ const RuleNotifyButton = ({ disabled = false }: RoundedButtonProps) => {
 
 const RulesPage = () => {
   const navigate = useNavigate();
+  const [rules, setRules] = useState(mockRulesList);
+
+  const warningRules = rules.filter((rule) => rule.disabled);
+
+  const handleNotify = (ruleId: number) => {
+    setRules((prev) =>
+      prev.map((rule) =>
+        rule.id === ruleId ? { ...rule, disabled: true } : rule
+      )
+    );
+  };
 
   return (
     <div className="space-y-4 p-4">
       <MottoSection motto={MOTTO} />
 
       <ListSection title="최근 경고 요인">
-        <ListItemCard
-          title="월요일은 다 먹는 날"
-          left={<AlertTriangle className="h-8 w-8 text-yellow-400" />}
-        />
-        <ListItemCard
-          title="3시 이후 샤워 금지"
-          left={<AlertTriangle className="h-8 w-8 text-yellow-400" />}
-        />
-        <ListItemCard
-          title="11시 이후 샤워 금지"
-          left={<AlertTriangle className="h-8 w-8 text-yellow-400" />}
-        />
+        {warningRules.map((rule) => (
+          <ListItemCard
+            key={rule.id}
+            title={rule.title}
+            left={<AlertTriangle className="h-8 w-8 text-yellow-400" />}
+          />
+        ))}
       </ListSection>
 
       <ListSection
@@ -70,15 +80,18 @@ const RulesPage = () => {
           </Button>
         }
       >
-        <ListItemCard
-          title="월요일은 다 먹는 날"
-          right={<RuleNotifyButton disabled />}
-        />
-        <ListItemCard title="3시 이후 샤워 금지" right={<RuleNotifyButton />} />
-        <ListItemCard
-          title="11시 이후 샤워 금지"
-          right={<RuleNotifyButton />}
-        />
+        {rules.map((rule) => (
+          <ListItemCard
+            key={rule.id}
+            title={rule.title}
+            right={
+              <RuleNotifyButton
+                disabled={rule.disabled}
+                onClick={() => handleNotify(rule.id)}
+              />
+            }
+          />
+        ))}
       </ListSection>
     </div>
   );
