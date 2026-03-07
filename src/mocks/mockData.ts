@@ -1,4 +1,5 @@
 import type { Member } from '@/types/member';
+import type { Rule } from '@/types/rules';
 import type { Todo } from '@/types/todo';
 
 export const MOTTO = '깨끗하게 살자!';
@@ -356,4 +357,10 @@ export const mockTodoList: Todo[] = [
     completedAt: '2026-03-06T16:45:00',
     proofImageUrl: 'test',
   },
+];
+
+export const mockRulesList: Rule[] = [
+  { id: 1, title: '월요일은 다 먹는 날', disabled: true },
+  { id: 2, title: '3시 이후 샤워 금지', disabled: false },
+  { id: 3, title: '11시 이후 샤워 금지', disabled: false },
 ];
