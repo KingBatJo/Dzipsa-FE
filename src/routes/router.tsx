@@ -8,6 +8,7 @@ import MyPage from '@/pages/mypage/MyPage';
 import NotFoundPage from '@/pages/NotFoundPage';
 import NotificationPage from '@/pages/notification/NotificationPage';
 import RootLayout from '@/layouts/RootLayout';
+import RuleCreatePage from '@/pages/rules/RuleCreatePage';
 import RulesPage from '@/pages/rules/RulesPage';
 import { TODO_TABS } from '@/constants/todos';
 import TodosPage from '@/pages/todos/TodosPage';
@@ -33,6 +34,8 @@ const Router = () => {
 
         <Route path="/notifications" element={<NotificationPage />} />
         <Route path="/mypage" element={<MyPage />} />
+
+        <Route path="/rules/new" element={<RuleCreatePage />} />
 
         {/* 404 페이지 */}
         <Route path="*" element={<NotFoundPage />} />

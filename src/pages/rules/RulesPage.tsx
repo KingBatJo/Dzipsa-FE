@@ -6,6 +6,7 @@ import { MOTTO } from '@/mocks/mockData';
 import MottoSection from '@/pages/home/components/MottoSection';
 import RoundedBadge from '@/components/common/RoundedBadge';
 import { cn } from '@/lib/utils';
+import { useNavigate } from 'react-router-dom';
 
 type RoundedButtonProps = {
   disabled?: boolean;
@@ -36,6 +37,8 @@ const RuleNotifyButton = ({ disabled = false }: RoundedButtonProps) => {
 };
 
 const RulesPage = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="space-y-4 p-4">
       <MottoSection motto={MOTTO} />
@@ -60,6 +63,7 @@ const RulesPage = () => {
         right={
           <Button
             variant="link"
+            onClick={() => navigate('/rules/new')}
             className="hover:bg-accent-foreground/5 active:bg-accent-foreground/10 h-fit px-2 py-1 hover:no-underline"
           >
             규칙 추가하기
