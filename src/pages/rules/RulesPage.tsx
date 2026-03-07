@@ -1,3 +1,4 @@
+import { AlertTriangle } from 'lucide-react';
 import ListItemCard from '@/components/common/ListItemCard';
 import ListSection from '@/components/common/ListSection';
 import { MOTTO } from '@/mocks/mockData';
@@ -39,9 +40,18 @@ const RulesPage = () => {
       <MottoSection motto={MOTTO} />
 
       <ListSection title="최근 경고 요인">
-        <ListItemCard title="월요일은 다 먹는 날" />
-        <ListItemCard title="3시 이후 샤워 금지" />
-        <ListItemCard title="11시 이후 샤워 금지" />
+        <ListItemCard
+          title="월요일은 다 먹는 날"
+          left={<AlertTriangle className="h-8 w-8 text-yellow-400" />}
+        />
+        <ListItemCard
+          title="3시 이후 샤워 금지"
+          left={<AlertTriangle className="h-8 w-8 text-yellow-400" />}
+        />
+        <ListItemCard
+          title="11시 이후 샤워 금지"
+          left={<AlertTriangle className="h-8 w-8 text-yellow-400" />}
+        />
       </ListSection>
 
       <ListSection title="우리집 규칙 리스트">
