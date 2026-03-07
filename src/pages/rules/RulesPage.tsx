@@ -6,40 +6,9 @@ import EmptyState from '@/components/common/EmptyState';
 import ListItemCard from '@/components/common/ListItemCard';
 import ListSection from '@/components/common/ListSection';
 import MottoSection from '@/pages/home/components/MottoSection';
-import RoundedBadge from '@/components/common/RoundedBadge';
-import { cn } from '@/lib/utils';
+import RuleNotifyButton from '@/pages/rules/components/RuleNotifyButton';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-
-type RoundedButtonProps = {
-  disabled?: boolean;
-  onClick?: () => void;
-};
-
-const RuleNotifyButton = ({
-  disabled = false,
-  onClick,
-}: RoundedButtonProps) => {
-  return (
-    <button
-      type="button"
-      disabled={disabled}
-      onClick={onClick}
-      className="rounded-full disabled:cursor-default"
-    >
-      <RoundedBadge
-        className={cn(
-          'text-white',
-          disabled
-            ? 'bg-[#D4D4D4]'
-            : 'bg-[#636363] hover:bg-slate-700 active:bg-slate-800'
-        )}
-      >
-        집사에게 알리기
-      </RoundedBadge>
-    </button>
-  );
-};
 
 const RulesPage = () => {
   const navigate = useNavigate();
