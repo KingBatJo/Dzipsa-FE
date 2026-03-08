@@ -60,9 +60,15 @@ const CreateHousePage = () => {
   return (
     <div>
       <header className={`${HEADER_HEIGHT_CLASS} flex items-center p-4`}>
-        <button type="button" onClick={handleBack} aria-label="뒤로가기">
+        <Button
+          type="button"
+          onClick={handleBack}
+          aria-label="뒤로가기"
+          variant="ghost"
+          className="h-fit p-1.5"
+        >
           <ChevronLeft />
-        </button>
+        </Button>
       </header>
 
       <div className="px-4">
