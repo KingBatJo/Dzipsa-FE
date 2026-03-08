@@ -1,7 +1,10 @@
 import { Button } from '@/components/ui/button';
 import dzipsaCharacter from '@/assets/dzipsa.svg';
+import { useNavigate } from 'react-router-dom';
 
 const OnboardingPage = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center py-10">
       <div className="flex flex-col items-center">
@@ -30,7 +33,11 @@ const OnboardingPage = () => {
         <p className="text-base font-semibold">어떤 방법으로 시작할까요?</p>
 
         <div className="flex w-full flex-col gap-3 px-4 text-sm leading-5 font-medium">
-          <Button type="button" className="h-12">
+          <Button
+            type="button"
+            onClick={() => navigate('/onboarding/create')}
+            className="h-12"
+          >
             새 집 만들기
           </Button>
 

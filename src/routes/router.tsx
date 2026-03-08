@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 
 import AppLayout from '@/components/layout/AppLayout';
 import AuthCallbackPage from '@/pages/login/AuthCallbackPage';
+import CreateHousePage from '@/pages/onboarding/CreateHousePage';
 import HomePage from '@/pages/home/HomePage';
 import LoginPage from '@/pages/login/LoginPage';
 import MyPage from '@/pages/mypage/MyPage';
@@ -37,6 +38,7 @@ const Router = () => {
 
         {/* 온보딩 */}
         <Route path="/onboarding" element={<OnboardingPage />} />
+        <Route path="/onboarding/create" element={<CreateHousePage />} />
 
         <Route path="/notifications" element={<NotificationPage />} />
         <Route path="/mypage" element={<MyPage />} />
