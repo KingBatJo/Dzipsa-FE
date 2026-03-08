@@ -1,7 +1,10 @@
 import { Button } from '@/components/ui/button';
 import DzipsaCharacter from '@/components/common/DzipsaCharacter';
+import { useNavigate } from 'react-router-dom';
 
 const SignupCompletePage = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="flex min-h-dvh flex-col">
       <div className="flex flex-1 flex-col items-center justify-center">
@@ -19,7 +22,12 @@ const SignupCompletePage = () => {
         </p>
       </div>
 
-      <Button className="mx-4 mb-18 h-12">시작하기</Button>
+      <Button
+        onClick={() => navigate('/onboarding', { replace: true })}
+        className="mx-4 mb-18 h-12"
+      >
+        시작하기
+      </Button>
     </div>
   );
 };
