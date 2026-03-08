@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+import DzipsaCharacter from '@/components/common/DzipsaCharacter';
 import SocialLoginButton from '@/pages/login/components/SocialLoginButton';
 import TermsAgreementSheet from '@/pages/login/components/TermsAgreementSheet';
 import kakaoSymbol from '@/assets/kakao_symbol.svg';
@@ -47,10 +48,7 @@ const LoginPage = () => {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-3 px-4">
       <div className="flex flex-col items-center gap-4 pb-40">
-        {/* 디집사 캐릭터 */}
-        <div className="flex h-24 w-24 items-center justify-center rounded-full bg-zinc-300 text-3xl font-extralight">
-          O O
-        </div>
+        <DzipsaCharacter />
         <p className="text-lg font-semibold">디집사</p>
       </div>
 
@@ -73,7 +71,11 @@ const LoginPage = () => {
       )}
 
       {/* 이용약관 동의 */}
-      <TermsAgreementSheet open={isTermsOpen} onOpenChange={setIsTermsOpen} />
+      <TermsAgreementSheet
+        open={isTermsOpen}
+        onOpenChange={setIsTermsOpen}
+        onAgree={() => navigate('/signup/complete')}
+      />
     </div>
   );
 };

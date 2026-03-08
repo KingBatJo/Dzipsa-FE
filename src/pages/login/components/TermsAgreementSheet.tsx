@@ -7,11 +7,13 @@ import { Checkbox } from '@/components/ui/checkbox';
 type TermsAgreementSheetProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onAgree: () => void;
 };
 
 const TermsAgreementSheet = ({
   open,
   onOpenChange,
+  onAgree,
 }: TermsAgreementSheetProps) => {
   const [serviceChecked, setServiceChecked] = useState(false);
   const [privacyChecked, setPrivacyChecked] = useState(false);
@@ -71,7 +73,7 @@ const TermsAgreementSheet = ({
           </label>
         </div>
 
-        <Button disabled={isSubmitDisabled} className="h-12">
+        <Button disabled={isSubmitDisabled} onClick={onAgree} className="h-12">
           동의하고 시작하기
         </Button>
       </div>
