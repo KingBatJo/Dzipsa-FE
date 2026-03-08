@@ -24,7 +24,9 @@ const LoginPage = () => {
   const [loginErrorMessage, setLoginErrorMessage] = useState('');
 
   const handleSocialLogin = (provider: SocialProvider) => {
-    navigate(`/auth/callback/${provider}?mock=${MOCK_LOGIN_RESULT}`);
+    navigate(`/auth/callback/${provider}?mock=${MOCK_LOGIN_RESULT}`, {
+      replace: true,
+    });
 
     // window.location.href = `/oauth2/authorization/${provider}`;
   };
@@ -46,7 +48,7 @@ const LoginPage = () => {
   }, [location.pathname, location.state, navigate]);
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-3 px-4">
+    <div className="flex min-h-dvh flex-col items-center justify-center gap-3 px-4">
       <div className="flex flex-col items-center gap-4 pb-40">
         <DzipsaCharacter />
         <p className="text-lg font-semibold">디집사</p>
@@ -74,7 +76,7 @@ const LoginPage = () => {
       <TermsAgreementSheet
         open={isTermsOpen}
         onOpenChange={setIsTermsOpen}
-        onAgree={() => navigate('/signup/complete')}
+        onAgree={() => navigate('/signup/complete', { replace: true })}
       />
     </div>
   );
