@@ -1,6 +1,6 @@
 import { HEADER_HEIGHT_CLASS, MOBILE_MAX_WIDTH } from '@/constants/layout';
 
-import Bell from '@/assets/bell.svg';
+import Bell from '@/assets/icon/bell.svg';
 import { Link } from 'react-router-dom';
 import { PROFILE_IMAGE } from '@/mocks/mockData';
 import UserAvatar from '@/components/common/UserAvatar';
