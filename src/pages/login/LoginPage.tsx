@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import SocialLoginButton from '@/pages/login/components/SocialLoginButton';
+import TermsAgreementSheet from '@/pages/login/components/TermsAgreementSheet';
 import kakaoSymbol from '@/assets/kakao_symbol.svg';
 import naverSymbol from '@/assets/naver_symbol.svg';
 
@@ -71,7 +72,8 @@ const LoginPage = () => {
         <p className="text-sm text-red-500">{loginErrorMessage}</p>
       )}
 
-      {isTermsOpen && <div>약관 동의 화면</div>}
+      {/* 이용약관 동의 */}
+      <TermsAgreementSheet open={isTermsOpen} onOpenChange={setIsTermsOpen} />
     </div>
   );
 };
