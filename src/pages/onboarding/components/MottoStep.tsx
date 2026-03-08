@@ -1,8 +1,18 @@
 import { useRef, useState } from 'react';
 
+import { Card } from '@/components/ui/card';
 import ClearX from '@/assets/icon/clear_x.svg';
 import { Edit3 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
+
+const MOTTO_TEMPLATES = [
+  '미루지 말고 지금 하자',
+  '눈치보지 말고 말하자',
+  '먹은 자가 치우자',
+  '남이지만 존중 필수',
+  '내 건 내가 사자',
+] as const;
 
 const MottoStep = () => {
   const [isFocused, setIsFocused] = useState(false);
@@ -20,7 +30,7 @@ const MottoStep = () => {
 
   return (
     <div className="pt-4">
-      <div className="flex flex-col gap-2 px-2 pb-10">
+      <section className="flex flex-col gap-2 px-2 pb-10">
         <h1 className="text-xl font-semibold">
           우리방만의 약속이 필요해요
           <br />
@@ -30,11 +40,11 @@ const MottoStep = () => {
         <p className="text-sm font-medium text-[#BCBCBC]">
           가훈은 다시 설정할 수 있어요!
         </p>
-      </div>
+      </section>
 
       {/* 가훈 입력 */}
-      <div className="flex flex-col gap-1">
-        <div className="bg-secondary flex h-12 items-center rounded-[10px] border border-neutral-200 px-4 shadow focus-within:border-neutral-900">
+      <section className="flex flex-col gap-1">
+        <div className="bg-secondary flex h-12 items-center rounded-[10px] border border-neutral-200 px-4 shadow-xs transition-all duration-200 focus-within:border-neutral-900">
           <Input
             ref={inputRef}
             value={value}
@@ -63,7 +73,32 @@ const MottoStep = () => {
         <div className="flex justify-end text-xs font-semibold text-[#BCBCBC]">
           최대 20글자
         </div>
-      </div>
+      </section>
+
+      {/* 가훈 템플릿 */}
+      <section className="flex flex-col gap-2 pt-5">
+        <h2 className="text-xs font-semibold text-[#888888]">가훈 템플릿</h2>
+
+        <div className="flex flex-col gap-2.5">
+          {MOTTO_TEMPLATES.map((template) => (
+            <Card
+              key={template}
+              onClick={() => {
+                setValue(template);
+                inputRef.current?.focus();
+              }}
+              className={cn(
+                'flex h-12 cursor-pointer items-center rounded-[10px] px-4 text-sm font-medium shadow-xs transition-all duration-200',
+                value === template
+                  ? 'border-neutral-900 bg-neutral-100'
+                  : 'border-neutral-200 hover:bg-neutral-50'
+              )}
+            >
+              {template}
+            </Card>
+          ))}
+        </div>
+      </section>
     </div>
   );
 };
