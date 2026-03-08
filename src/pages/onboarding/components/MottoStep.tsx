@@ -45,7 +45,12 @@ const MottoStep = () => {
       {/* 가훈 입력 */}
       <section className="flex flex-col gap-1">
         <div className="bg-secondary flex h-12 items-center rounded-[10px] border border-neutral-200 px-4 shadow-xs transition-all duration-200 focus-within:border-neutral-900">
+          <label htmlFor="motto" className="sr-only">
+            가훈 입력
+          </label>
+
           <Input
+            id="motto"
             ref={inputRef}
             value={value}
             type="text"
