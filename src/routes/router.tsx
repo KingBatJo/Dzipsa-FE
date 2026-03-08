@@ -1,15 +1,16 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 
-import AppLayout from '@/layouts/AppLayout';
-import AuthCallbackPage from '@/pages/AuthCallbackPage';
+import AppLayout from '@/components/layout/AppLayout';
+import AuthCallbackPage from '@/pages/login/AuthCallbackPage';
 import HomePage from '@/pages/home/HomePage';
 import LoginPage from '@/pages/login/LoginPage';
 import MyPage from '@/pages/mypage/MyPage';
 import NotFoundPage from '@/pages/NotFoundPage';
 import NotificationPage from '@/pages/notification/NotificationPage';
-import RootLayout from '@/layouts/RootLayout';
+import RootLayout from '@/components/layout/RootLayout';
 import RuleCreatePage from '@/pages/rules/RuleCreatePage';
 import RulesPage from '@/pages/rules/RulesPage';
+import SignupCompletePage from '@/pages/login/SignupCompletePage';
 import { TODO_TABS } from '@/constants/todos';
 import TodosPage from '@/pages/todos/TodosPage';
 
@@ -31,6 +32,7 @@ const Router = () => {
         {/* 헤더 미포함 */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/auth/callback/:provider" element={<AuthCallbackPage />} />
+        <Route path="/signup/complete" element={<SignupCompletePage />} />
 
         <Route path="/notifications" element={<NotificationPage />} />
         <Route path="/mypage" element={<MyPage />} />
