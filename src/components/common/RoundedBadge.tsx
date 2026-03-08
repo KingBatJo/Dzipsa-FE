@@ -11,7 +11,7 @@ const RoundedBadge = ({ children, className }: RoundedBadgeProps) => {
     <Badge
       variant="outline"
       className={cn(
-        '!hover:bg-none rounded-full border-none px-[10px] py-[5px] shadow-none',
+        'rounded-full border-none px-[10px] py-[5px] shadow-none',
         className
       )}
     >

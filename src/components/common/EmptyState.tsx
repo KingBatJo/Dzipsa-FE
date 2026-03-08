@@ -7,7 +7,12 @@ type EmptyStateProps = {
 
 const EmptyState = ({ message, className }: EmptyStateProps) => {
   return (
-    <p className={cn('text-muted-foreground px-1 text-sm', className)}>
+    <p
+      className={cn(
+        'text-muted-foreground py-6 text-center text-sm',
+        className
+      )}
+    >
       {message}
     </p>
   );

@@ -1,5 +1,8 @@
 import type { Member } from '@/types/member';
+import type { Rule } from '@/types/rules';
 import type { Todo } from '@/types/todo';
+
+export const MOTTO = '깨끗하게 살자!';
 
 export const MOCK_MY_ID = '1';
 export const MOCK_TODAY = '2026-03-06';
@@ -354,4 +357,17 @@ export const mockTodoList: Todo[] = [
     completedAt: '2026-03-06T16:45:00',
     proofImageUrl: 'test',
   },
+];
+
+export const mockRulesList: Rule[] = [
+  { id: 1, title: '월요일은 다 먹는 날', disabled: false },
+  { id: 2, title: '3시 이후 샤워 금지', disabled: false },
+  { id: 3, title: '11시 이후 샤워 금지', disabled: false },
+  { id: 4, title: '분리수거는 지정된 요일에만 하기', disabled: false },
+  { id: 5, title: '설거지는 사용 후 바로 하기', disabled: false },
+  { id: 6, title: '공용 냉장고 음식에는 이름 붙이기', disabled: false },
+  { id: 7, title: '밤 12시 이후 큰 소리 금지', disabled: false },
+  { id: 8, title: '욕실 사용 후 환풍기 10분 이상 켜두기', disabled: false },
+  { id: 9, title: '공용 물건은 제자리에 두기', disabled: false },
+  { id: 10, title: '외출 시 불, 가스 확인하기', disabled: false },
 ];

@@ -1,13 +1,21 @@
 import { BOTTOM_NAV_HEIGHT, HEADER_HEIGHT } from '@/constants/layout';
+import { Outlet, useLocation } from 'react-router-dom';
 
 import BottomNavigation from '@/components/common/BottomNavigation';
 import Header from '@/components/common/Header';
-import { Outlet } from 'react-router-dom';
 
 const AppLayout = () => {
+  const { pathname } = useLocation();
+
+  const getHeaderTitle = () => {
+    if (pathname.startsWith('/todos')) return '할 일 홈';
+    if (pathname.startsWith('/rules')) return '규칙 홈';
+    return 'Dzipasa';
+  };
+
   return (
     <div>
-      <Header />
+      <Header title={getHeaderTitle()} />
 
       <main
         className={`relative min-h-dvh`}

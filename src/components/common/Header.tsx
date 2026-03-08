@@ -5,7 +5,11 @@ import { Link } from 'react-router-dom';
 import { PROFILE_IMAGE } from '@/mocks/mockData';
 import UserAvatar from '@/components/common/UserAvatar';
 
-const Header = () => {
+type HeaderProps = {
+  title: string;
+};
+
+const Header = ({ title }: HeaderProps) => {
   return (
     <header
       className={`fixed top-0 z-10 w-full ${MOBILE_MAX_WIDTH} backdrop-blur-xl`}
@@ -13,9 +17,7 @@ const Header = () => {
       <div
         className={`flex items-center justify-between ${HEADER_HEIGHT_CLASS} px-4`}
       >
-        <h1 className="text-xl font-semibold">
-          <Link to="/">Dzipsa</Link>
-        </h1>
+        <h1 className="text-xl font-semibold">{title}</h1>
 
         <div className="flex items-center gap-2">
           {/* 알림 */}
