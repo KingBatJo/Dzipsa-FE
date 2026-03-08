@@ -1,4 +1,4 @@
-import type { SocialProvider } from '../LoginPage';
+import type { SocialProvider } from '@/pages/login/LoginPage';
 
 type SocialLoginButtonProps = {
   provider: SocialProvider;
