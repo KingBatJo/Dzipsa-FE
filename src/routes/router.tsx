@@ -7,6 +7,7 @@ import LoginPage from '@/pages/login/LoginPage';
 import MyPage from '@/pages/mypage/MyPage';
 import NotFoundPage from '@/pages/NotFoundPage';
 import NotificationPage from '@/pages/notification/NotificationPage';
+import OnboardingPage from '@/pages/onboarding/OnboardingPage';
 import RootLayout from '@/components/layout/RootLayout';
 import RuleCreatePage from '@/pages/rules/RuleCreatePage';
 import RulesPage from '@/pages/rules/RulesPage';
@@ -33,6 +34,9 @@ const Router = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/auth/callback/:provider" element={<AuthCallbackPage />} />
         <Route path="/signup/complete" element={<SignupCompletePage />} />
+
+        {/* 온보딩 */}
+        <Route path="/onboarding" element={<OnboardingPage />} />
 
         <Route path="/notifications" element={<NotificationPage />} />
         <Route path="/mypage" element={<MyPage />} />
