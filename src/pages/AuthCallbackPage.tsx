@@ -1,20 +1,51 @@
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+
+import { useEffect } from 'react';
 
 const AuthCallbackPage = () => {
+  const navigate = useNavigate();
   const { provider } = useParams();
   const [searchParams] = useSearchParams();
-  const code = searchParams.get('code');
-  const error = searchParams.get('error');
+
+  const mock = searchParams.get('mock');
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (mock === 'success') {
+        navigate('/login', {
+          replace: true,
+          state: {
+            openTermsSheet: true,
+          },
+        });
+        return;
+      }
+
+      if (mock === 'error') {
+        navigate('/login', {
+          replace: true,
+          state: {
+            loginError: `${provider} 로그인에 실패했어요. 다시 시도해주세요.`,
+          },
+        });
+
+        return;
+      }
+
+      navigate('/login', {
+        replace: true,
+        state: {
+          loginError: '로그인 처리 중 문제가 발생했어요. 다시 시도해주세요.',
+        },
+      });
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [mock, navigate, provider]);
 
   return (
-    <div className="p-6">
-      <p className="text-xl">Auth Callback</p>
-
-      <div className="mt-2">
-        <p>provider: {provider}</p>
-        <p>code: {code ?? '없음'}</p>
-        <p>error: {error ?? '없음'}</p>
-      </div>
+    <div className="flex min-h-screen items-center justify-center px-4">
+      <p className="text-base font-medium">로그인 처리 중...</p>
     </div>
   );
 };

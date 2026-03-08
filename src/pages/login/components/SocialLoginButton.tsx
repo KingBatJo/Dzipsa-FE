@@ -1,9 +1,10 @@
-type SocialProvider = 'kakao' | 'naver';
+import type { SocialProvider } from '../LoginPage';
 
 type SocialLoginButtonProps = {
   provider: SocialProvider;
   label: string;
   iconSrc: string;
+  onClick: () => void;
 };
 
 const providerStyles: Record<SocialProvider, string> = {
@@ -15,14 +16,13 @@ const SocialLoginButton = ({
   provider,
   iconSrc,
   label,
+  onClick,
 }: SocialLoginButtonProps) => {
   return (
     <button
       type="button"
       className={`flex h-[54px] w-full items-center justify-center gap-[15px] rounded-[6px] ${providerStyles[provider]} hover:brightness-95 active:brightness-90`}
-      onClick={() => {
-        window.location.href = `/oauth2/authorization/${provider}`;
-      }}
+      onClick={onClick}
     >
       <img
         alt={`${provider} 로고`}
