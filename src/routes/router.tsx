@@ -1,13 +1,13 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 
-import AppLayout from '@/layouts/AppLayout';
-import AuthCallbackPage from '@/pages/AuthCallbackPage';
+import AppLayout from '@/components/layout/AppLayout';
+import AuthCallbackPage from '@/pages/login/AuthCallbackPage';
 import HomePage from '@/pages/home/HomePage';
 import LoginPage from '@/pages/login/LoginPage';
 import MyPage from '@/pages/mypage/MyPage';
 import NotFoundPage from '@/pages/NotFoundPage';
 import NotificationPage from '@/pages/notification/NotificationPage';
-import RootLayout from '@/layouts/RootLayout';
+import RootLayout from '@/components/layout/RootLayout';
 import RuleCreatePage from '@/pages/rules/RuleCreatePage';
 import RulesPage from '@/pages/rules/RulesPage';
 import { TODO_TABS } from '@/constants/todos';

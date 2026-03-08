@@ -1,8 +1,8 @@
 import { BOTTOM_NAV_HEIGHT, HEADER_HEIGHT } from '@/constants/layout';
 import { Outlet, useLocation } from 'react-router-dom';
 
-import BottomNavigation from '@/components/common/BottomNavigation';
-import Header from '@/components/common/Header';
+import BottomNavigation from '@/components/layout/BottomNavigation';
+import Header from '@/components/layout/Header';
 
 const AppLayout = () => {
   const { pathname } = useLocation();
