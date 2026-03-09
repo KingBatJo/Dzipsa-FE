@@ -24,6 +24,10 @@ const CreateHousePage = () => {
   const [nickname, setNickname] = useState(MOCK_INIT_NICKNAME);
   const [selectedProfileId, setSelectedProfileId] = useState(0);
 
+  const getSafeNickname = (nickname: string) => {
+    return nickname.trim() || MOCK_INIT_NICKNAME;
+  };
+
   const handleBack = () => {
     if (step === 'profile') {
       setStep('motto');
@@ -50,6 +54,12 @@ const CreateHousePage = () => {
       return;
     }
 
+    console.log({
+      motto,
+      nickname,
+      selectedProfileId,
+    });
+
     // invite 단계일 때
     setIsCompleteOpen(true);
   };
@@ -61,6 +71,7 @@ const CreateHousePage = () => {
     }
 
     if (step === 'profile') {
+      setNickname((prev) => getSafeNickname(prev));
       setStep('invite');
       return;
     }
@@ -131,7 +142,7 @@ const CreateHousePage = () => {
 
       <HouseWelcomeDialog
         open={isCompleteOpen}
-        userName={nickname}
+        userName={getSafeNickname(nickname)}
         onConfirm={() => navigate('/', { replace: true })}
       />
     </div>
