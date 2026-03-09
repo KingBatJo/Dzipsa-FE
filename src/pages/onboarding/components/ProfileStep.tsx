@@ -1,13 +1,37 @@
 import { useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import EditableInput from './EditableInput';
+import EditableInput from '@/pages/onboarding/components/EditableInput';
 import Profile from '@/assets/profile.svg';
+import ProfilePickerSheet from '@/pages/onboarding/components/ProfilePickerSheet';
 import { RefreshCw } from 'lucide-react';
+
+const PROFILE_OPTIONS = [
+  { id: 'profile-1', imageUrl: Profile, alt: '기본 프로필 1' },
+  { id: 'profile-2', imageUrl: Profile, alt: '기본 프로필 2' },
+  { id: 'profile-3', imageUrl: Profile, alt: '기본 프로필 3' },
+  { id: 'profile-4', imageUrl: Profile, alt: '기본 프로필 4' },
+  { id: 'profile-5', imageUrl: Profile, alt: '기본 프로필 5' },
+  { id: 'profile-6', imageUrl: Profile, alt: '기본 프로필 6' },
+] as const;
 
 const ProfileStep = () => {
   const [nickname, setNickname] = useState('');
+  const [isProfileSheetOpen, setIsProfileSheetOpen] = useState(false);
+  const [selectedProfileId, setSelectedProfileId] = useState<string>(
+    PROFILE_OPTIONS[0].id
+  );
+
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const selectedProfile =
+    PROFILE_OPTIONS.find((profile) => profile.id === selectedProfileId) ??
+    PROFILE_OPTIONS[0];
+
+  const handleSelectProfile = (profileId: string) => {
+    setSelectedProfileId(profileId);
+    setIsProfileSheetOpen(false);
+  };
 
   return (
     <div className="pt-3">
@@ -21,9 +45,12 @@ const ProfileStep = () => {
 
       <section className="flex justify-center pb-[45px]">
         <div className="relative">
-          <img src={Profile} alt="프로필 사진" />
+          <img src={selectedProfile.imageUrl} alt={selectedProfile.alt} />
 
-          <Button className="absolute -right-3 bottom-0 h-fit rounded-xl p-[9px] outline-2 outline-white [&>svg]:h-6 [&>svg]:w-6">
+          <Button
+            onClick={() => setIsProfileSheetOpen(true)}
+            className="absolute -right-3 bottom-0 h-fit rounded-xl p-[9px] outline-2 outline-white [&>svg]:h-6 [&>svg]:w-6"
+          >
             <RefreshCw />
           </Button>
         </div>
@@ -43,6 +70,22 @@ const ProfileStep = () => {
           최대 20글자
         </div>
       </section>
+
+      {/* 임시 (테스트용) */}
+      {
+        <p className="flex justify-center text-xs">
+          선택 프로필(확인용): {selectedProfile.alt}
+        </p>
+      }
+
+      {/* 프로필 설정 */}
+      <ProfilePickerSheet
+        open={isProfileSheetOpen}
+        onOpenChange={setIsProfileSheetOpen}
+        profiles={PROFILE_OPTIONS}
+        selectedProfileId={selectedProfileId}
+        onSelectProfile={handleSelectProfile}
+      />
     </div>
   );
 };
