@@ -1,9 +1,30 @@
 import { Card } from '@/components/ui/card';
 import { Copy } from 'lucide-react';
 import dzipsaCharacter from '@/assets/dzipsa.svg';
+import { toast } from 'sonner';
+
+const APP_URL = import.meta.env.VITE_APP_URL;
 
 const InviteCodeStep = () => {
   const MOCK_INVITE_CODE = '123456';
+  const inviteMessage = `[디집사] 룸메이트가 당신을 초대했어요!
+입장 코드: ${MOCK_INVITE_CODE}
+서비스 링크: ${APP_URL}`;
+
+  const handleCopyInviteCode = async () => {
+    try {
+      await navigator.clipboard.writeText(inviteMessage);
+
+      toast(`초대 코드 ${MOCK_INVITE_CODE}이 클립보드에 복사되었습니다.`, {
+        duration: 2000,
+      });
+    } catch (err) {
+      toast.error('초대 코드 복사 실패', {
+        duration: 2000,
+      });
+      console.error('초대 코드 복사 실패: ', err);
+    }
+  };
 
   return (
     <div className="pt-30">
@@ -22,7 +43,10 @@ const InviteCodeStep = () => {
               className="absolute top-8 left-1/2 h-[120px] -translate-x-1/2"
             />
 
-            <Card className="group bg-secondary flex h-[70px] cursor-pointer items-center border-none pr-4 shadow-none">
+            <Card
+              onClick={handleCopyInviteCode}
+              className="group bg-secondary flex h-[70px] cursor-pointer items-center border-none pr-4 shadow-none"
+            >
               <div className="flex gap-[5px]">
                 {MOCK_INVITE_CODE.split('').map((digit, index) => (
                   <div
@@ -34,7 +58,7 @@ const InviteCodeStep = () => {
                 ))}
 
                 <div className="flex h-[55px] w-6 items-center p-0">
-                  <Copy className="h-6 w-6 shrink-0 text-[#E5E5E5] group-hover:text-[#888888]" />
+                  <Copy className="h-6 w-6 shrink-0 text-[#E5E5E5] transition-all group-hover:text-[#888888]" />
                 </div>
               </div>
             </Card>
