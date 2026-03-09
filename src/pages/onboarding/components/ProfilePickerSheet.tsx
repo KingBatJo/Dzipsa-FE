@@ -2,7 +2,7 @@ import BottomSheet from '@/components/common/BottomSheet';
 import { cn } from '@/lib/utils';
 
 type ProfileOption = {
-  id: string;
+  id: number;
   imageUrl: string;
   alt: string;
 };
@@ -11,8 +11,8 @@ type ProfilePickerSheetProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   profiles: readonly ProfileOption[];
-  selectedProfileId: string;
-  onSelectProfile: (profileId: string) => void;
+  selectedProfileId: number;
+  onSelectProfile: (profileId: number) => void;
 };
 
 const ProfilePickerSheet = ({

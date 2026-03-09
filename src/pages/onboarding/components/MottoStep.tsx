@@ -1,8 +1,7 @@
-import { useRef, useState } from 'react';
-
 import { Card } from '@/components/ui/card';
 import EditableInput from './EditableInput';
 import { cn } from '@/lib/utils';
+import { useRef } from 'react';
 
 const MOTTO_TEMPLATES = [
   '미루지 말고 지금 하자',
@@ -12,9 +11,12 @@ const MOTTO_TEMPLATES = [
   '내 건 내가 사자',
 ] as const;
 
-const MottoStep = () => {
-  const [value, setValue] = useState('');
+type MottoStepProps = {
+  value: string;
+  onChange: (value: string) => void;
+};
 
+const MottoStep = ({ value, onChange }: MottoStepProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   return (
@@ -39,7 +41,7 @@ const MottoStep = () => {
           value={value}
           placeholder="우리집의 가훈을 정해보세요"
           maxLength={20}
-          onChange={setValue}
+          onChange={onChange}
         />
 
         <div className="flex justify-end text-xs font-semibold text-[#BCBCBC]">
@@ -56,7 +58,7 @@ const MottoStep = () => {
             <Card
               key={template}
               onClick={() => {
-                setValue(template);
+                onChange(template);
                 inputRef.current?.focus();
               }}
               className={cn(

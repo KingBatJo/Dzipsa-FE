@@ -9,6 +9,9 @@ import ProfileStep from '@/pages/onboarding/components/ProfileStep';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
+const MOCK_INVITE_CODE = '123456';
+const MOCK_INIT_NICKNAME = '닉네임';
+
 type CreateHouseStep = 'motto' | 'profile' | 'invite';
 
 const CreateHousePage = () => {
@@ -16,6 +19,10 @@ const CreateHousePage = () => {
 
   const [step, setStep] = useState<CreateHouseStep>('motto');
   const [isCompleteOpen, setIsCompleteOpen] = useState(false);
+
+  const [motto, setMotto] = useState('');
+  const [nickname, setNickname] = useState(MOCK_INIT_NICKNAME);
+  const [selectedProfileId, setSelectedProfileId] = useState(0);
 
   const handleBack = () => {
     if (step === 'profile') {
@@ -28,6 +35,7 @@ const CreateHousePage = () => {
       return;
     }
 
+    // motto 단계일 때
     navigate('/onboarding');
   };
 
@@ -60,6 +68,10 @@ const CreateHousePage = () => {
 
   const buttonLabel = step === 'invite' ? '집 입장하기' : '다음';
 
+  const isNextDisabled =
+    (step === 'motto' && !motto.trim()) ||
+    (step === 'profile' && !nickname.trim());
+
   return (
     <div>
       <header className={`${HEADER_HEIGHT_CLASS} flex items-center p-4`}>
@@ -75,16 +87,27 @@ const CreateHousePage = () => {
       </header>
 
       <div className="px-4">
-        {step === 'motto' && <MottoStep />}
+        {step === 'motto' && <MottoStep value={motto} onChange={setMotto} />}
 
-        {step === 'profile' && <ProfileStep />}
+        {step === 'profile' && (
+          <ProfileStep
+            nickname={nickname}
+            selectedProfileId={selectedProfileId}
+            onChangeNickname={setNickname}
+            onChangeProfile={setSelectedProfileId}
+          />
+        )}
 
-        {step === 'invite' && <InviteCodeStep />}
+        {step === 'invite' && <InviteCodeStep inviteCode={MOCK_INVITE_CODE} />}
       </div>
 
       <footer className={`fixed bottom-0 ${MOBILE_MAX_WIDTH} w-full pb-9`}>
         <div className="flex flex-col gap-6 px-4">
-          <Button onClick={handleNext} className="h-12 w-full rounded-[10px]">
+          <Button
+            onClick={handleNext}
+            disabled={isNextDisabled}
+            className="h-12 w-full rounded-[10px]"
+          >
             {buttonLabel}
           </Button>
 
@@ -108,7 +131,7 @@ const CreateHousePage = () => {
 
       <HouseWelcomeDialog
         open={isCompleteOpen}
-        userName="test"
+        userName={nickname}
         onConfirm={() => navigate('/', { replace: true })}
       />
     </div>
