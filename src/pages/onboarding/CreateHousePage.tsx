@@ -2,6 +2,7 @@ import { HEADER_HEIGHT_CLASS, MOBILE_MAX_WIDTH } from '@/constants/layout';
 
 import { Button } from '@/components/ui/button';
 import { ChevronLeft } from 'lucide-react';
+import HouseWelcomeDialog from '@/pages/onboarding/components/HouseWelcomeDialog';
 import InviteCodeStep from '@/pages/onboarding/components/InviteCodeStep';
 import MottoStep from '@/pages/onboarding/components/MottoStep';
 import ProfileStep from '@/pages/onboarding/components/ProfileStep';
@@ -14,6 +15,7 @@ const CreateHousePage = () => {
   const navigate = useNavigate();
 
   const [step, setStep] = useState<CreateHouseStep>('motto');
+  const [isCompleteOpen, setIsCompleteOpen] = useState(false);
 
   const handleBack = () => {
     if (step === 'profile') {
@@ -40,7 +42,8 @@ const CreateHousePage = () => {
       return;
     }
 
-    navigate('/', { replace: true });
+    // invite 단계일 때
+    setIsCompleteOpen(true);
   };
 
   const handleSkip = () => {
@@ -102,6 +105,12 @@ const CreateHousePage = () => {
           )}
         </div>
       </footer>
+
+      <HouseWelcomeDialog
+        open={isCompleteOpen}
+        userName="test"
+        onConfirm={() => navigate('/', { replace: true })}
+      />
     </div>
   );
 };
