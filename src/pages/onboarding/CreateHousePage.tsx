@@ -96,7 +96,9 @@ const CreateHousePage = () => {
               </Button>
             </div>
           ) : (
-            <div className="h-5" />
+            <div className="h-5 text-center text-xs font-semibold text-[#888888]">
+              코드는 홈에서도 복사할 수 있어요!
+            </div>
           )}
         </div>
       </footer>
