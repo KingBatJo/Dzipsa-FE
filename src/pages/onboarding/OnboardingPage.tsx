@@ -52,8 +52,7 @@ const OnboardingPage = () => {
 
       <p className="pt-14 text-center text-sm leading-[1.3] font-medium text-[#BCBCBC]">
         초대코드가 없을 시
-        <br />
-        방만들기를 통해 방을 생성하세요
+        <br />새 집 만들기를 통해 방을 생성하세요
       </p>
     </div>
   );
