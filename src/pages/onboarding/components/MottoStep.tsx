@@ -1,9 +1,7 @@
 import { useRef, useState } from 'react';
 
 import { Card } from '@/components/ui/card';
-import ClearX from '@/assets/icon/clear_x.svg';
-import { Edit3 } from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import EditableInput from './EditableInput';
 import { cn } from '@/lib/utils';
 
 const MOTTO_TEMPLATES = [
@@ -15,18 +13,9 @@ const MOTTO_TEMPLATES = [
 ] as const;
 
 const MottoStep = () => {
-  const [isFocused, setIsFocused] = useState(false);
   const [value, setValue] = useState('');
 
   const inputRef = useRef<HTMLInputElement>(null);
-
-  const handleEdit = () => {
-    inputRef.current?.focus();
-  };
-
-  const handleClear = () => {
-    setValue('');
-  };
 
   return (
     <div className="pt-4">
@@ -44,36 +33,14 @@ const MottoStep = () => {
 
       {/* 가훈 입력 */}
       <section className="flex flex-col gap-1">
-        <div className="bg-secondary flex h-12 items-center rounded-[10px] border border-neutral-200 px-4 shadow-xs transition-all duration-200 focus-within:border-neutral-900">
-          <label htmlFor="motto" className="sr-only">
-            가훈 입력
-          </label>
-
-          <Input
-            id="motto"
-            ref={inputRef}
-            value={value}
-            type="text"
-            placeholder="우리방의 가훈을 정해보세요"
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            onChange={(e) => setValue(e.target.value)}
-            className="flex-1 border-none p-0 text-sm font-medium shadow-none focus-visible:ring-0"
-          />
-
-          <button
-            type="button"
-            onMouseDown={(e) => e.preventDefault()}
-            onClick={isFocused ? handleClear : handleEdit}
-            aria-label={isFocused ? '입력값 지우기' : '수정'}
-          >
-            {isFocused ? (
-              <img src={ClearX} className="h-4 w-4" />
-            ) : (
-              <Edit3 className="h-4 w-4 text-[#AFAFAF]" />
-            )}
-          </button>
-        </div>
+        <EditableInput
+          id="motto"
+          ref={inputRef}
+          value={value}
+          placeholder="우리방의 가훈을 정해보세요"
+          maxLength={20}
+          onChange={setValue}
+        />
 
         <div className="flex justify-end text-xs font-semibold text-[#BCBCBC]">
           최대 20글자
