@@ -5,17 +5,20 @@ import { toast } from 'sonner';
 
 const APP_URL = import.meta.env.VITE_APP_URL;
 
-const InviteCodeStep = () => {
-  const MOCK_INVITE_CODE = '123456';
+type InviteCodeStepProps = {
+  inviteCode: string;
+};
+
+const InviteCodeStep = ({ inviteCode }: InviteCodeStepProps) => {
   const inviteMessage = `[디집사] 룸메이트가 당신을 초대했어요!
-입장 코드: ${MOCK_INVITE_CODE}
+입장 코드: ${inviteCode}
 서비스 링크: ${APP_URL}`;
 
   const handleCopyInviteCode = async () => {
     try {
       await navigator.clipboard.writeText(inviteMessage);
 
-      toast(`초대 코드 ${MOCK_INVITE_CODE}이 클립보드에 복사되었습니다.`, {
+      toast(`초대 코드 ${inviteCode}이 클립보드에 복사되었습니다.`, {
         id: 'invite-copy-toast',
         duration: 2000,
       });
@@ -50,7 +53,7 @@ const InviteCodeStep = () => {
               className="group bg-secondary flex h-[70px] cursor-pointer items-center border-none pr-4 shadow-none"
             >
               <div className="flex gap-[5px]">
-                {MOCK_INVITE_CODE.split('').map((digit, index) => (
+                {inviteCode.split('').map((digit, index) => (
                   <div
                     key={index}
                     className="flex h-[55px] w-10 items-center justify-center rounded-md px-1 py-2 text-lg font-semibold"

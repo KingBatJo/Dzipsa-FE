@@ -7,20 +7,28 @@ import ProfilePickerSheet from '@/pages/onboarding/components/ProfilePickerSheet
 import { RefreshCw } from 'lucide-react';
 
 const PROFILE_OPTIONS = [
-  { id: 'profile-1', imageUrl: Profile, alt: '기본 프로필 1' },
-  { id: 'profile-2', imageUrl: Profile, alt: '기본 프로필 2' },
-  { id: 'profile-3', imageUrl: Profile, alt: '기본 프로필 3' },
-  { id: 'profile-4', imageUrl: Profile, alt: '기본 프로필 4' },
-  { id: 'profile-5', imageUrl: Profile, alt: '기본 프로필 5' },
-  { id: 'profile-6', imageUrl: Profile, alt: '기본 프로필 6' },
+  { id: 0, imageUrl: Profile, alt: '기본 프로필 1' },
+  { id: 1, imageUrl: Profile, alt: '기본 프로필 2' },
+  { id: 2, imageUrl: Profile, alt: '기본 프로필 3' },
+  { id: 3, imageUrl: Profile, alt: '기본 프로필 4' },
+  { id: 4, imageUrl: Profile, alt: '기본 프로필 5' },
+  { id: 5, imageUrl: Profile, alt: '기본 프로필 6' },
 ] as const;
 
-const ProfileStep = () => {
-  const [nickname, setNickname] = useState('');
+type ProfileStepProps = {
+  nickname: string;
+  selectedProfileId: number;
+  onChangeNickname: (nickname: string) => void;
+  onChangeProfile: (profileId: number) => void;
+};
+
+const ProfileStep = ({
+  nickname,
+  selectedProfileId,
+  onChangeNickname,
+  onChangeProfile,
+}: ProfileStepProps) => {
   const [isProfileSheetOpen, setIsProfileSheetOpen] = useState(false);
-  const [selectedProfileId, setSelectedProfileId] = useState<string>(
-    PROFILE_OPTIONS[0].id
-  );
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -28,8 +36,8 @@ const ProfileStep = () => {
     PROFILE_OPTIONS.find((profile) => profile.id === selectedProfileId) ??
     PROFILE_OPTIONS[0];
 
-  const handleSelectProfile = (profileId: string) => {
-    setSelectedProfileId(profileId);
+  const handleSelectProfile = (profileId: number) => {
+    onChangeProfile(profileId);
     setIsProfileSheetOpen(false);
   };
 
@@ -63,7 +71,7 @@ const ProfileStep = () => {
           value={nickname}
           placeholder="닉네임을 입력해주세요"
           maxLength={20}
-          onChange={setNickname}
+          onChange={onChangeNickname}
         />
 
         <div className="flex justify-end text-xs font-semibold text-[#BCBCBC]">
