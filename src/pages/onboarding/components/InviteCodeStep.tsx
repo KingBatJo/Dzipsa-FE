@@ -16,10 +16,12 @@ const InviteCodeStep = () => {
       await navigator.clipboard.writeText(inviteMessage);
 
       toast(`초대 코드 ${MOCK_INVITE_CODE}이 클립보드에 복사되었습니다.`, {
+        id: 'invite-copy-toast',
         duration: 2000,
       });
     } catch (err) {
       toast.error('초대 코드 복사 실패', {
+        id: 'invite-copy-toast',
         duration: 2000,
       });
       console.error('초대 코드 복사 실패: ', err);
