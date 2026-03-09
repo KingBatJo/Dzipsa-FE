@@ -16,7 +16,7 @@ const RootLayout = () => {
             unstyled: true,
             classNames: {
               toast:
-                'w-full gap-2 text-white rounded-[38px] text-sm font-medium bg-neutral-500/70 border-none px-6 py-5 flex justify-center',
+                'rounded-[38px] w-full bg-neutral-500/70 px-6 py-5 text-[13px] font-medium text-white text-center break-keep',
             },
           }}
         />
