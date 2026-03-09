@@ -1,9 +1,8 @@
+import { APP_URL } from '@/constants/onboarding';
 import { Card } from '@/components/ui/card';
 import { Copy } from 'lucide-react';
 import dzipsaCharacter from '@/assets/dzipsa.svg';
 import { toast } from 'sonner';
-
-const APP_URL = import.meta.env.VITE_APP_URL;
 
 type InviteCodeStepProps = {
   inviteCode: string;

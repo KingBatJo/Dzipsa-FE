@@ -2,18 +2,9 @@ import { useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import EditableInput from '@/pages/onboarding/components/EditableInput';
-import Profile from '@/assets/profile.svg';
+import { PROFILE_OPTIONS } from '@/constants/onboarding';
 import ProfilePickerSheet from '@/pages/onboarding/components/ProfilePickerSheet';
 import { RefreshCw } from 'lucide-react';
-
-const PROFILE_OPTIONS = [
-  { id: 0, imageUrl: Profile, alt: '기본 프로필 1' },
-  { id: 1, imageUrl: Profile, alt: '기본 프로필 2' },
-  { id: 2, imageUrl: Profile, alt: '기본 프로필 3' },
-  { id: 3, imageUrl: Profile, alt: '기본 프로필 4' },
-  { id: 4, imageUrl: Profile, alt: '기본 프로필 5' },
-  { id: 5, imageUrl: Profile, alt: '기본 프로필 6' },
-] as const;
 
 type ProfileStepProps = {
   nickname: string;
