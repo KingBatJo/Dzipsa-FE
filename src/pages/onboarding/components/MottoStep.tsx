@@ -1,15 +1,8 @@
 import { Card } from '@/components/ui/card';
 import EditableInput from './EditableInput';
+import { MOTTO_TEMPLATES } from '@/constants/onboarding';
 import { cn } from '@/lib/utils';
 import { useRef } from 'react';
-
-const MOTTO_TEMPLATES = [
-  '미루지 말고 지금 하자',
-  '눈치보지 말고 말하자',
-  '먹은 자가 치우자',
-  '남이지만 존중 필수',
-  '내 건 내가 사자',
-] as const;
 
 type MottoStepProps = {
   value: string;
