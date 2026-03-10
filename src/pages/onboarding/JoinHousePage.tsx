@@ -1,21 +1,18 @@
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from '@/components/ui/input-otp';
-
+import InviteCodeInputStep from '@/pages/onboarding/components/InviteCodeInputStep';
+import { OTP_LENGTH } from '@/constants/onboarding';
 import OnboardingFlowLayout from '@/pages/onboarding/components/OnboardingFlowLayout';
-import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
-const OTP_LENGTH = 6;
 const MOCK_VALID_INVITE_CODE = '123456';
+
+type JoinHouseStep = 'invite' | 'confirm' | 'profile';
 
 const JoinHousePage = () => {
   const navigate = useNavigate();
 
+  const [step, setStep] = useState<JoinHouseStep>('invite');
   const [inviteCode, setInviteCode] = useState('');
   const [hasError, setHasError] = useState(false);
 
@@ -29,63 +26,76 @@ const JoinHousePage = () => {
     }
   };
 
-  const handleNext = () => {
-    if (inviteCode !== MOCK_VALID_INVITE_CODE) {
-      setHasError(true);
-      toast('존재하지 않는 집입니다. 코드를 다시 입력해보세요', {
-        id: 'invalid-invite-code',
-        duration: 2000,
-      });
+  const handleBack = () => {
+    if (step === 'invite') {
+      navigate('/onboarding');
       return;
     }
 
-    setHasError(false);
+    if (step === 'confirm') {
+      setStep('invite');
+      return;
+    }
 
-    // TODO: 다음 화면으로 이동
-    navigate('/');
+    if (step === 'profile') {
+      setStep('confirm');
+    }
   };
 
-  const isNextDisabled = inviteCode.length !== OTP_LENGTH;
+  const handleNext = () => {
+    if (step === 'invite') {
+      if (inviteCode !== MOCK_VALID_INVITE_CODE) {
+        setHasError(true);
+        toast('존재하지 않는 집입니다. 코드를 다시 입력해보세요', {
+          id: 'invalid-invite-code',
+          duration: 2000,
+        });
+        return;
+      }
+
+      setHasError(false);
+      setStep('confirm');
+      return;
+    }
+
+    if (step === 'confirm') {
+      setStep('profile');
+      return;
+    }
+
+    if (step === 'profile') {
+      navigate('/');
+    }
+  };
+
+  const buttonLabel =
+    step === 'invite'
+      ? '집 찾기'
+      : step === 'confirm'
+        ? '우리집 맞아요!'
+        : '다음';
+
+  const isNextDisabled =
+    step === 'invite' ? inviteCode.length !== OTP_LENGTH : false;
 
   return (
     <OnboardingFlowLayout
-      onBack={() => navigate('/onboarding')}
+      onBack={handleBack}
       onNext={handleNext}
       isNextDisabled={isNextDisabled}
-      nextLabel={'집 찾기'}
-      //   bottomSlot={}
+      nextLabel={buttonLabel}
     >
-      <div className="pt-4">
-        <section className="flex flex-col gap-2 px-2 pb-[188px]">
-          <h1 className="text-xl leading-8 font-semibold">
-            공유받은 초대코드를
-            <br />
-            입력해주세요
-          </h1>
-        </section>
+      {step === 'invite' && (
+        <InviteCodeInputStep
+          inviteCode={inviteCode}
+          hasError={hasError}
+          onChangeInviteCode={handleChangeInviteCode}
+        />
+      )}
 
-        <section className="flex justify-center px-2">
-          <InputOTP
-            maxLength={OTP_LENGTH}
-            value={inviteCode}
-            onChange={handleChangeInviteCode}
-            pattern="[0-9*]"
-            inputMode="numeric"
-          >
-            <InputOTPGroup className="gap-2">
-              {Array.from({ length: OTP_LENGTH }, (_, index) => (
-                <InputOTPSlot
-                  index={index}
-                  className={cn(
-                    'bg-secondary h-[70px] w-[50px] rounded-lg border-none text-xl font-semibold shadow-none',
-                    hasError ? 'ring-1 ring-red-500' : 'ring-primary'
-                  )}
-                />
-              ))}
-            </InputOTPGroup>
-          </InputOTP>
-        </section>
-      </div>
+      {step === 'confirm' && <div>방 확인 화면</div>}
+
+      {step === 'profile' && <div>프로필 설정 화면</div>}
     </OnboardingFlowLayout>
   );
 };
