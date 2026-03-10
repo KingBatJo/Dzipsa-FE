@@ -34,7 +34,7 @@ const OnboardingFlowLayout = ({
         </Button>
       </header>
 
-      <div className="px-4">{children}</div>
+      <div className="px-4 pb-40">{children}</div>
 
       <footer className={`fixed bottom-0 ${MOBILE_MAX_WIDTH} w-full pb-9`}>
         <div className="flex flex-col gap-6 px-4">
