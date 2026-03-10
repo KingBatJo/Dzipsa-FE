@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 
 const navigationItems = [
   { label: '할 일', path: '/todos', icon: List },
-  { label: '홈', path: '/', icon: Home },
+  { label: '홈', path: '/home', icon: Home },
   { label: '규칙', path: '/rules', icon: Calendar },
 ];
 
