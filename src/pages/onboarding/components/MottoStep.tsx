@@ -10,11 +10,11 @@ import EditableInput from '@/pages/onboarding/components/EditableInput';
 import { cn } from '@/lib/utils';
 
 type MottoStepProps = {
-  value: string;
-  onChange: (value: string) => void;
+  motto: string;
+  onChangeMotto: (value: string) => void;
 };
 
-const MottoStep = ({ value, onChange }: MottoStepProps) => {
+const MottoStep = ({ motto, onChangeMotto }: MottoStepProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -26,7 +26,7 @@ const MottoStep = ({ value, onChange }: MottoStepProps) => {
       return;
     }
 
-    onChange(nextValue);
+    onChangeMotto(nextValue);
 
     if (errorMessage) {
       setErrorMessage('');
@@ -34,7 +34,7 @@ const MottoStep = ({ value, onChange }: MottoStepProps) => {
   };
 
   const handleBlur = () => {
-    setErrorMessage(validateRequiredText(value));
+    setErrorMessage(validateRequiredText(motto));
   };
 
   return (
@@ -56,7 +56,7 @@ const MottoStep = ({ value, onChange }: MottoStepProps) => {
         <EditableInput
           id="motto"
           ref={inputRef}
-          value={value}
+          value={motto}
           placeholder="우리집의 가훈을 정해보세요"
           errorMessage={errorMessage}
           onChange={handleChange}
@@ -77,13 +77,13 @@ const MottoStep = ({ value, onChange }: MottoStepProps) => {
             <Card
               key={template}
               onClick={() => {
-                onChange(template);
+                onChangeMotto(template);
                 setErrorMessage('');
                 inputRef.current?.focus();
               }}
               className={cn(
                 'flex h-12 cursor-pointer items-center rounded-[10px] px-4 text-sm font-medium shadow-xs transition-all duration-200',
-                value === template
+                motto === template
                   ? 'border-neutral-900 bg-neutral-100'
                   : 'border-neutral-200 hover:bg-neutral-50'
               )}
