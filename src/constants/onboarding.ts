@@ -18,3 +18,6 @@ export const PROFILE_OPTIONS = [
 ] as const;
 
 export const APP_URL = import.meta.env.VITE_APP_URL;
+
+export const MOTTO_MAX_LENGTH = 20;
+export const NICKNAME_MAX_LENGTH = 20;
