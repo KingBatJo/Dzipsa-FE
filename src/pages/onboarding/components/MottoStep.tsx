@@ -40,7 +40,7 @@ const MottoStep = ({ motto, onChangeMotto }: MottoStepProps) => {
   return (
     <div className="pt-4">
       <section className="flex flex-col gap-2 px-2 pb-10">
-        <h1 className="text-xl font-semibold">
+        <h1 className="text-xl leading-8 font-semibold">
           우리집만의 약속이 필요해요
           <br />
           함께 지키고 싶은 가훈을 골라보세요
