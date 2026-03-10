@@ -35,7 +35,7 @@ const OnboardingPage = () => {
         <div className="flex w-full flex-col gap-3 px-4 text-sm leading-5 font-medium">
           <Button
             type="button"
-            onClick={() => navigate('/onboarding/create')}
+            onClick={() => navigate('/onboarding/create', { replace: true })}
             className="h-12"
           >
             새 집 만들기
@@ -43,7 +43,7 @@ const OnboardingPage = () => {
 
           <Button
             type="button"
-            onClick={() => navigate('/onboarding/join')}
+            onClick={() => navigate('/onboarding/join', { replace: true })}
             className="h-12 bg-neutral-500 hover:bg-neutral-600"
           >
             초대코드로 입장하기
