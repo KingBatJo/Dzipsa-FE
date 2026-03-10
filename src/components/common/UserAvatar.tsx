@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 type UserAvatarProps = {
   src?: string;
   alt?: string;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg' | 'xl';
   className?: string;
   variant?: 'user' | 'add';
 };
@@ -15,6 +15,7 @@ const avatarSizes = {
   sm: 'h-6 w-6',
   md: 'h-8 w-8',
   lg: 'h-11 w-11',
+  xl: 'h-[50px] w-[50px]',
 };
 
 const UserAvatar = ({
