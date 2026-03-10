@@ -134,7 +134,7 @@
   [data-sonner-toaster][data-x-position='center'] {
     left: 50% !important;
     right: auto !important;
-    width: min(100vw, 375px) !important;
+    width: min(100vw, 380px) !important;
     transform: translateX(-50%) !important;
   }
 
