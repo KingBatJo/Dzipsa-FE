@@ -8,7 +8,7 @@ const NotFoundPage = () => {
       <p className="mt-2">요청하신 페이지를 찾을 수 없습니다.</p>
 
       <Button variant="default" asChild>
-        <Link to="/" className="mt-4 inline-flex">
+        <Link to="/home" className="mt-4 inline-flex">
           홈으로 돌아가기
         </Link>
       </Button>

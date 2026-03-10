@@ -61,7 +61,7 @@ const JoinHousePage = () => {
       selectedProfileId,
     });
 
-    navigate('/', { replace: true });
+    navigate('/home', { replace: true });
   };
 
   const handleNext = () => {
