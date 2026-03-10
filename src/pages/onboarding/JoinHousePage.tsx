@@ -1,3 +1,4 @@
+import HouseConfirmStep from '@/pages/onboarding/components/HouseConfirmStep';
 import InviteCodeInputStep from '@/pages/onboarding/components/InviteCodeInputStep';
 import { OTP_LENGTH } from '@/constants/onboarding';
 import OnboardingFlowLayout from '@/pages/onboarding/components/OnboardingFlowLayout';
@@ -93,7 +94,7 @@ const JoinHousePage = () => {
         />
       )}
 
-      {step === 'confirm' && <div>방 확인 화면</div>}
+      {step === 'confirm' && <HouseConfirmStep />}
 
       {step === 'profile' && <div>프로필 설정 화면</div>}
     </OnboardingFlowLayout>
