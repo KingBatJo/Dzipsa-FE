@@ -28,7 +28,7 @@ const MembersSection = ({ members }: MembersSectionProps) => {
 
       {canAdd && (
         // 임시. 추후 초대 코드로 연결
-        <Link to="/" aria-label="멤버 추가" className="shrink-0 snap-start">
+        <Link to="/home" aria-label="멤버 추가" className="shrink-0 snap-start">
           <UserAvatar size="lg" variant="add" className="hover:bg-muted" />
         </Link>
       )}

@@ -21,9 +21,12 @@ const Router = () => {
   return (
     <Routes>
       <Route element={<RootLayout />}>
+        {/* 첫 진입 */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+
         {/* 헤더 포함 */}
         <Route element={<AppLayout />}>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/home" element={<HomePage />} />
           <Route
             path="/todos"
             element={<Navigate to={`/todos/${TODO_TABS.MY}`} replace />}

@@ -126,7 +126,7 @@ const CreateHousePage = () => {
       <HouseWelcomeDialog
         open={isCompleteOpen}
         userName={getSafeNickname(nickname)}
-        onConfirm={() => navigate('/', { replace: true })}
+        onConfirm={() => navigate('/home', { replace: true })}
       />
     </>
   );
