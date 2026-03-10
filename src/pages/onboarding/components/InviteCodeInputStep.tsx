@@ -50,6 +50,11 @@ const InviteCodeInputStep = ({
           </InputOTPGroup>
         </InputOTP>
       </section>
+
+      {/* 임시 (테스트용 안내 문구) */}
+      <p className="pt-4 text-center text-xs text-neutral-400">
+        테스트용 초대코드: 123456
+      </p>
     </div>
   );
 };
