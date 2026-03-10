@@ -4,6 +4,7 @@ import AppLayout from '@/components/layout/AppLayout';
 import AuthCallbackPage from '@/pages/login/AuthCallbackPage';
 import CreateHousePage from '@/pages/onboarding/CreateHousePage';
 import HomePage from '@/pages/home/HomePage';
+import JoinHousePage from '@/pages/onboarding/JoinHousePage';
 import LoginPage from '@/pages/login/LoginPage';
 import MyPage from '@/pages/mypage/MyPage';
 import NotFoundPage from '@/pages/NotFoundPage';
@@ -39,6 +40,7 @@ const Router = () => {
         {/* 온보딩 */}
         <Route path="/onboarding" element={<OnboardingPage />} />
         <Route path="/onboarding/create" element={<CreateHousePage />} />
+        <Route path="/onboarding/join" element={<JoinHousePage />} />
 
         <Route path="/notifications" element={<NotificationPage />} />
         <Route path="/mypage" element={<MyPage />} />

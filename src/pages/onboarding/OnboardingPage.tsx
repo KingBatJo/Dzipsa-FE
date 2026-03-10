@@ -43,6 +43,7 @@ const OnboardingPage = () => {
 
           <Button
             type="button"
+            onClick={() => navigate('/onboarding/join')}
             className="h-12 bg-neutral-500 hover:bg-neutral-600"
           >
             초대코드로 입장하기
