@@ -1,12 +1,15 @@
+import { Button } from '@/components/ui/button';
 import HouseConfirmStep from '@/pages/onboarding/components/HouseConfirmStep';
 import InviteCodeInputStep from '@/pages/onboarding/components/InviteCodeInputStep';
 import { OTP_LENGTH } from '@/constants/onboarding';
 import OnboardingFlowLayout from '@/pages/onboarding/components/OnboardingFlowLayout';
+import ProfileStep from '@/pages/onboarding/components/ProfileStep';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
 const MOCK_VALID_INVITE_CODE = '123456';
+const MOCK_INIT_NICKNAME = '카카오 닉네임';
 
 type JoinHouseStep = 'invite' | 'confirm' | 'profile';
 
@@ -16,6 +19,13 @@ const JoinHousePage = () => {
   const [step, setStep] = useState<JoinHouseStep>('invite');
   const [inviteCode, setInviteCode] = useState('');
   const [hasError, setHasError] = useState(false);
+
+  const [nickname, setNickname] = useState(MOCK_INIT_NICKNAME);
+  const [selectedProfileId, setSelectedProfileId] = useState(0);
+
+  const getSafeNickname = (nickname: string) => {
+    return nickname.trim() || MOCK_INIT_NICKNAME;
+  };
 
   const handleChangeInviteCode = (value: string) => {
     const numericValue = value.replace(/[^0-9]/g, '');
@@ -43,6 +53,17 @@ const JoinHousePage = () => {
     }
   };
 
+  const handleComplete = () => {
+    const safeNickname = getSafeNickname(nickname);
+
+    console.log({
+      nickname: safeNickname,
+      selectedProfileId,
+    });
+
+    navigate('/');
+  };
+
   const handleNext = () => {
     if (step === 'invite') {
       if (inviteCode !== MOCK_VALID_INVITE_CODE) {
@@ -65,8 +86,13 @@ const JoinHousePage = () => {
     }
 
     if (step === 'profile') {
-      navigate('/');
+      handleComplete();
     }
+  };
+
+  const handleSkip = () => {
+    if (step !== 'profile') return;
+    handleComplete();
   };
 
   const buttonLabel =
@@ -77,7 +103,23 @@ const JoinHousePage = () => {
         : '다음';
 
   const isNextDisabled =
-    step === 'invite' ? inviteCode.length !== OTP_LENGTH : false;
+    (step === 'invite' ? inviteCode.length !== OTP_LENGTH : false) ||
+    (step === 'profile' && !nickname.trim());
+
+  const bottomSlot =
+    step === 'profile' ? (
+      <div className="flex items-center justify-center">
+        <Button
+          variant="link"
+          onClick={handleSkip}
+          className="h-fit p-0 font-semibold text-[#888888]"
+        >
+          Skip
+        </Button>
+      </div>
+    ) : (
+      <div className="h-5" />
+    );
 
   return (
     <OnboardingFlowLayout
@@ -85,6 +127,7 @@ const JoinHousePage = () => {
       onNext={handleNext}
       isNextDisabled={isNextDisabled}
       nextLabel={buttonLabel}
+      bottomSlot={bottomSlot}
     >
       {step === 'invite' && (
         <InviteCodeInputStep
@@ -96,7 +139,14 @@ const JoinHousePage = () => {
 
       {step === 'confirm' && <HouseConfirmStep />}
 
-      {step === 'profile' && <div>프로필 설정 화면</div>}
+      {step === 'profile' && (
+        <ProfileStep
+          nickname={nickname}
+          selectedProfileId={selectedProfileId}
+          onChangeNickname={setNickname}
+          onChangeProfile={setSelectedProfileId}
+        />
+      )}
     </OnboardingFlowLayout>
   );
 };
