@@ -60,9 +60,9 @@ const ProfileStep = ({
   };
 
   return (
-    <div className="pt-3">
+    <div className="pt-4">
       <section className="flex flex-col gap-2 px-2 pb-10">
-        <h1 className="text-xl font-semibold">
+        <h1 className="text-xl leading-8 font-semibold">
           나를 표현할 프로필과
           <br />
           닉네임을 설정해주세요
