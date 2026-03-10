@@ -1,8 +1,13 @@
+import { MOTTO_MAX_LENGTH, MOTTO_TEMPLATES } from '@/constants/onboarding';
+import { useRef, useState } from 'react';
+import {
+  validateRequiredText,
+  validateTextMaxLength,
+} from '@/utils/validators';
+
 import { Card } from '@/components/ui/card';
-import EditableInput from './EditableInput';
-import { MOTTO_TEMPLATES } from '@/constants/onboarding';
+import EditableInput from '@/pages/onboarding/components/EditableInput';
 import { cn } from '@/lib/utils';
-import { useRef } from 'react';
 
 type MottoStepProps = {
   value: string;
@@ -11,6 +16,26 @@ type MottoStepProps = {
 
 const MottoStep = ({ value, onChange }: MottoStepProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleChange = (nextValue: string) => {
+    const maxLengthError = validateTextMaxLength(nextValue, MOTTO_MAX_LENGTH);
+
+    if (maxLengthError) {
+      setErrorMessage(maxLengthError);
+      return;
+    }
+
+    onChange(nextValue);
+
+    if (errorMessage) {
+      setErrorMessage('');
+    }
+  };
+
+  const handleBlur = () => {
+    setErrorMessage(validateRequiredText(value));
+  };
 
   return (
     <div className="pt-4">
@@ -33,12 +58,13 @@ const MottoStep = ({ value, onChange }: MottoStepProps) => {
           ref={inputRef}
           value={value}
           placeholder="우리집의 가훈을 정해보세요"
-          maxLength={20}
-          onChange={onChange}
+          errorMessage={errorMessage}
+          onChange={handleChange}
+          onBlur={handleBlur}
         />
 
         <div className="flex justify-end text-xs font-semibold text-[#BCBCBC]">
-          최대 20글자
+          최대 {MOTTO_MAX_LENGTH}글자
         </div>
       </section>
 
@@ -52,6 +78,7 @@ const MottoStep = ({ value, onChange }: MottoStepProps) => {
               key={template}
               onClick={() => {
                 onChange(template);
+                setErrorMessage('');
                 inputRef.current?.focus();
               }}
               className={cn(

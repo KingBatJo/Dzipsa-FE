@@ -1,3 +1,9 @@
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { forwardRef, useState } from 'react';
 
 import ClearX from '@/assets/icon/clear_x.svg';
@@ -10,14 +16,26 @@ type EditableInputProps = {
   value: string;
   placeholder: string;
   onChange: (value: string) => void;
+  onBlur?: () => void;
   maxLength?: number;
+  errorMessage?: string;
   className?: string;
   inputClassName?: string;
 };
 
 const EditableInput = forwardRef<HTMLInputElement, EditableInputProps>(
   (
-    { id, value, placeholder, onChange, maxLength, className, inputClassName },
+    {
+      id,
+      value,
+      placeholder,
+      onChange,
+      onBlur,
+      maxLength,
+      errorMessage,
+      className,
+      inputClassName,
+    },
     ref
   ) => {
     const [isFocused, setIsFocused] = useState(false);
@@ -33,45 +51,68 @@ const EditableInput = forwardRef<HTMLInputElement, EditableInputProps>(
     };
 
     return (
-      <div
-        className={cn(
-          'bg-secondary flex h-12 items-center gap-1 rounded-[10px] border border-neutral-200 px-4 shadow-xs transition-all duration-200 focus-within:border-neutral-900',
-          className
-        )}
-      >
-        <label htmlFor={id} className="sr-only">
-          {placeholder}
-        </label>
+      <TooltipProvider delayDuration={0}>
+        <Tooltip open={Boolean(errorMessage)}>
+          <TooltipTrigger asChild>
+            <div
+              className={cn(
+                'bg-secondary flex h-12 items-center gap-1 rounded-[10px] border px-4 shadow-xs transition-all duration-200',
+                errorMessage
+                  ? 'border-red-500'
+                  : 'border-neutral-200 focus-within:border-neutral-900',
+                className
+              )}
+            >
+              <label htmlFor={id} className="sr-only">
+                {placeholder}
+              </label>
 
-        <Input
-          id={id}
-          ref={ref}
-          value={value}
-          type="text"
-          placeholder={placeholder}
-          maxLength={maxLength}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          onChange={(e) => onChange(e.target.value)}
-          className={cn(
-            'flex-1 border-none p-0 text-sm font-medium shadow-none focus-visible:ring-0',
-            inputClassName
-          )}
-        />
+              <Input
+                id={id}
+                ref={ref}
+                value={value}
+                type="text"
+                placeholder={placeholder}
+                maxLength={maxLength}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => {
+                  setIsFocused(false);
+                  onBlur?.();
+                }}
+                onChange={(e) => onChange(e.target.value)}
+                className={cn(
+                  'flex-1 border-none p-0 text-sm font-medium shadow-none focus-visible:ring-0',
+                  inputClassName
+                )}
+              />
 
-        <button
-          type="button"
-          onMouseDown={(e) => e.preventDefault()}
-          onClick={isFocused ? handleClear : handleEdit}
-          aria-label={isFocused ? '입력값 지우기' : '수정'}
-        >
-          {isFocused ? (
-            <img src={ClearX} alt="" className="h-4 w-4" />
-          ) : (
-            <Edit3 className="h-4 w-4 text-[#AFAFAF]" />
-          )}
-        </button>
-      </div>
+              <button
+                type="button"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={isFocused ? handleClear : handleEdit}
+                aria-label={isFocused ? '입력값 지우기' : '수정'}
+              >
+                {isFocused ? (
+                  <img src={ClearX} alt="" className="h-4 w-4" />
+                ) : (
+                  <Edit3 className="h-4 w-4 text-[#AFAFAF]" />
+                )}
+              </button>
+            </div>
+          </TooltipTrigger>
+
+          <TooltipContent
+            side="top"
+            align="start"
+            sideOffset={6}
+            className="relative overflow-visible rounded-lg bg-[#6B6B6B] px-3 py-1.5 text-sm font-medium text-white"
+          >
+            <p>{errorMessage}</p>
+
+            <div className="absolute top-full left-1/2 h-0 w-0 -translate-x-1/2 border-x-[6px] border-t-[5px] border-x-transparent border-t-[#6B6B6B]" />
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     );
   }
 );

@@ -1,8 +1,12 @@
+import { NICKNAME_MAX_LENGTH, PROFILE_OPTIONS } from '@/constants/onboarding';
 import { useRef, useState } from 'react';
+import {
+  validateRequiredText,
+  validateTextMaxLength,
+} from '@/utils/validators';
 
 import { Button } from '@/components/ui/button';
 import EditableInput from '@/pages/onboarding/components/EditableInput';
-import { PROFILE_OPTIONS } from '@/constants/onboarding';
 import ProfilePickerSheet from '@/pages/onboarding/components/ProfilePickerSheet';
 import { RefreshCw } from 'lucide-react';
 
@@ -20,6 +24,7 @@ const ProfileStep = ({
   onChangeProfile,
 }: ProfileStepProps) => {
   const [isProfileSheetOpen, setIsProfileSheetOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -32,6 +37,28 @@ const ProfileStep = ({
     setIsProfileSheetOpen(false);
   };
 
+  const handleChangeNickname = (nextNickname: string) => {
+    const maxLengthError = validateTextMaxLength(
+      nextNickname,
+      NICKNAME_MAX_LENGTH
+    );
+
+    if (maxLengthError) {
+      setErrorMessage(maxLengthError);
+      return;
+    }
+
+    onChangeNickname(nextNickname);
+
+    if (errorMessage) {
+      setErrorMessage('');
+    }
+  };
+
+  const handleBlurNickname = () => {
+    setErrorMessage(validateRequiredText(nickname));
+  };
+
   return (
     <div className="pt-3">
       <section className="flex flex-col gap-2 px-2 pb-10">
@@ -42,7 +69,7 @@ const ProfileStep = ({
         </h1>
       </section>
 
-      <section className="flex justify-center pb-[45px]">
+      <section className="flex justify-center pb-14">
         <div className="relative">
           <img src={selectedProfile.imageUrl} alt={selectedProfile.alt} />
 
@@ -61,12 +88,13 @@ const ProfileStep = ({
           ref={inputRef}
           value={nickname}
           placeholder="닉네임을 입력해주세요"
-          maxLength={20}
-          onChange={onChangeNickname}
+          errorMessage={errorMessage}
+          onChange={handleChangeNickname}
+          onBlur={handleBlurNickname}
         />
 
         <div className="flex justify-end text-xs font-semibold text-[#BCBCBC]">
-          최대 20글자
+          최대 {NICKNAME_MAX_LENGTH}글자
         </div>
       </section>
 
