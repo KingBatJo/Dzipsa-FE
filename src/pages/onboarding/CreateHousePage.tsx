@@ -98,7 +98,9 @@ const CreateHousePage = () => {
       </header>
 
       <div className="px-4">
-        {step === 'motto' && <MottoStep value={motto} onChange={setMotto} />}
+        {step === 'motto' && (
+          <MottoStep motto={motto} onChangeMotto={setMotto} />
+        )}
 
         {step === 'profile' && (
           <ProfileStep
