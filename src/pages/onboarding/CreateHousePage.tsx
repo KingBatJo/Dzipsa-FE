@@ -1,10 +1,8 @@
-import { HEADER_HEIGHT_CLASS, MOBILE_MAX_WIDTH } from '@/constants/layout';
-
 import { Button } from '@/components/ui/button';
-import { ChevronLeft } from 'lucide-react';
 import HouseWelcomeDialog from '@/pages/onboarding/components/HouseWelcomeDialog';
 import InviteCodeStep from '@/pages/onboarding/components/InviteCodeStep';
 import MottoStep from '@/pages/onboarding/components/MottoStep';
+import OnboardingFlowLayout from './components/OnboardingFlowLayout';
 import ProfileStep from '@/pages/onboarding/components/ProfileStep';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
@@ -83,21 +81,32 @@ const CreateHousePage = () => {
     (step === 'motto' && !motto.trim()) ||
     (step === 'profile' && !nickname.trim());
 
-  return (
-    <div>
-      <header className={`${HEADER_HEIGHT_CLASS} flex items-center p-4`}>
+  const bottomSlot =
+    step !== 'invite' ? (
+      <div className="flex items-center justify-center">
         <Button
-          type="button"
-          onClick={handleBack}
-          aria-label="뒤로가기"
-          variant="ghost"
-          className="h-fit p-1.5"
+          variant="link"
+          onClick={handleSkip}
+          className="h-fit p-0 font-semibold text-[#888888]"
         >
-          <ChevronLeft />
+          Skip
         </Button>
-      </header>
+      </div>
+    ) : (
+      <div className="h-5 text-center text-xs font-semibold text-[#888888]">
+        코드는 홈에서도 복사할 수 있어요!
+      </div>
+    );
 
-      <div className="px-4">
+  return (
+    <>
+      <OnboardingFlowLayout
+        onBack={handleBack}
+        onNext={handleNext}
+        isNextDisabled={isNextDisabled}
+        nextLabel={buttonLabel}
+        bottomSlot={bottomSlot}
+      >
         {step === 'motto' && (
           <MottoStep motto={motto} onChangeMotto={setMotto} />
         )}
@@ -112,42 +121,14 @@ const CreateHousePage = () => {
         )}
 
         {step === 'invite' && <InviteCodeStep inviteCode={MOCK_INVITE_CODE} />}
-      </div>
-
-      <footer className={`fixed bottom-0 ${MOBILE_MAX_WIDTH} w-full pb-9`}>
-        <div className="flex flex-col gap-6 px-4">
-          <Button
-            onClick={handleNext}
-            disabled={isNextDisabled}
-            className="h-12 w-full rounded-[10px]"
-          >
-            {buttonLabel}
-          </Button>
-
-          {step !== 'invite' ? (
-            <div className="flex items-center justify-center">
-              <Button
-                variant="link"
-                onClick={handleSkip}
-                className="h-fit p-0 font-semibold text-[#888888]"
-              >
-                Skip
-              </Button>
-            </div>
-          ) : (
-            <div className="h-5 text-center text-xs font-semibold text-[#888888]">
-              코드는 홈에서도 복사할 수 있어요!
-            </div>
-          )}
-        </div>
-      </footer>
+      </OnboardingFlowLayout>
 
       <HouseWelcomeDialog
         open={isCompleteOpen}
         userName={getSafeNickname(nickname)}
         onConfirm={() => navigate('/', { replace: true })}
       />
-    </div>
+    </>
   );
 };
 
