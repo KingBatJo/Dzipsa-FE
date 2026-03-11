@@ -6,6 +6,7 @@ import SocialLoginButton from '@/pages/login/components/SocialLoginButton';
 import TermsAgreementSheet from '@/pages/login/components/TermsAgreementSheet';
 import kakaoSymbol from '@/assets/kakao_symbol.svg';
 import naverSymbol from '@/assets/naver_symbol.svg';
+import { toast } from 'sonner';
 
 export type LoginNavigationState = {
   openTermsSheet?: boolean;
@@ -52,6 +53,15 @@ const LoginPage = () => {
     navigate(location.pathname, { replace: true, state: null });
   }, [location.pathname, location.state, navigate]);
 
+  useEffect(() => {
+    if (!loginErrorMessage) return;
+
+    toast(loginErrorMessage, {
+      id: 'login-error',
+      duration: 2000,
+    });
+  }, [loginErrorMessage]);
+
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center gap-3 px-4">
       <div className="flex flex-col items-center gap-4 pb-40">
@@ -72,10 +82,6 @@ const LoginPage = () => {
         label="네이버로 시작하기"
         onClick={handleSocialLogin}
       />
-
-      {loginErrorMessage && (
-        <p className="text-sm text-red-500">{loginErrorMessage}</p>
-      )}
 
       {/* 이용약관 동의 */}
       <TermsAgreementSheet
