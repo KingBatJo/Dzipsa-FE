@@ -2,10 +2,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
-import CompletedTodosTab from './components/CompletedTodosTab';
-import HouseTodosTab from './components/HouseTodosTab';
+import CompletedTodosTab from '@/pages/todos/components/CompletedTodosTab';
+import HouseTodosTab from '@/pages/todos/components/HouseTodosTab';
 import { MOBILE_MAX_WIDTH } from '@/constants/layout';
-import MyTodosTab from './components/MyTodosTab';
+import MyTodosTab from '@/pages/todos/components/MyTodosTab';
 import { TODO_TABS } from '@/constants/todos';
 
 const TABS = [
@@ -54,7 +54,10 @@ const TodosPage = () => {
         className={`fixed bottom-20 left-1/2 z-10 w-full -translate-x-1/2 p-4 ${MOBILE_MAX_WIDTH}`}
       >
         <div className="flex justify-end">
-          <Button className="h-15 w-15 rounded-full">
+          <Button
+            onClick={() => navigate('/todos/new', { state: { fromTap: tab } })}
+            className="h-15 w-15 rounded-full"
+          >
             <span className="-translate-y-0.5 text-3xl font-light">+</span>
           </Button>
         </div>
