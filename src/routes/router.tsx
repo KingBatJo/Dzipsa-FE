@@ -37,7 +37,7 @@ const Router = () => {
 
         {/* 헤더 미포함 */}
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/auth/callback/:provider" element={<AuthCallbackPage />} />
+        <Route path="/auth/callback" element={<AuthCallbackPage />} />
         <Route path="/signup/complete" element={<SignupCompletePage />} />
 
         {/* 온보딩 */}

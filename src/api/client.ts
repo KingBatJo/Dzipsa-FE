@@ -1,5 +1,6 @@
 // axios 인스턴스 + 공통 설정
 
+import { tokenStorage } from '@/auth/token';
 import axios, {
   AxiosError,
   type AxiosResponse,
@@ -20,8 +21,7 @@ export const apiClient = axios.create({
 // 요청 보내기 전 실행
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    // TODO: accessToken 저장 방식 확정 후 토큰 조회 로직 연결
-    const accessToken = null;
+    const accessToken = tokenStorage.getAccessToken();
 
     if (accessToken) {
       config.headers.set('Authorization', `Bearer ${accessToken}`);
