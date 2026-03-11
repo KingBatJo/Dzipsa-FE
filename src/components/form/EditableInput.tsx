@@ -2,7 +2,7 @@ import { forwardRef, useState } from 'react';
 
 import ClearX from '@/assets/icon/clear_x.svg';
 import { Edit3 } from 'lucide-react';
-import ErrorTooltip from '@/components/common/ErrorToolTip';
+import ErrorTooltip from '@/components/form/ErrorToolTip';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 

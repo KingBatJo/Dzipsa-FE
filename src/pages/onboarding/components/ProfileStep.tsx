@@ -6,7 +6,7 @@ import {
 } from '@/utils/validators';
 
 import { Button } from '@/components/ui/button';
-import EditableInput from '@/pages/onboarding/components/EditableInput';
+import EditableInputSection from '@/components/form/EditableInputSection';
 import ProfilePickerSheet from '@/pages/onboarding/components/ProfilePickerSheet';
 import { RefreshCw } from 'lucide-react';
 
@@ -82,21 +82,17 @@ const ProfileStep = ({
         </div>
       </section>
 
-      <section className="flex flex-col gap-1 px-10">
-        <EditableInput
-          id="nickname"
-          ref={inputRef}
-          value={nickname}
-          placeholder="닉네임을 입력해주세요"
-          errorMessage={errorMessage}
-          onChange={handleChangeNickname}
-          onBlur={handleBlurNickname}
-        />
-
-        <div className="flex justify-end text-xs font-semibold text-[#BCBCBC]">
-          최대 {NICKNAME_MAX_LENGTH}글자
-        </div>
-      </section>
+      <EditableInputSection
+        id="nickname"
+        inputRef={inputRef}
+        value={nickname}
+        placeholder="닉네임을 입력해주세요"
+        errorMessage={errorMessage}
+        maxLength={NICKNAME_MAX_LENGTH}
+        onChange={handleChangeNickname}
+        onBlur={handleBlurNickname}
+        className="px-10"
+      />
 
       {/* 임시 (테스트용) */}
       {
