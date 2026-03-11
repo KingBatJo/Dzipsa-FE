@@ -6,8 +6,8 @@ import { useNavigate } from 'react-router-dom';
 
 type FormPageLayoutProps = {
   title: string;
-  top: React.ReactNode;
-  bottom: React.ReactNode;
+  top?: React.ReactNode;
+  bottom?: React.ReactNode;
   onSubmit: () => void;
   submitDisabled?: boolean;
 };

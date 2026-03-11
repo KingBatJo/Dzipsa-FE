@@ -7,9 +7,7 @@ const RuleCreatePage = () => {
       onSubmit={() => {
         console.log('완료');
       }}
-    >
-      <div>규칙 추가 폼</div>
-    </FormPageLayout>
+    />
   );
 };
 
