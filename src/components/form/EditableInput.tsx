@@ -1,8 +1,8 @@
-import { forwardRef, useState } from 'react';
+import { forwardRef, useRef, useState } from 'react';
 
 import ClearX from '@/assets/icon/clear_x.svg';
 import { Edit3 } from 'lucide-react';
-import ErrorTooltip from '@/components/form/ErrorToolTip';
+import ErrorTooltip from '@/components/form/ErrorTooltip';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 
@@ -12,7 +12,6 @@ type EditableInputProps = {
   placeholder: string;
   onChange: (value: string) => void;
   onBlur?: () => void;
-  maxLength?: number;
   errorMessage?: string;
   className?: string;
   inputClassName?: string;
@@ -26,7 +25,6 @@ const EditableInput = forwardRef<HTMLInputElement, EditableInputProps>(
       placeholder,
       onChange,
       onBlur,
-      maxLength,
       errorMessage,
       className,
       inputClassName,
@@ -34,14 +32,26 @@ const EditableInput = forwardRef<HTMLInputElement, EditableInputProps>(
     ref
   ) => {
     const [isFocused, setIsFocused] = useState(false);
+    const inputRef = useRef<HTMLInputElement>(null);
 
     const handleClear = () => {
       onChange('');
     };
 
     const handleEdit = () => {
-      if (ref && typeof ref !== 'function') {
-        ref.current?.focus();
+      inputRef.current?.focus();
+    };
+
+    const handleInputRef = (node: HTMLInputElement | null) => {
+      inputRef.current = node;
+
+      if (typeof ref === 'function') {
+        ref(node);
+        return;
+      }
+
+      if (ref) {
+        ref.current = node;
       }
     };
 
@@ -62,11 +72,10 @@ const EditableInput = forwardRef<HTMLInputElement, EditableInputProps>(
 
           <Input
             id={id}
-            ref={ref}
+            ref={handleInputRef}
             value={value}
             type="text"
             placeholder={placeholder}
-            maxLength={maxLength}
             onFocus={() => setIsFocused(true)}
             onBlur={() => {
               setIsFocused(false);
