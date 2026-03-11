@@ -1,4 +1,4 @@
-import type { SocialProvider } from '@/pages/login/LoginPage';
+type SocialProvider = 'kakao' | 'naver';
 
 type SocialLoginButtonProps = {
   provider: SocialProvider;

@@ -7,14 +7,12 @@ import TermsAgreementSheet from '@/pages/login/components/TermsAgreementSheet';
 import kakaoSymbol from '@/assets/kakao_symbol.svg';
 import naverSymbol from '@/assets/naver_symbol.svg';
 
-export type SocialProvider = 'kakao' | 'naver';
-
-type LoginNavigationState = {
+export type LoginNavigationState = {
   openTermsSheet?: boolean;
   loginError?: string;
 };
 
-export const MOCK_LOGIN_RESULT: 'success' | 'error' = 'success';
+const MOCK_LOGIN_RESULT = 'error' as 'success' | 'error';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -23,8 +21,15 @@ const LoginPage = () => {
   const [isTermsOpen, setIsTermsOpen] = useState(false);
   const [loginErrorMessage, setLoginErrorMessage] = useState('');
 
-  const handleSocialLogin = (provider: SocialProvider) => {
-    navigate(`/auth/callback/${provider}?mock=${MOCK_LOGIN_RESULT}`, {
+  const handleSocialLogin = () => {
+    if (MOCK_LOGIN_RESULT === 'success') {
+      navigate('/auth/callback?accessToken=mock-access-token', {
+        replace: true,
+      });
+      return;
+    }
+
+    navigate('/auth/callback', {
       replace: true,
     });
 
@@ -58,14 +63,14 @@ const LoginPage = () => {
         provider="kakao"
         iconSrc={kakaoSymbol}
         label="카카오로 시작하기"
-        onClick={() => handleSocialLogin('kakao')}
+        onClick={handleSocialLogin}
       />
 
       <SocialLoginButton
         provider="naver"
         iconSrc={naverSymbol}
         label="네이버로 시작하기"
-        onClick={() => handleSocialLogin('naver')}
+        onClick={handleSocialLogin}
       />
 
       {loginErrorMessage && (
