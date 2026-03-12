@@ -12,6 +12,8 @@ export type MeResponse = {
   profileImageUrl: string;
   role: 'USER' | 'ADMIN';
   // 추후 약관 동의 여부, 룸 소속 여부 추가 예정
+  isOnboardingCompleted?: boolean;
+  termsAgreed?: boolean;
 };
 
 export type AuthErrorCode =

@@ -1,3 +1,4 @@
+import { hasAgreedToTerms, isOnboardingCompleted } from '@/api/auth/auth.utils';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { getMe } from '@/api/auth/auth.api';
@@ -11,7 +12,6 @@ const AuthCallbackPage = () => {
   useEffect(() => {
     const initializeAuth = async () => {
       const accessToken = searchParams.get('accessToken');
-      const created = searchParams.get('created');
 
       const { setAccessToken, setUser } = useAuthStore.getState();
 
@@ -36,18 +36,19 @@ const AuthCallbackPage = () => {
         const me = await getMe();
         setUser(me);
 
-        // 신규 유저일 경우 약관 동의
-        if (created === 'true') {
-          navigate('/login', {
-            replace: true,
-            state: {
-              openTermsSheet: true,
-            },
-          });
+        // 약관 동의 시
+        if (!hasAgreedToTerms(me)) {
+          navigate('/signup/terms', { replace: true });
           return;
         }
 
-        navigate('/onboarding', { replace: true });
+        // 온보딩 완료 시
+        if (!isOnboardingCompleted(me)) {
+          navigate('/onboarding', { replace: true });
+          return;
+        }
+
+        navigate('/home', { replace: true });
       } catch (error) {
         console.error('사용자 정보 조회 실패:', error);
 
