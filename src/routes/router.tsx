@@ -10,7 +10,10 @@ import MyPage from '@/pages/mypage/MyPage';
 import NotFoundPage from '@/pages/NotFoundPage';
 import NotificationPage from '@/pages/notification/NotificationPage';
 import OnboardingPage from '@/pages/onboarding/OnboardingPage';
+import ProtectedRoute from '@/routes/ProtectedRoute';
+import PublicOnlyRoute from '@/routes/PublicOnlyRoute';
 import RootLayout from '@/components/layout/RootLayout';
+import RootRedirect from '@/routes/RootRedirect';
 import RuleCreatePage from '@/pages/rules/RuleCreatePage';
 import RulesPage from '@/pages/rules/RulesPage';
 import SignupCompletePage from '@/pages/login/SignupCompletePage';
@@ -23,34 +26,38 @@ const Router = () => {
     <Routes>
       <Route element={<RootLayout />}>
         {/* 첫 진입 */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/" element={<RootRedirect />} />
 
-        {/* 헤더 포함 */}
-        <Route element={<AppLayout />}>
-          <Route path="/home" element={<HomePage />} />
-          <Route
-            path="/todos"
-            element={<Navigate to={`/todos/${TODO_TABS.MY}`} replace />}
-          />
-          <Route path="/todos/:tab" element={<TodosPage />} />
-          <Route path="/rules" element={<RulesPage />} />
+        <Route element={<PublicOnlyRoute />}>
+          <Route path="/login" element={<LoginPage />} />
         </Route>
-
-        {/* 헤더 미포함 */}
-        <Route path="/login" element={<LoginPage />} />
         <Route path="/auth/callback" element={<AuthCallbackPage />} />
-        <Route path="/signup/terms" element={<TermsPage />} />
-        <Route path="/signup/complete" element={<SignupCompletePage />} />
 
-        {/* 온보딩 */}
-        <Route path="/onboarding" element={<OnboardingPage />} />
-        <Route path="/onboarding/create" element={<CreateHousePage />} />
-        <Route path="/onboarding/join" element={<JoinHousePage />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/signup/terms" element={<TermsPage />} />
+          <Route path="/signup/complete" element={<SignupCompletePage />} />
 
-        <Route path="/notifications" element={<NotificationPage />} />
-        <Route path="/mypage" element={<MyPage />} />
+          {/* 헤더 포함 */}
+          <Route element={<AppLayout />}>
+            <Route path="/home" element={<HomePage />} />
+            <Route
+              path="/todos"
+              element={<Navigate to={`/todos/${TODO_TABS.MY}`} replace />}
+            />
+            <Route path="/todos/:tab" element={<TodosPage />} />
+            <Route path="/rules" element={<RulesPage />} />
+          </Route>
 
-        <Route path="/rules/new" element={<RuleCreatePage />} />
+          {/* 온보딩 */}
+          <Route path="/onboarding" element={<OnboardingPage />} />
+          <Route path="/onboarding/create" element={<CreateHousePage />} />
+          <Route path="/onboarding/join" element={<JoinHousePage />} />
+
+          <Route path="/notifications" element={<NotificationPage />} />
+          <Route path="/mypage" element={<MyPage />} />
+
+          <Route path="/rules/new" element={<RuleCreatePage />} />
+        </Route>
 
         {/* 404 페이지 */}
         <Route path="*" element={<NotFoundPage />} />
