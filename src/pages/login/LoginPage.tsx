@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+import { BASE_URL } from '@/api/client';
 import DzipsaCharacter from '@/components/common/DzipsaCharacter';
 import SocialLoginButton from '@/pages/login/components/SocialLoginButton';
+import type { SocialProvider } from '@/api/auth/auth.types';
 import TermsAgreementSheet from '@/pages/login/components/TermsAgreementSheet';
 import kakaoSymbol from '@/assets/kakao_symbol.svg';
 import naverSymbol from '@/assets/naver_symbol.svg';
@@ -13,8 +15,6 @@ export type LoginNavigationState = {
   loginError?: string;
 };
 
-const MOCK_LOGIN_RESULT = 'error' as 'success' | 'error';
-
 const LoginPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -22,19 +22,8 @@ const LoginPage = () => {
   const [isTermsOpen, setIsTermsOpen] = useState(false);
   const [loginErrorMessage, setLoginErrorMessage] = useState('');
 
-  const handleSocialLogin = () => {
-    if (MOCK_LOGIN_RESULT === 'success') {
-      navigate('/auth/callback?accessToken=mock-access-token', {
-        replace: true,
-      });
-      return;
-    }
-
-    navigate('/auth/callback', {
-      replace: true,
-    });
-
-    // window.location.href = `/oauth2/authorization/${provider}`;
+  const handleSocialLogin = (provider: SocialProvider) => {
+    window.location.href = `${BASE_URL}/oauth2/authorization/${provider}`;
   };
 
   useEffect(() => {
@@ -73,14 +62,14 @@ const LoginPage = () => {
         provider="kakao"
         iconSrc={kakaoSymbol}
         label="카카오로 시작하기"
-        onClick={handleSocialLogin}
+        onClick={() => handleSocialLogin('kakao')}
       />
 
       <SocialLoginButton
         provider="naver"
         iconSrc={naverSymbol}
         label="네이버로 시작하기"
-        onClick={handleSocialLogin}
+        onClick={() => handleSocialLogin('naver')}
       />
 
       {/* 이용약관 동의 */}
