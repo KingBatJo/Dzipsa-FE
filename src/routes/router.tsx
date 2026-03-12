@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 
+import AppEntryRoute from '@/routes/AppEntryRoute';
 import AppLayout from '@/components/layout/AppLayout';
 import AuthCallbackPage from '@/pages/login/AuthCallbackPage';
 import CreateHousePage from '@/pages/onboarding/CreateHousePage';
@@ -37,26 +38,28 @@ const Router = () => {
           <Route path="/signup/terms" element={<TermsPage />} />
           <Route path="/signup/complete" element={<SignupCompletePage />} />
 
-          {/* 헤더 포함 */}
-          <Route element={<AppLayout />}>
-            <Route path="/home" element={<HomePage />} />
-            <Route
-              path="/todos"
-              element={<Navigate to={`/todos/${TODO_TABS.MY}`} replace />}
-            />
-            <Route path="/todos/:tab" element={<TodosPage />} />
-            <Route path="/rules" element={<RulesPage />} />
-          </Route>
-
           {/* 온보딩 */}
           <Route path="/onboarding" element={<OnboardingPage />} />
           <Route path="/onboarding/create" element={<CreateHousePage />} />
           <Route path="/onboarding/join" element={<JoinHousePage />} />
 
-          <Route path="/notifications" element={<NotificationPage />} />
-          <Route path="/mypage" element={<MyPage />} />
+          <Route element={<AppEntryRoute />}>
+            {/* 헤더 포함 */}
+            <Route element={<AppLayout />}>
+              <Route path="/home" element={<HomePage />} />
+              <Route
+                path="/todos"
+                element={<Navigate to={`/todos/${TODO_TABS.MY}`} replace />}
+              />
+              <Route path="/todos/:tab" element={<TodosPage />} />
+              <Route path="/rules" element={<RulesPage />} />
+            </Route>
 
-          <Route path="/rules/new" element={<RuleCreatePage />} />
+            <Route path="/notifications" element={<NotificationPage />} />
+            <Route path="/mypage" element={<MyPage />} />
+
+            <Route path="/rules/new" element={<RuleCreatePage />} />
+          </Route>
         </Route>
 
         {/* 404 페이지 */}
