@@ -9,7 +9,7 @@ const AuthCallbackPage = () => {
 
   useEffect(() => {
     const accessToken = searchParams.get('accessToken');
-    console.log('callback accessToken:', accessToken);
+    const created = searchParams.get('created');
 
     // 토큰이 없으면 로그인 페이지로 이동
     if (!accessToken) {
@@ -28,12 +28,18 @@ const AuthCallbackPage = () => {
     // 주소창에서 accessToken 제거
     window.history.replaceState({}, '', window.location.pathname);
 
-    navigate('/login', {
-      replace: true,
-      state: {
-        openTermsSheet: true,
-      },
-    });
+    // 신규 유저일 경우 약관 동의
+    if (created === 'true') {
+      navigate('/login', {
+        replace: true,
+        state: {
+          openTermsSheet: true,
+        },
+      });
+      return;
+    }
+
+    navigate('/', { replace: true });
   }, [navigate, searchParams]);
 
   return (
