@@ -1,25 +1,21 @@
 import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
 
 import { BASE_URL } from '@/api/client';
 import DzipsaCharacter from '@/components/common/DzipsaCharacter';
 import SocialLoginButton from '@/pages/login/components/SocialLoginButton';
 import type { SocialProvider } from '@/api/auth/auth.types';
-import TermsAgreementSheet from '@/pages/login/components/TermsAgreementSheet';
 import kakaoSymbol from '@/assets/kakao_symbol.svg';
 import naverSymbol from '@/assets/naver_symbol.svg';
 import { toast } from 'sonner';
+import { useLocation } from 'react-router-dom';
 
 export type LoginNavigationState = {
-  openTermsSheet?: boolean;
   loginError?: string;
 };
 
 const LoginPage = () => {
-  const navigate = useNavigate();
   const location = useLocation();
 
-  const [isTermsOpen, setIsTermsOpen] = useState(false);
   const [loginErrorMessage, setLoginErrorMessage] = useState('');
 
   const handleSocialLogin = (provider: SocialProvider) => {
@@ -31,16 +27,10 @@ const LoginPage = () => {
 
     if (!state) return;
 
-    if (state.openTermsSheet) {
-      setIsTermsOpen(true);
-      setLoginErrorMessage('');
-    } else if (state.loginError) {
+    if (state.loginError) {
       setLoginErrorMessage(state.loginError);
-      setIsTermsOpen(false);
     }
-
-    navigate(location.pathname, { replace: true, state: null });
-  }, [location.pathname, location.state, navigate]);
+  }, [location.state]);
 
   useEffect(() => {
     if (!loginErrorMessage) return;
@@ -70,13 +60,6 @@ const LoginPage = () => {
         iconSrc={naverSymbol}
         label="네이버로 시작하기"
         onClick={() => handleSocialLogin('naver')}
-      />
-
-      {/* 이용약관 동의 */}
-      <TermsAgreementSheet
-        open={isTermsOpen}
-        onOpenChange={setIsTermsOpen}
-        onAgree={() => navigate('/signup/complete', { replace: true })}
       />
     </div>
   );

@@ -15,6 +15,7 @@ import RuleCreatePage from '@/pages/rules/RuleCreatePage';
 import RulesPage from '@/pages/rules/RulesPage';
 import SignupCompletePage from '@/pages/login/SignupCompletePage';
 import { TODO_TABS } from '@/constants/todos';
+import TermsPage from '@/pages/login/TermsPage';
 import TodosPage from '@/pages/todos/TodosPage';
 
 const Router = () => {
@@ -38,6 +39,7 @@ const Router = () => {
         {/* 헤더 미포함 */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/auth/callback" element={<AuthCallbackPage />} />
+        <Route path="/signup/terms" element={<TermsPage />} />
         <Route path="/signup/complete" element={<SignupCompletePage />} />
 
         {/* 온보딩 */}
