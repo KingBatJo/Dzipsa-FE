@@ -1,7 +1,7 @@
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { getMe } from '@/api/auth/auth.api';
-import { tokenStorage } from '@/auth/token';
+import { useAuthStore } from '@/stores/auth.store';
 import { useEffect } from 'react';
 
 const AuthCallbackPage = () => {
@@ -12,6 +12,8 @@ const AuthCallbackPage = () => {
     const initializeAuth = async () => {
       const accessToken = searchParams.get('accessToken');
       const created = searchParams.get('created');
+
+      const { setAccessToken, setUser } = useAuthStore.getState();
 
       // 토큰이 없으면 로그인 페이지로 이동
       if (!accessToken) {
@@ -25,14 +27,14 @@ const AuthCallbackPage = () => {
       }
 
       // 메모리에 accessToken 저장
-      tokenStorage.setAccessToken(accessToken);
+      setAccessToken(accessToken);
 
       // 주소창에서 accessToken 제거
       window.history.replaceState({}, '', window.location.pathname);
 
       try {
         const me = await getMe();
-        console.log('내 정보:', me);
+        setUser(me);
 
         // 신규 유저일 경우 약관 동의
         if (created === 'true') {

@@ -1,12 +1,11 @@
 // axios 인스턴스 + 공통 설정
-
-import { tokenStorage } from '@/auth/token';
 import axios, {
   AxiosError,
   type AxiosResponse,
   type InternalAxiosRequestConfig,
 } from 'axios';
-import type { RefreshResponse } from './auth/auth.types';
+import type { RefreshResponse } from '@/api/auth/auth.types';
+import { useAuthStore } from '@/stores/auth.store';
 
 export const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -16,7 +15,9 @@ type RetryableRequestConfig = InternalAxiosRequestConfig & {
 };
 
 const redirectToLogin = () => {
-  tokenStorage.clearAccessToken();
+  const { clearAuth } = useAuthStore.getState();
+  clearAuth();
+
   window.location.replace('/login');
 };
 
@@ -46,7 +47,7 @@ const refreshAccessToken = async () => {
 // 요청 보내기 전 실행
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const accessToken = tokenStorage.getAccessToken();
+    const { accessToken } = useAuthStore.getState();
 
     if (accessToken) {
       config.headers.set('Authorization', `Bearer ${accessToken}`);
@@ -81,7 +82,9 @@ apiClient.interceptors.response.use(
       try {
         const newAccessToken = await refreshAccessToken();
 
-        tokenStorage.setAccessToken(newAccessToken);
+        const { setAccessToken } = useAuthStore.getState();
+        setAccessToken(newAccessToken);
+
         originalRequest.headers.set(
           'Authorization',
           `Bearer ${newAccessToken}`
