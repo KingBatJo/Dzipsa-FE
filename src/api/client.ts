@@ -6,16 +6,13 @@ import axios, {
   type AxiosResponse,
   type InternalAxiosRequestConfig,
 } from 'axios';
+import type { RefreshResponse } from './auth/auth.types';
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+export const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 // 재시도 여부를 저장하기 위해 요청 타입 확장
 type RetryableRequestConfig = InternalAxiosRequestConfig & {
   _retry?: boolean;
-};
-
-type RefreshResponse = {
-  accessToken: string;
 };
 
 const redirectToLogin = () => {
