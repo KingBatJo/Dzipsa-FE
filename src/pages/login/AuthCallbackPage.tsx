@@ -9,14 +9,17 @@ const AuthCallbackPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
+  const setAccessToken = useAuthStore((state) => state.setAccessToken);
+  const setUser = useAuthStore((state) => state.setUser);
+  const clearAuth = useAuthStore((state) => state.clearAuth);
+
   useEffect(() => {
     const initializeAuth = async () => {
       const accessToken = searchParams.get('accessToken');
 
-      const { setAccessToken, setUser } = useAuthStore.getState();
-
       // 토큰이 없으면 로그인 페이지로 이동
       if (!accessToken) {
+        clearAuth();
         navigate('/login', {
           replace: true,
           state: {
@@ -62,7 +65,7 @@ const AuthCallbackPage = () => {
     };
 
     initializeAuth();
-  }, [navigate, searchParams]);
+  }, [navigate, searchParams, setAccessToken, setUser, clearAuth]);
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4">
