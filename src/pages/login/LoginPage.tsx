@@ -1,34 +1,25 @@
 import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
 
+import { BASE_URL } from '@/api/client';
 import DzipsaCharacter from '@/components/common/DzipsaCharacter';
 import SocialLoginButton from '@/pages/login/components/SocialLoginButton';
-import TermsAgreementSheet from '@/pages/login/components/TermsAgreementSheet';
+import type { SocialProvider } from '@/api/auth/auth.types';
 import kakaoSymbol from '@/assets/kakao_symbol.svg';
 import naverSymbol from '@/assets/naver_symbol.svg';
+import { toast } from 'sonner';
+import { useLocation } from 'react-router-dom';
 
-export type SocialProvider = 'kakao' | 'naver';
-
-type LoginNavigationState = {
-  openTermsSheet?: boolean;
+export type LoginNavigationState = {
   loginError?: string;
 };
 
-export const MOCK_LOGIN_RESULT: 'success' | 'error' = 'success';
-
 const LoginPage = () => {
-  const navigate = useNavigate();
   const location = useLocation();
 
-  const [isTermsOpen, setIsTermsOpen] = useState(false);
   const [loginErrorMessage, setLoginErrorMessage] = useState('');
 
   const handleSocialLogin = (provider: SocialProvider) => {
-    navigate(`/auth/callback/${provider}?mock=${MOCK_LOGIN_RESULT}`, {
-      replace: true,
-    });
-
-    // window.location.href = `/oauth2/authorization/${provider}`;
+    window.location.href = `${BASE_URL}/oauth2/authorization/${provider}`;
   };
 
   useEffect(() => {
@@ -36,16 +27,19 @@ const LoginPage = () => {
 
     if (!state) return;
 
-    if (state.openTermsSheet) {
-      setIsTermsOpen(true);
-      setLoginErrorMessage('');
-    } else if (state.loginError) {
+    if (state.loginError) {
       setLoginErrorMessage(state.loginError);
-      setIsTermsOpen(false);
     }
+  }, [location.state]);
 
-    navigate(location.pathname, { replace: true, state: null });
-  }, [location.pathname, location.state, navigate]);
+  useEffect(() => {
+    if (!loginErrorMessage) return;
+
+    toast(loginErrorMessage, {
+      id: 'login-error',
+      duration: 2000,
+    });
+  }, [loginErrorMessage]);
 
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center gap-3 px-4">
@@ -66,17 +60,6 @@ const LoginPage = () => {
         iconSrc={naverSymbol}
         label="네이버로 시작하기"
         onClick={() => handleSocialLogin('naver')}
-      />
-
-      {loginErrorMessage && (
-        <p className="text-sm text-red-500">{loginErrorMessage}</p>
-      )}
-
-      {/* 이용약관 동의 */}
-      <TermsAgreementSheet
-        open={isTermsOpen}
-        onOpenChange={setIsTermsOpen}
-        onAgree={() => navigate('/signup/complete', { replace: true })}
       />
     </div>
   );
