@@ -1,6 +1,11 @@
 import type { MeResponse } from '@/api/auth/auth.types';
 import { apiClient } from '@/api/client';
 
+// AccessToken 유효성 검증
+export const checkAuth = async () => {
+  await apiClient.get('/api/auth/check');
+};
+
 // 로그아웃
 export const logout = async () => {
   await apiClient.post('/api/auth/logout');
