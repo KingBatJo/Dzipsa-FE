@@ -13,9 +13,11 @@ import { useState } from 'react';
 
 import { Controller, useForm } from 'react-hook-form';
 import AppButton from '@/components/common/AppButton';
+import ToggleSwitch from '@/components/common/ToggleSwitch';
 
 const TodoCreatePage = () => {
   const [inputErrorMessage, setInputErrorMessage] = useState('');
+  const [isRepeatEnabled, setIsRepeatEnabled] = useState(false);
 
   const {
     control,
@@ -116,10 +118,14 @@ const TodoCreatePage = () => {
               <div className="flex items-center justify-between">
                 <p className="text-base font-semibold">반복</p>
 
-                <div>토글 스위치</div>
+                <ToggleSwitch
+                  checked={isRepeatEnabled}
+                  onCheckedChange={setIsRepeatEnabled}
+                  ariaLabel="반복 설정 토글"
+                />
               </div>
 
-              <div>토글 on일 때만 보이도록</div>
+              {isRepeatEnabled && <div>토글 on일 때만 보이도록</div>}
             </div>
 
             <div className="space-y-4">
