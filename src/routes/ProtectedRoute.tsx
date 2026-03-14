@@ -7,10 +7,14 @@ import { useAuthStore } from '@/stores/auth.store';
 
 const ProtectedRoute = () => {
   const accessToken = useAuthStore((state) => state.accessToken);
+  const isAuthChecked = useAuthStore((state) => state.isAuthChecked);
   const location = useLocation();
 
-  if (!accessToken)
+  if (!isAuthChecked) return null;
+
+  if (!accessToken) {
     return <Navigate to="/login" replace state={{ from: location }} />;
+  }
 
   return <Outlet />;
 };

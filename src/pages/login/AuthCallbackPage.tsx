@@ -54,6 +54,7 @@ const AuthCallbackPage = () => {
         navigate('/home', { replace: true });
       } catch (error) {
         console.error('사용자 정보 조회 실패:', error);
+        clearAuth();
 
         navigate('/login', {
           replace: true,

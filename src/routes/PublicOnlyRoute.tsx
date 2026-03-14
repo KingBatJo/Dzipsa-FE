@@ -7,6 +7,9 @@ import { useAuthStore } from '@/stores/auth.store';
 
 const PublicOnlyRoute = () => {
   const accessToken = useAuthStore((state) => state.accessToken);
+  const isAuthChecked = useAuthStore((state) => state.isAuthChecked);
+
+  if (!isAuthChecked) return null;
 
   if (accessToken) return <Navigate to="/home" replace />;
 
