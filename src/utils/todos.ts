@@ -108,7 +108,7 @@ export const getTodoSections = (todos: TodoWithLocal[], today: string) => {
   // 놓친 할 일 (미완료만)
   const missedTodos = todos
     .filter((t) => t.local.dueDate < today && !t.completed)
-    .sort((a, b) => b.dueAt.localeCompare(a.dueAt)); // 최신순
+    .sort((a, b) => a.dueAt.localeCompare(b.dueAt)); // 오래된 순
 
   // 예정된 할 일 (미완료만)
   const upcomingTodos = todos
