@@ -1,7 +1,7 @@
 import type { Todo } from '@/types/todo';
 import { toLocalDateTime } from '@/utils/date';
 
-type TodoWithLocal = Todo & {
+export type TodoWithLocal = Todo & {
   local: {
     dueDate: string;
     completedDate?: string;

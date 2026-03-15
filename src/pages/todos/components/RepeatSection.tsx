@@ -9,9 +9,9 @@ import DateWheelDialog from '@/components/form/DateWheelDialog';
 import { cn } from '@/lib/utils';
 import { formatDate } from '@/utils/date';
 import type { RepeatValue } from '@/pages/todos/TodoCreatePage';
+import type { RepeatType } from '@/types/todo';
+import { REPEAT_TYPE_OPTIONS } from '@/constants/todos';
 
-const REPEAT_CYCLE_OPTIONS = ['매주', '매월'] as const;
-export type RepeatCycle = (typeof REPEAT_CYCLE_OPTIONS)[number];
 type DateFieldType = 'start' | 'end';
 
 type RepeatSectionProps = {
@@ -30,15 +30,15 @@ const RepeatSection = ({
     null
   );
 
-  const repeatCycleDropdownRef = useRef<HTMLDivElement>(null);
+  const repeatTypeDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!isRepeatMenuOpen) return;
 
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        repeatCycleDropdownRef.current &&
-        !repeatCycleDropdownRef.current.contains(event.target as Node)
+        repeatTypeDropdownRef.current &&
+        !repeatTypeDropdownRef.current.contains(event.target as Node)
       ) {
         setIsRepeatMenuOpen(false);
       }
@@ -86,12 +86,12 @@ const RepeatSection = ({
     }
   };
 
-  const handleChangeCycle = (cycle: RepeatCycle) => {
+  const handleChangeType = (type: RepeatType) => {
     if (disabled) return;
 
     onChange({
       ...value,
-      cycle,
+      type,
     });
     setIsRepeatMenuOpen(false);
   };
@@ -145,7 +145,7 @@ const RepeatSection = ({
           <div className="flex flex-col gap-[15px]">
             <div
               className="relative flex justify-end"
-              ref={repeatCycleDropdownRef}
+              ref={repeatTypeDropdownRef}
             >
               <button
                 type="button"
@@ -155,7 +155,7 @@ const RepeatSection = ({
                 aria-haspopup="menu"
                 aria-expanded={isRepeatMenuOpen}
               >
-                <span>{value.cycle}</span>
+                <span>{value.type}</span>
                 <ChevronDown
                   className={cn(
                     'h-6 w-6 transition-transform',
@@ -169,19 +169,19 @@ const RepeatSection = ({
                   role="menu"
                   className="absolute top-[calc(100%+6px)] right-0 z-10 w-[77px] rounded-md border border-[#898887] bg-[#696867] p-1 text-xs font-medium text-white shadow-md"
                 >
-                  {REPEAT_CYCLE_OPTIONS.map((option) => (
+                  {REPEAT_TYPE_OPTIONS.map((option) => (
                     <li key={option}>
                       <button
                         type="button"
                         disabled={disabled}
                         role="menuitemradio"
-                        aria-checked={value.cycle === option}
+                        aria-checked={value.type === option}
                         className="flex w-full items-center gap-1 rounded-md px-2 py-1.5 text-left hover:bg-[#525150] disabled:opacity-50 disabled:hover:bg-transparent"
-                        onClick={() => handleChangeCycle(option)}
+                        onClick={() => handleChangeType(option)}
                       >
                         <div className="flex gap-1">
                           <span>
-                            {value.cycle === option ? (
+                            {value.type === option ? (
                               <Check className="h-4 w-4" />
                             ) : (
                               <div className="h-4 w-4" />
@@ -196,7 +196,7 @@ const RepeatSection = ({
               )}
             </div>
 
-            {value.cycle === '매주' && (
+            {value.type === '매주' && (
               <WeekdaySelector
                 value={value.days}
                 onChange={handleChangeDays}

@@ -13,19 +13,18 @@ import { useEffect, useRef, useState } from 'react';
 
 import { Controller, useForm } from 'react-hook-form';
 import AppButton from '@/components/common/AppButton';
-import RepeatSection, {
-  type RepeatCycle,
-} from '@/pages/todos/components/RepeatSection';
+import RepeatSection from '@/pages/todos/components/RepeatSection';
 import { formatDate } from '@/utils/date';
 import type { WeekDay } from '@/components/form/WeekdaySelector';
 import { cn } from '@/lib/utils';
 import DateWheelDialog from '@/components/form/DateWheelDialog';
 import ErrorTooltip from '@/components/form/ErrorTooltip';
 import RandomAssignOverlay from '@/pages/todos/components/RandomAssignOverlay';
+import type { RepeatType, TodoCreateRequest } from '@/types/todo';
 
 export type RepeatValue = {
   enabled: boolean;
-  cycle: RepeatCycle;
+  type: RepeatType;
   days: WeekDay[];
   startDate: Date;
   endDate: Date | null;
@@ -33,17 +32,19 @@ export type RepeatValue = {
 
 type RandomAssignStage = 'idle' | 'loading' | 'result';
 
+const ROOM_ID = 1; // 임시값, 나중에 실제 방 id로 교체
+
 const TodoCreatePage = () => {
   const [inputErrorMessage, setInputErrorMessage] = useState('');
   const [memoErrorMessage, setMemoErrorMessage] = useState('');
   const [isDueDateDialogOpen, setIsDueDateDialogOpen] = useState(false);
   const [dueDate, setDueDate] = useState<Date | null>(new Date());
-  const [selectedAssigneeId, setSelectedAssigneeId] = useState<number | null>(
-    mockMembers[0]?.id ?? null
+  const [selectedAssigneeId, setSelectedAssigneeId] = useState<number>(
+    mockMembers[0]?.id
   );
   const [repeatValue, setRepeatValue] = useState<RepeatValue>({
     enabled: false,
-    cycle: '매주',
+    type: '매주',
     days: ['월'],
     startDate: new Date(),
     endDate: null,
@@ -131,22 +132,21 @@ const TodoCreatePage = () => {
   };
 
   const onSubmit = (data: TodoCreateValues) => {
-    const randomMember =
-      mockMembers.find((member) => member.id === selectedAssigneeId) ?? null;
-    const submitData = {
+    const submitData: TodoCreateRequest = {
       title: data.title,
-      memo: data.memo ?? '',
-      dueDate: !repeatValue.enabled && dueDate ? formatDate(dueDate) : '',
+      roomId: ROOM_ID,
       assigneeId: selectedAssigneeId,
-      assigneeName: randomMember?.name ?? '',
-      repeat: repeatValue.enabled
+      dueDate: !repeatValue.enabled && dueDate ? formatDate(dueDate) : '',
+      isRepeat: repeatValue.enabled,
+      repeatOption: repeatValue.enabled
         ? {
-            cycle: repeatValue.cycle,
-            days: repeatValue.cycle === '매주' ? repeatValue.days : [],
+            type: repeatValue.type,
+            dayOfWeeks: repeatValue.type === '매주' ? repeatValue.days : [],
             startDate: formatDate(repeatValue.startDate),
             endDate: repeatValue.endDate ? formatDate(repeatValue.endDate) : '',
           }
         : null,
+      memo: data.memo ?? '',
     };
 
     console.log('할 일 등록:', submitData);
