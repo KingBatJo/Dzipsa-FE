@@ -123,8 +123,23 @@ const RepeatSection = () => {
           )}
 
           <div className="flex flex-col gap-[15px]">
-            <div>시작 날짜</div>
-            <div>종료 날짜</div>
+            <div className="flex items-center justify-between">
+              <p>시작 날짜</p>
+
+              <button type="button" className="flex items-center gap-1">
+                <span>2026.03.15</span>
+                <ChevronDown className="h-6 w-6 transition-transform" />
+              </button>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <p>종료 날짜</p>
+
+              <button type="button" className="flex items-center gap-1">
+                <span>없음</span>
+                <ChevronDown className="h-6 w-6 transition-transform" />
+              </button>
+            </div>
           </div>
         </div>
       )}
