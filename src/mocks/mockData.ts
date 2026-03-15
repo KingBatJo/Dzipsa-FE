@@ -34,7 +34,7 @@ export const mockMembers: Member[] = [
 export const mockTodoList: Todo[] = [
   // 오늘
   {
-    id: 't1',
+    id: 1,
     title: '주방 가전용품 청소',
     dueAt: '2026-03-06T09:00:00',
     assigneeId: 1,
@@ -44,7 +44,7 @@ export const mockTodoList: Todo[] = [
     proofImageUrl: 'test',
   },
   {
-    id: 't2',
+    id: 2,
     title: '분리수거',
     dueAt: '2026-03-06T10:30:00',
     assigneeId: 2,
@@ -53,7 +53,7 @@ export const mockTodoList: Todo[] = [
     completedAt: '2026-03-06T10:10:00',
   },
   {
-    id: 't3',
+    id: 3,
     title: '화장실 청소',
     dueAt: '2026-03-06T15:00:00',
     assigneeId: 3,
@@ -61,7 +61,7 @@ export const mockTodoList: Todo[] = [
     completed: false,
   },
   {
-    id: 't4',
+    id: 4,
     title: '거실 바닥 물걸레',
     dueAt: '2026-03-06T18:00:00',
     assigneeId: 4,
@@ -70,7 +70,7 @@ export const mockTodoList: Todo[] = [
     completedAt: '2026-03-06T17:20:00',
   },
   {
-    id: 't5',
+    id: 5,
     title: '매트 청소',
     dueAt: '2026-03-06T20:00:00',
     assigneeId: 1,
@@ -78,7 +78,7 @@ export const mockTodoList: Todo[] = [
     completed: false,
   },
   {
-    id: 't11',
+    id: 11,
     title: '싱크대 배수구 청소',
     dueAt: '2026-03-06T12:00:00',
     assigneeId: 2,
@@ -86,7 +86,7 @@ export const mockTodoList: Todo[] = [
     completed: false,
   },
   {
-    id: 't12',
+    id: 12,
     title: '냉장고 정리',
     dueAt: '2026-03-06T21:00:00',
     assigneeId: 3,
@@ -94,7 +94,7 @@ export const mockTodoList: Todo[] = [
     completed: false,
   },
   {
-    id: 't18',
+    id: 18,
     title: '쓰레기 봉투 교체',
     dueAt: '2026-03-06T08:30:00',
     assigneeId: 1,
@@ -103,7 +103,7 @@ export const mockTodoList: Todo[] = [
     completedAt: '2026-03-06T08:25:00',
   },
   {
-    id: 't19',
+    id: 19,
     title: '식탁 닦기',
     dueAt: '2026-03-06T11:30:00',
     assigneeId: 4,
@@ -111,7 +111,7 @@ export const mockTodoList: Todo[] = [
     completed: false,
   },
   {
-    id: 't20',
+    id: 20,
     title: '주방 바닥 청소',
     dueAt: '2026-03-06T13:30:00',
     assigneeId: 1,
@@ -119,7 +119,7 @@ export const mockTodoList: Todo[] = [
     completed: false,
   },
   {
-    id: 't21',
+    id: 21,
     title: '냉동실 정리',
     dueAt: '2026-03-06T16:30:00',
     assigneeId: 2,
@@ -127,7 +127,7 @@ export const mockTodoList: Todo[] = [
     completed: false,
   },
   {
-    id: 't22',
+    id: 22,
     title: '분리수거함 정리',
     dueAt: '2026-03-06T22:00:00',
     assigneeId: 1,
@@ -137,7 +137,7 @@ export const mockTodoList: Todo[] = [
 
   // 예정
   {
-    id: 't6',
+    id: 6,
     title: '식자재 장보기',
     dueAt: '2026-03-07T19:00:00',
     assigneeId: 1,
@@ -145,7 +145,7 @@ export const mockTodoList: Todo[] = [
     completed: false,
   },
   {
-    id: 't7',
+    id: 7,
     title: '세탁기 필터 청소',
     dueAt: '2026-03-08T11:00:00',
     assigneeId: 2,
@@ -153,7 +153,7 @@ export const mockTodoList: Todo[] = [
     completed: false,
   },
   {
-    id: 't8',
+    id: 8,
     title: '전등 교체',
     dueAt: '2026-03-08T15:00:00',
     assigneeId: 4,
@@ -161,7 +161,7 @@ export const mockTodoList: Todo[] = [
     completed: false,
   },
   {
-    id: 't13',
+    id: 13,
     title: '베란다 창문 닦기',
     dueAt: '2026-03-09T10:00:00',
     assigneeId: 3,
@@ -169,7 +169,7 @@ export const mockTodoList: Todo[] = [
     completed: false,
   },
   {
-    id: 't14',
+    id: 14,
     title: '청소기 먼지통 비우기',
     dueAt: '2026-03-09T18:00:00',
     assigneeId: 2,
@@ -177,7 +177,7 @@ export const mockTodoList: Todo[] = [
     completed: false,
   },
   {
-    id: 't15',
+    id: 15,
     title: '욕실 환풍기 먼지 제거',
     dueAt: '2026-03-10T11:30:00',
     assigneeId: 4,
@@ -185,7 +185,7 @@ export const mockTodoList: Todo[] = [
     completed: false,
   },
   {
-    id: 't23',
+    id: 23,
     title: '화장실 휴지 채우기',
     dueAt: '2026-03-07T09:30:00',
     assigneeId: 1,
@@ -193,7 +193,7 @@ export const mockTodoList: Todo[] = [
     completed: false,
   },
   {
-    id: 't24',
+    id: 24,
     title: '현관 매트 털기',
     dueAt: '2026-03-07T17:00:00',
     assigneeId: 3,
@@ -201,7 +201,7 @@ export const mockTodoList: Todo[] = [
     completed: false,
   },
   {
-    id: 't25',
+    id: 25,
     title: '세탁기 돌리기',
     dueAt: '2026-03-08T08:30:00',
     assigneeId: 1,
@@ -209,7 +209,7 @@ export const mockTodoList: Todo[] = [
     completed: false,
   },
   {
-    id: 't26',
+    id: 26,
     title: '세탁물 널기',
     dueAt: '2026-03-08T10:00:00',
     assigneeId: 1,
@@ -217,7 +217,7 @@ export const mockTodoList: Todo[] = [
     completed: false,
   },
   {
-    id: 't27',
+    id: 27,
     title: '현관 바닥 청소',
     dueAt: '2026-03-09T12:00:00',
     assigneeId: 2,
@@ -225,7 +225,7 @@ export const mockTodoList: Todo[] = [
     completed: false,
   },
   {
-    id: 't28',
+    id: 28,
     title: '청소도구 정리',
     dueAt: '2026-03-10T18:00:00',
     assigneeId: 3,
@@ -233,9 +233,9 @@ export const mockTodoList: Todo[] = [
     completed: false,
   },
 
-  // 지난 (놓친 할 일)
+  // 지난
   {
-    id: 't9',
+    id: 9,
     title: '현관 신발 정리',
     dueAt: '2026-03-04T19:00:00',
     assigneeId: 3,
@@ -243,7 +243,7 @@ export const mockTodoList: Todo[] = [
     completed: false,
   },
   {
-    id: 't10',
+    id: 10,
     title: '화분에 물 주기',
     dueAt: '2026-03-05T10:00:00',
     assigneeId: 1,
@@ -251,7 +251,7 @@ export const mockTodoList: Todo[] = [
     completed: false,
   },
   {
-    id: 't16',
+    id: 16,
     title: '식탁 정리',
     dueAt: '2026-03-03T20:00:00',
     assigneeId: 2,
@@ -259,7 +259,7 @@ export const mockTodoList: Todo[] = [
     completed: false,
   },
   {
-    id: 't17',
+    id: 17,
     title: '세제 리필',
     dueAt: '2026-03-05T14:00:00',
     assigneeId: 4,
@@ -267,7 +267,7 @@ export const mockTodoList: Todo[] = [
     completed: false,
   },
   {
-    id: 't29',
+    id: 29,
     title: '거실 쿠션 정리',
     dueAt: '2026-03-04T21:00:00',
     assigneeId: 2,
@@ -275,7 +275,7 @@ export const mockTodoList: Todo[] = [
     completed: false,
   },
   {
-    id: 't30',
+    id: 30,
     title: '세탁세제 채우기',
     dueAt: '2026-03-05T16:00:00',
     assigneeId: 1,
@@ -283,7 +283,7 @@ export const mockTodoList: Todo[] = [
     completed: false,
   },
   {
-    id: 't31',
+    id: 31,
     title: '주방 행주 교체',
     dueAt: '2026-03-05T08:00:00',
     assigneeId: 1,
@@ -291,28 +291,27 @@ export const mockTodoList: Todo[] = [
     completed: false,
   },
 
-  // 추가 완료 데이터 (피드 테스트용)
-
+  // 완료 데이터
   {
-    id: 't32',
+    id: 32,
     title: '욕실 거울 닦기',
     dueAt: '2026-03-05T07:30:00',
     assigneeId: 2,
     memo: '',
     completed: true,
-    completedAt: '2026-03-06T07:50:00', // 지연 완료
+    completedAt: '2026-03-06T07:50:00',
   },
   {
-    id: 't33',
+    id: 33,
     title: '베란다 정리',
     dueAt: '2026-03-05T18:00:00',
     assigneeId: 1,
     memo: '',
     completed: true,
-    completedAt: '2026-03-06T09:30:00', // 지연 완료
+    completedAt: '2026-03-06T09:30:00',
   },
   {
-    id: 't34',
+    id: 34,
     title: '전자레인지 외부 청소',
     dueAt: '2026-03-04T09:00:00',
     assigneeId: 3,
@@ -321,7 +320,7 @@ export const mockTodoList: Todo[] = [
     completedAt: '2026-03-04T11:00:00',
   },
   {
-    id: 't35',
+    id: 35,
     title: '현관 신발장 정리',
     dueAt: '2026-03-06T14:30:00',
     assigneeId: 4,
@@ -330,26 +329,26 @@ export const mockTodoList: Todo[] = [
     completedAt: '2026-03-06T14:10:00',
   },
   {
-    id: 't36',
+    id: 36,
     title: '주방 수납장 정리',
     dueAt: '2026-03-05T20:00:00',
     assigneeId: 2,
     memo: '',
     completed: true,
-    completedAt: '2026-03-06T12:20:00', // 지연 완료
+    completedAt: '2026-03-06T12:20:00',
     proofImageUrl: 'test',
   },
   {
-    id: 't37',
+    id: 37,
     title: '창틀 먼지 제거',
     dueAt: '2026-03-03T11:00:00',
     assigneeId: 1,
     memo: '',
     completed: true,
-    completedAt: '2026-03-06T15:40:00', // 지연 완료
+    completedAt: '2026-03-06T15:40:00',
   },
   {
-    id: 't38',
+    id: 38,
     title: '세탁실 정리',
     dueAt: '2026-03-06T17:00:00',
     assigneeId: 3,
