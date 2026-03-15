@@ -118,6 +118,11 @@ const TodoDetailSheet = ({
               }
               alignTop
             />
+
+            {/* 인증 사진 */}
+            {viewState?.isCompleted && todo?.proofImageUrl && (
+              <div className="bg-accent h-[180px] w-full rounded-xl" />
+            )}
           </div>
 
           {/* 하단 버튼 */}
