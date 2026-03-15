@@ -31,7 +31,7 @@ const ToggleSwitch = ({
       className={cn(
         'relative inline-flex h-6 w-11 items-center rounded-full p-[2px] transition-colors duration-200',
         checked ? 'bg-primary' : 'bg-input',
-        'disabled:cursor-not-allowed disabled:opacity-50',
+        'disabled:cursor-default disabled:opacity-50',
         className
       )}
     >

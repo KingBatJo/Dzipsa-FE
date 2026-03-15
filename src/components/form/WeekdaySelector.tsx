@@ -7,15 +7,19 @@ export type WeekDay = (typeof WEEK_DAYS)[number];
 type WeekdaySelectorProps = {
   value: WeekDay[];
   onChange: (value: WeekDay[]) => void;
+  disabled?: boolean;
   className?: string;
 };
 
 const WeekdaySelector = ({
   value,
   onChange,
+  disabled = false,
   className,
 }: WeekdaySelectorProps) => {
   const handleToggle = (day: WeekDay) => {
+    if (disabled) return;
+
     if (value.includes(day)) {
       onChange(value.filter((selectedDay) => selectedDay !== day));
       return;
@@ -34,9 +38,10 @@ const WeekdaySelector = ({
             key={day}
             type="button"
             aria-pressed={isSelected}
+            disabled={disabled}
             onClick={() => handleToggle(day)}
             className={cn(
-              'h-10 w-10 rounded-md text-sm font-semibold transition-colors',
+              'h-10 w-10 rounded-md text-sm font-semibold transition-colors disabled:opacity-50',
               isSelected
                 ? 'bg-primary text-primary-foreground'
                 : 'bg-primary-foreground text-foreground'

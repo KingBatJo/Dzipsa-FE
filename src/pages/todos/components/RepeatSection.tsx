@@ -17,9 +17,14 @@ type DateFieldType = 'start' | 'end';
 type RepeatSectionProps = {
   value: RepeatValue;
   onChange: (value: RepeatValue) => void;
+  disabled?: boolean;
 };
 
-const RepeatSection = ({ value, onChange }: RepeatSectionProps) => {
+const RepeatSection = ({
+  value,
+  onChange,
+  disabled = false,
+}: RepeatSectionProps) => {
   const [isRepeatMenuOpen, setIsRepeatMenuOpen] = useState(false);
   const [activeDateField, setActiveDateField] = useState<DateFieldType | null>(
     null
@@ -54,6 +59,12 @@ const RepeatSection = ({ value, onChange }: RepeatSectionProps) => {
     };
   }, [isRepeatMenuOpen]);
 
+  useEffect(() => {
+    if (!disabled) return;
+    setIsRepeatMenuOpen(false);
+    setActiveDateField(null);
+  }, [disabled]);
+
   const activeDialogDate =
     activeDateField === 'start'
       ? value.startDate
@@ -62,6 +73,8 @@ const RepeatSection = ({ value, onChange }: RepeatSectionProps) => {
         : value.startDate;
 
   const handleToggleRepeat = (checked: boolean) => {
+    if (disabled) return;
+
     onChange({
       ...value,
       enabled: checked,
@@ -74,6 +87,8 @@ const RepeatSection = ({ value, onChange }: RepeatSectionProps) => {
   };
 
   const handleChangeCycle = (cycle: RepeatCycle) => {
+    if (disabled) return;
+
     onChange({
       ...value,
       cycle,
@@ -82,6 +97,8 @@ const RepeatSection = ({ value, onChange }: RepeatSectionProps) => {
   };
 
   const handleChangeDays = (days: WeekDay[]) => {
+    if (disabled) return;
+
     onChange({
       ...value,
       days,
@@ -89,6 +106,8 @@ const RepeatSection = ({ value, onChange }: RepeatSectionProps) => {
   };
 
   const handleConfirmDate = (date: Date) => {
+    if (disabled) return;
+
     if (activeDateField === 'start') {
       onChange({
         ...value,
@@ -117,6 +136,7 @@ const RepeatSection = ({ value, onChange }: RepeatSectionProps) => {
           <ToggleSwitch
             checked={value.enabled}
             onCheckedChange={handleToggleRepeat}
+            disabled={disabled}
             ariaLabel="반복 설정 토글"
           />
         </div>
@@ -129,7 +149,8 @@ const RepeatSection = ({ value, onChange }: RepeatSectionProps) => {
             >
               <button
                 type="button"
-                className="flex items-center gap-1"
+                disabled={disabled}
+                className="flex items-center gap-1 disabled:opacity-50"
                 onClick={() => setIsRepeatMenuOpen((prevOpen) => !prevOpen)}
                 aria-haspopup="menu"
                 aria-expanded={isRepeatMenuOpen}
@@ -152,9 +173,10 @@ const RepeatSection = ({ value, onChange }: RepeatSectionProps) => {
                     <li key={option}>
                       <button
                         type="button"
+                        disabled={disabled}
                         role="menuitemradio"
                         aria-checked={value.cycle === option}
-                        className="flex w-full items-center gap-1 rounded-md px-2 py-1.5 text-left hover:bg-[#525150]"
+                        className="flex w-full items-center gap-1 rounded-md px-2 py-1.5 text-left hover:bg-[#525150] disabled:opacity-50 disabled:hover:bg-transparent"
                         onClick={() => handleChangeCycle(option)}
                       >
                         <div className="flex gap-1">
@@ -175,7 +197,11 @@ const RepeatSection = ({ value, onChange }: RepeatSectionProps) => {
             </div>
 
             {value.cycle === '매주' && (
-              <WeekdaySelector value={value.days} onChange={handleChangeDays} />
+              <WeekdaySelector
+                value={value.days}
+                onChange={handleChangeDays}
+                disabled={disabled}
+              />
             )}
 
             <div className="flex flex-col gap-[15px]">
@@ -184,7 +210,8 @@ const RepeatSection = ({ value, onChange }: RepeatSectionProps) => {
 
                 <button
                   type="button"
-                  className="flex items-center gap-1"
+                  disabled={disabled}
+                  className="flex items-center gap-1 disabled:opacity-50"
                   onClick={() => setActiveDateField('start')}
                 >
                   <span>{formatDate(value.startDate)}</span>
@@ -202,7 +229,8 @@ const RepeatSection = ({ value, onChange }: RepeatSectionProps) => {
 
                 <button
                   type="button"
-                  className="flex items-center gap-1"
+                  disabled={disabled}
+                  className="flex items-center gap-1 disabled:opacity-50"
                   onClick={() => setActiveDateField('end')}
                 >
                   <span>

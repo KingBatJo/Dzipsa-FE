@@ -1,5 +1,4 @@
-﻿import RoundedBadge from '@/components/common/RoundedBadge';
-import EditableInputSection from '@/components/form/EditableInputSection';
+﻿import EditableInputSection from '@/components/form/EditableInputSection';
 import FormPageLayout from '@/components/form/FormPageLayout';
 import { mockMembers } from '@/mocks/mockData';
 import {
@@ -10,7 +9,7 @@ import {
 } from '@/schemas/todoCreateSchema';
 import { validateTextMaxLength } from '@/utils/validators';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Controller, useForm } from 'react-hook-form';
 import AppButton from '@/components/common/AppButton';
@@ -22,6 +21,7 @@ import type { WeekDay } from '@/components/form/WeekdaySelector';
 import { cn } from '@/lib/utils';
 import DateWheelDialog from '@/components/form/DateWheelDialog';
 import ErrorTooltip from '@/components/form/ErrorTooltip';
+import RandomAssignOverlay from '@/pages/todos/components/RandomAssignOverlay';
 
 export type RepeatValue = {
   enabled: boolean;
@@ -30,6 +30,8 @@ export type RepeatValue = {
   startDate: Date;
   endDate: Date | null;
 };
+
+type RandomAssignStage = 'idle' | 'loading' | 'result';
 
 const TodoCreatePage = () => {
   const [inputErrorMessage, setInputErrorMessage] = useState('');
@@ -46,6 +48,27 @@ const TodoCreatePage = () => {
     startDate: new Date(),
     endDate: null,
   });
+  const [randomAssignStage, setRandomAssignStage] =
+    useState<RandomAssignStage>('idle');
+  const [randomCandidateAssigneeId, setRandomCandidateAssigneeId] = useState<
+    number | null
+  >(null);
+  const [randomAssignedAssigneeId, setRandomAssignedAssigneeId] = useState<
+    number | null
+  >(null);
+  const randomAssignTimeoutRef = useRef<number | null>(null);
+  const isRandomAssigneeLocked = randomAssignedAssigneeId !== null;
+  const randomCandidate = mockMembers.find(
+    (member) => member.id === randomCandidateAssigneeId
+  );
+
+  useEffect(() => {
+    return () => {
+      if (randomAssignTimeoutRef.current) {
+        window.clearTimeout(randomAssignTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const {
     control,
@@ -61,17 +84,61 @@ const TodoCreatePage = () => {
   });
 
   const handleRandomAssign = () => {
-    const randomMember =
-      mockMembers[Math.floor(Math.random() * mockMembers.length)];
-    setSelectedAssigneeId(randomMember.id);
+    if (isRandomAssigneeLocked) return;
+
+    if (randomAssignTimeoutRef.current) {
+      window.clearTimeout(randomAssignTimeoutRef.current);
+    }
+
+    setRandomAssignStage('loading');
+    setRandomCandidateAssigneeId(null);
+
+    randomAssignTimeoutRef.current = window.setTimeout(() => {
+      const randomMember =
+        mockMembers[Math.floor(Math.random() * mockMembers.length)];
+      setRandomCandidateAssigneeId(randomMember.id);
+      setRandomAssignStage('result');
+    }, 1200);
+  };
+
+  const handleCloseRandomOverlay = () => {
+    if (randomAssignTimeoutRef.current) {
+      window.clearTimeout(randomAssignTimeoutRef.current);
+      randomAssignTimeoutRef.current = null;
+    }
+
+    setRandomAssignStage('idle');
+    setRandomCandidateAssigneeId(null);
+  };
+
+  const handleConfirmRandomAssignee = () => {
+    if (!randomCandidateAssigneeId) return;
+
+    setSelectedAssigneeId(randomCandidateAssigneeId);
+    setRandomAssignedAssigneeId(randomCandidateAssigneeId);
+    setRandomAssignStage('idle');
+    setRandomCandidateAssigneeId(null);
+    if (repeatValue.enabled) {
+      setRepeatValue((prev) => ({
+        ...prev,
+        enabled: false,
+      }));
+    }
+  };
+
+  const onSelectAssignee = (memberId: number) => {
+    setSelectedAssigneeId(memberId);
   };
 
   const onSubmit = (data: TodoCreateValues) => {
+    const randomMember =
+      mockMembers.find((member) => member.id === selectedAssigneeId) ?? null;
     const submitData = {
       title: data.title,
       memo: data.memo ?? '',
       dueDate: !repeatValue.enabled && dueDate ? formatDate(dueDate) : '',
       assigneeId: selectedAssigneeId,
+      assigneeName: randomMember?.name ?? '',
       repeat: repeatValue.enabled
         ? {
             cycle: repeatValue.cycle,
@@ -163,21 +230,27 @@ const TodoCreatePage = () => {
             <p className="text-base font-semibold">담당자</p>
 
             <div className="flex flex-col gap-[10px]">
-              <div className="flex gap-[10px]">
+              <div className="grid grid-cols-4 gap-[10px]">
                 {mockMembers.map((member) => {
                   const isSelected = selectedAssigneeId === member.id;
+                  const isRandomAssigned =
+                    randomAssignedAssigneeId === member.id;
 
                   return (
                     <button
                       key={member.id}
                       type="button"
-                      onClick={() => setSelectedAssigneeId(member.id)}
+                      onClick={() => onSelectAssignee(member.id)}
                       className={cn(
-                        'border-border rounded-full border',
-                        isSelected ? 'bg-secondary' : 'hover:bg-secondary'
+                        'rounded-full border px-4 py-2 text-base font-semibold transition-colors',
+                        isSelected && isRandomAssigned
+                          ? 'from-primary border-none bg-gradient-to-r to-zinc-500 text-white'
+                          : isSelected
+                            ? 'border-border bg-primary text-white'
+                            : 'border-border hover:bg-secondary'
                       )}
                     >
-                      <RoundedBadge>{member.name}</RoundedBadge>
+                      {member.name}
                     </button>
                   );
                 })}
@@ -185,15 +258,26 @@ const TodoCreatePage = () => {
 
               <AppButton
                 onClick={handleRandomAssign}
+                disabled={isRandomAssigneeLocked}
                 className="text-primary-foreground from-primary bg-gradient-to-r to-zinc-500 text-sm font-medium"
               >
                 운명에 맡기기
               </AppButton>
+
+              {isRandomAssigneeLocked && (
+                <p className="text-destructive/50 pt-2 text-xs font-medium">
+                  랜덤 배정 시 반복 설정은 사용할 수 없어요.
+                </p>
+              )}
             </div>
           </section>
 
           {/* 반복 */}
-          <RepeatSection value={repeatValue} onChange={setRepeatValue} />
+          <RepeatSection
+            value={repeatValue}
+            onChange={setRepeatValue}
+            disabled={isRandomAssigneeLocked}
+          />
 
           {/* 메모 */}
           <section className="space-y-4">
@@ -262,6 +346,15 @@ const TodoCreatePage = () => {
           setIsDueDateDialogOpen(false);
         }}
       />
+
+      {randomAssignStage !== 'idle' && (
+        <RandomAssignOverlay
+          stage={randomAssignStage}
+          candidateName={randomCandidate?.name}
+          onClose={handleCloseRandomOverlay}
+          onConfirm={handleConfirmRandomAssignee}
+        />
+      )}
     </FormPageLayout>
   );
 };
