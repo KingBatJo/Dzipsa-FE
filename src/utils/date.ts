@@ -1,3 +1,15 @@
+// 두 자리 숫자 문자열로 변환
+const padTwo = (value: number) => value.toString().padStart(2, '0');
+
+// Date 객체를 'YYYY.MM.DD' 형식 문자열로 변환
+export const formatDate = (date: Date) => {
+  const year = date.getFullYear();
+  const month = padTwo(date.getMonth() + 1);
+  const day = padTwo(date.getDate());
+
+  return `${year}.${month}.${day}`;
+};
+
 // ISO datetime -> 오늘 오전 9:00
 export const formatDueAt = (dueAt: string) => {
   const today = new Date();
@@ -27,24 +39,24 @@ export const formatDueAt = (dueAt: string) => {
 
 // 'YYYY-MM-DD', 'HH:mm' -> ISO (UTC)
 export const toIsoDateTime = (date: string, time: string) => {
-  const [y, m, d] = date.split('-').map(Number);
-  const [hh, mm] = time.split(':').map(Number);
+  const [year, month, day] = date.split('-').map(Number);
+  const [hours, minutes] = time.split(':').map(Number);
 
-  const local = new Date(y, m - 1, d, hh, mm, 0, 0);
+  const localDateTime = new Date(year, month - 1, day, hours, minutes, 0, 0);
 
-  return local.toISOString();
+  return localDateTime.toISOString();
 };
 
 // ISO (UTC) -> 'YYYY-MM-DD', 'HH:mm'
 export const toLocalDateTime = (iso: string) => {
-  const d = new Date(iso);
+  const date = new Date(iso);
 
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
+  const year = date.getFullYear();
+  const month = padTwo(date.getMonth() + 1);
+  const day = padTwo(date.getDate());
 
-  const hours = String(d.getHours()).padStart(2, '0');
-  const minutes = String(d.getMinutes()).padStart(2, '0');
+  const hours = padTwo(date.getHours());
+  const minutes = padTwo(date.getMinutes());
 
   return {
     date: `${year}-${month}-${day}`,
