@@ -1,12 +1,11 @@
-import type { Todo } from '@/types/todo';
-import { toLocalDateTime } from '@/utils/date';
+import type {
+  Todo,
+  TodoDetailViewState,
+  TodoStatusLabel,
+  TodoWithLocal,
+} from '@/types/todo';
 
-export type TodoWithLocal = Todo & {
-  local: {
-    dueDate: string;
-    completedDate?: string;
-  };
-};
+import { toLocalDateTime } from '@/utils/date';
 
 // Todo에 local 시간 정보 붙이기
 export const addLocalToTodos = (todos: Todo[]): TodoWithLocal[] =>
@@ -19,6 +18,51 @@ export const addLocalToTodos = (todos: Todo[]): TodoWithLocal[] =>
         : undefined,
     },
   }));
+
+// 지연 여부
+export const isTodoDelayed = (todo: TodoWithLocal, today: string) => {
+  if (todo.completed && todo.completedAt) {
+    return todo.local.completedDate! > todo.local.dueDate;
+  }
+
+  return todo.local.dueDate < today;
+};
+
+// 상태 라벨
+export const getTodoStatusLabel = (
+  todo: TodoWithLocal,
+  today: string
+): TodoStatusLabel => {
+  const delayed = isTodoDelayed(todo, today);
+
+  if (todo.completed) {
+    return delayed ? '지연 완료' : '완료';
+  }
+
+  return delayed ? '지연' : '진행';
+};
+
+// 상세 보기용 상태
+export const getTodoDetailViewState = (
+  todo: TodoWithLocal,
+  myId: number
+): TodoDetailViewState => {
+  const isMine = todo.assigneeId === myId;
+  const isCompleted = todo.completed;
+  const hasProofImage = Boolean(todo.proofImageUrl);
+
+  return {
+    isMine,
+    isCompleted,
+    hasProofImage,
+    canEdit: isMine,
+    canDelete: isMine,
+    canConfirmComplete: isMine && !isCompleted,
+    canPhotoComplete: isMine && !isCompleted,
+    canRevertToInProgress: isMine && isCompleted,
+    canAddProofImage: isMine && isCompleted && !hasProofImage,
+  };
+};
 
 // Todo 섹션 분류
 export const getTodoSections = (todos: TodoWithLocal[], today: string) => {

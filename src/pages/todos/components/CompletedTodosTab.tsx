@@ -1,18 +1,28 @@
 import { MOCK_TODAY, mockMembers, mockTodoList } from '@/mocks/mockData';
-import { addLocalToTodos, getTodoSections } from '@/utils/todos';
+import {
+  addLocalToTodos,
+  getTodoSections,
+  getTodoStatusLabel,
+} from '@/utils/todos';
 
 import { Card } from '@/components/ui/card';
 import ListSection from '@/components/common/ListSection';
 import RoundedBadge from '@/components/common/RoundedBadge';
+import type { TodoWithLocal } from '@/types/todo';
 import UserAvatar from '@/components/common/UserAvatar';
-import { toLocalDateTime } from '@/utils/date';
+import { cn } from '@/lib/utils';
+
+type CompletedTodosTabProps = {
+  onTodoClick?: (todo: TodoWithLocal) => void;
+};
 
 type CompletedTodoFeedCardProps = {
   userName: string;
   todoTitle: string;
   dueDate: string;
   proofImageUrl?: string;
-  isDelayed?: boolean;
+  statusLabel: '완료' | '지연 완료';
+  onClick?: () => void;
 };
 
 type CompletedTodoFeedItemProps = CompletedTodoFeedCardProps & {
@@ -24,10 +34,19 @@ const CompletedTodoFeedCard = ({
   todoTitle,
   dueDate,
   proofImageUrl,
-  isDelayed = false,
+  statusLabel,
+  onClick,
 }: CompletedTodoFeedCardProps) => {
   return (
-    <Card className="flex flex-1 flex-col gap-3 border-slate-100 p-4">
+    <Card
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onClick={onClick}
+      className={cn(
+        'flex flex-1 flex-col gap-3 border-slate-100 p-4',
+        onClick && 'hover:cursor-pointer'
+      )}
+    >
       <p className="text-sm font-medium">
         {userName}님이 할 일을 완료하였습니다.
       </p>
@@ -42,7 +61,7 @@ const CompletedTodoFeedCard = ({
           {todoTitle}
         </RoundedBadge>
 
-        {isDelayed && (
+        {statusLabel === '지연 완료' && (
           <RoundedBadge className="bg-[#FFEDD5] text-[#FF602C]">
             지연 완료
           </RoundedBadge>
@@ -70,7 +89,7 @@ const CompletedTodoFeedItem = ({
   );
 };
 
-const CompletedTodosTab = () => {
+const CompletedTodosTab = ({ onTodoClick }: CompletedTodosTabProps) => {
   const todosWithLocal = addLocalToTodos(mockTodoList);
 
   const { completedTodos } = getTodoSections(todosWithLocal, MOCK_TODAY);
@@ -80,19 +99,21 @@ const CompletedTodosTab = () => {
       <div className="flex flex-col gap-8 pt-3">
         {completedTodos.map((todo) => {
           const member = mockMembers.find((m) => m.id === todo.assigneeId);
+          const statusLabel = getTodoStatusLabel(todo, MOCK_TODAY);
+
+          if (statusLabel !== '완료' && statusLabel !== '지연 완료') {
+            return null;
+          }
 
           return (
             <CompletedTodoFeedItem
               key={todo.id}
+              onClick={() => onTodoClick?.(todo)}
               userName={member?.name ?? '알 수 없음'}
               profileImage={member?.profileImage}
               todoTitle={todo.title}
               dueDate={todo.local.dueDate} // 임시 포맷
-              isDelayed={
-                !!todo.completedAt &&
-                toLocalDateTime(todo.completedAt).date >
-                  toLocalDateTime(todo.dueAt).date
-              }
+              statusLabel={statusLabel}
               proofImageUrl={todo.proofImageUrl}
             />
           );

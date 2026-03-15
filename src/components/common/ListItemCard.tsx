@@ -21,9 +21,14 @@ const ListItemCard = ({
   <Card
     role={onClick ? 'button' : undefined}
     tabIndex={onClick ? 0 : undefined}
-    onClick={onClick}
+    onClick={(event) => {
+      if (!onClick) return;
+      event.currentTarget.blur();
+      onClick();
+    }}
     className={cn(
       'flex items-center rounded-md border-[#D4D4D4] p-4',
+      onClick && 'hover:cursor-pointer',
       className
     )}
   >

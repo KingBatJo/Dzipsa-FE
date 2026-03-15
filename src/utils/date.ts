@@ -10,6 +10,30 @@ export const formatDate = (date: Date) => {
   return `${year}.${month}.${day}`;
 };
 
+export const WEEKDAY_LABELS = [
+  '일',
+  '월',
+  '화',
+  '수',
+  '목',
+  '금',
+  '토',
+] as const;
+
+export const formatDueDateLabel = (dateString: string) => {
+  const date = new Date(dateString);
+
+  return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일까지`;
+};
+
+export const formatStatusDateLabel = (dateString: string) => {
+  const date = new Date(dateString);
+
+  return `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()} (${
+    WEEKDAY_LABELS[date.getDay()]
+  })`;
+};
+
 // ISO datetime -> 오늘 오전 9:00
 export const formatDueAt = (dueAt: string) => {
   const today = new Date();

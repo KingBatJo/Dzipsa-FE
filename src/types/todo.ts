@@ -13,6 +13,27 @@ export type Todo = {
   proofImageUrl?: string;
 };
 
+export type TodoWithLocal = Todo & {
+  local: {
+    dueDate: string;
+    completedDate?: string;
+  };
+};
+
+export type TodoStatusLabel = '진행' | '지연' | '완료' | '지연 완료';
+
+export type TodoDetailViewState = {
+  isMine: boolean;
+  isCompleted: boolean;
+  hasProofImage: boolean;
+  canEdit: boolean;
+  canDelete: boolean;
+  canConfirmComplete: boolean;
+  canPhotoComplete: boolean;
+  canRevertToInProgress: boolean;
+  canAddProofImage: boolean;
+};
+
 export type RepeatType = (typeof REPEAT_TYPE_OPTIONS)[number];
 
 export type TodoCreateRequest = {
