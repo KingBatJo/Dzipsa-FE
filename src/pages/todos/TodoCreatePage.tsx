@@ -3,6 +3,7 @@ import EditableInputSection from '@/components/form/EditableInputSection';
 import FormPageLayout from '@/components/form/FormPageLayout';
 import { mockMembers } from '@/mocks/mockData';
 import {
+  TODO_MEMO_MAX_LENGTH,
   TODO_TITLE_MAX_LENGTH,
   todoCreateSchema,
   type TodoCreateValues,
@@ -13,10 +14,38 @@ import { useState } from 'react';
 
 import { Controller, useForm } from 'react-hook-form';
 import AppButton from '@/components/common/AppButton';
-import RepeatSection from './components/RepeatSection';
+import RepeatSection, {
+  type RepeatCycle,
+} from '@/pages/todos/components/RepeatSection';
+import { formatDate } from '@/utils/date';
+import type { WeekDay } from '@/components/form/WeekdaySelector';
+import { cn } from '@/lib/utils';
+import DateWheelDialog from '@/components/form/DateWheelDialog';
+import ErrorTooltip from '@/components/form/ErrorTooltip';
+
+export type RepeatValue = {
+  enabled: boolean;
+  cycle: RepeatCycle;
+  days: WeekDay[];
+  startDate: Date;
+  endDate: Date | null;
+};
 
 const TodoCreatePage = () => {
   const [inputErrorMessage, setInputErrorMessage] = useState('');
+  const [memoErrorMessage, setMemoErrorMessage] = useState('');
+  const [isDueDateDialogOpen, setIsDueDateDialogOpen] = useState(false);
+  const [dueDate, setDueDate] = useState<Date | null>(new Date());
+  const [selectedAssigneeId, setSelectedAssigneeId] = useState<number | null>(
+    mockMembers[0]?.id ?? null
+  );
+  const [repeatValue, setRepeatValue] = useState<RepeatValue>({
+    enabled: false,
+    cycle: '매주',
+    days: ['월'],
+    startDate: new Date(),
+    endDate: null,
+  });
 
   const {
     control,
@@ -27,11 +56,33 @@ const TodoCreatePage = () => {
     mode: 'onChange',
     defaultValues: {
       title: '',
+      memo: '',
     },
   });
 
+  const handleRandomAssign = () => {
+    const randomMember =
+      mockMembers[Math.floor(Math.random() * mockMembers.length)];
+    setSelectedAssigneeId(randomMember.id);
+  };
+
   const onSubmit = (data: TodoCreateValues) => {
-    console.log('할 일 등록: ', data);
+    const submitData = {
+      title: data.title,
+      memo: data.memo ?? '',
+      dueDate: !repeatValue.enabled && dueDate ? formatDate(dueDate) : '',
+      assigneeId: selectedAssigneeId,
+      repeat: repeatValue.enabled
+        ? {
+            cycle: repeatValue.cycle,
+            days: repeatValue.cycle === '매주' ? repeatValue.days : [],
+            startDate: formatDate(repeatValue.startDate),
+            endDate: repeatValue.endDate ? formatDate(repeatValue.endDate) : '',
+          }
+        : null,
+    };
+
+    console.log('할 일 등록:', submitData);
   };
 
   return (
@@ -87,10 +138,24 @@ const TodoCreatePage = () => {
           <section className="space-y-4">
             <p className="text-base font-semibold">마감기한</p>
 
-            <AppButton className="text-muted-foreground bg-secondary border-border border text-lg font-semibold">
-              {/* 기본값 오늘 */}
-              2026.03.15 (토) 까지
-            </AppButton>
+            <div>
+              <AppButton
+                disabled={repeatValue.enabled}
+                onClick={() => {
+                  if (repeatValue.enabled) return;
+                  setIsDueDateDialogOpen(true);
+                }}
+                className="text-muted-foreground bg-secondary border-border border text-lg font-semibold"
+              >
+                {dueDate ? `${formatDate(dueDate)} 까지` : '마감기한 선택'}
+              </AppButton>
+
+              {repeatValue.enabled && (
+                <p className="text-destructive/50 pt-2 text-xs font-medium">
+                  반복 설정 시 마감기한은 설정할 수 없어요.
+                </p>
+              )}
+            </div>
           </section>
 
           {/* 담당자 */}
@@ -99,46 +164,104 @@ const TodoCreatePage = () => {
 
             <div className="flex flex-col gap-[10px]">
               <div className="flex gap-[10px]">
-                {mockMembers.map((member) => (
-                  <button
-                    key={member.id}
-                    type="button"
-                    className="border-border hover:bg-secondary rounded-full border"
-                  >
-                    {/* 기본값 작성자 */}
-                    <RoundedBadge>{member.name}</RoundedBadge>
-                  </button>
-                ))}
+                {mockMembers.map((member) => {
+                  const isSelected = selectedAssigneeId === member.id;
+
+                  return (
+                    <button
+                      key={member.id}
+                      type="button"
+                      onClick={() => setSelectedAssigneeId(member.id)}
+                      className={cn(
+                        'border-border rounded-full border',
+                        isSelected ? 'bg-secondary' : 'hover:bg-secondary'
+                      )}
+                    >
+                      <RoundedBadge>{member.name}</RoundedBadge>
+                    </button>
+                  );
+                })}
               </div>
 
-              <AppButton className="text-primary-foreground from-primary bg-gradient-to-r to-zinc-500 text-sm font-medium">
+              <AppButton
+                onClick={handleRandomAssign}
+                className="text-primary-foreground from-primary bg-gradient-to-r to-zinc-500 text-sm font-medium"
+              >
                 운명에 맡기기
               </AppButton>
             </div>
           </section>
 
           {/* 반복 */}
-          <RepeatSection />
+          <RepeatSection value={repeatValue} onChange={setRepeatValue} />
 
           {/* 메모 */}
           <section className="space-y-4">
             <p className="text-base font-semibold">메모</p>
 
-            <div className="flex flex-col gap-1">
-              <textarea
-                name="todo-memo"
-                id="todo-memo"
-                placeholder="메모를 입력하세요"
-                className="border-border bg-secondary h-[125px] resize-none rounded-[10px] border px-4 py-2"
-              />
+            <Controller
+              name="memo"
+              control={control}
+              render={({ field }) => (
+                <ErrorTooltip
+                  message={memoErrorMessage || errors.memo?.message}
+                >
+                  <div className="flex flex-col gap-1">
+                    <textarea
+                      id="todo-memo"
+                      placeholder="메모를 입력하세요"
+                      className={cn(
+                        'border-border bg-secondary h-[125px] resize-none rounded-[10px] border px-4 py-2',
+                        memoErrorMessage || errors.memo?.message
+                          ? 'border-red-500'
+                          : 'border-neutral-200 focus:border-neutral-900'
+                      )}
+                      value={field.value}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        const maxLengthError = validateTextMaxLength(
+                          value,
+                          TODO_MEMO_MAX_LENGTH
+                        );
 
-              <p className="flex justify-end text-xs font-semibold text-[#BCBCBC]">
-                최대 300글자
-              </p>
-            </div>
+                        if (maxLengthError) {
+                          setMemoErrorMessage(maxLengthError);
+                          return;
+                        }
+
+                        field.onChange(value);
+
+                        if (memoErrorMessage) {
+                          setMemoErrorMessage('');
+                        }
+                      }}
+                      onBlur={() => {
+                        field.onBlur();
+                        setMemoErrorMessage('');
+                      }}
+                      ref={field.ref}
+                    />
+
+                    <p className="flex justify-end text-xs font-semibold text-[#BCBCBC]">
+                      최대 300글자
+                    </p>
+                  </div>
+                </ErrorTooltip>
+              )}
+            />
           </section>
         </div>
       </div>
+
+      <DateWheelDialog
+        open={isDueDateDialogOpen}
+        value={dueDate ?? new Date()}
+        onOpenChange={setIsDueDateDialogOpen}
+        onConfirm={(date) => {
+          setDueDate(date);
+          setIsDueDateDialogOpen(false);
+        }}
+      />
     </FormPageLayout>
   );
 };
