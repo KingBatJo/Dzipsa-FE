@@ -75,187 +75,186 @@ const TodoCreatePage = () => {
       title="할 일 등록"
       onSubmit={handleSubmit(onSubmit)}
       submitDisabled={!isValid}
-      top={
-        <Controller
-          name="title"
-          control={control}
-          render={({ field }) => (
-            <EditableInputSection
-              id="todo-title"
-              value={field.value}
-              placeholder="할 일을 입력하세요"
-              maxLength={TODO_TITLE_MAX_LENGTH}
-              onChange={(value) => {
-                const maxLengthError = validateTextMaxLength(
-                  value,
-                  TODO_TITLE_MAX_LENGTH
-                );
+    >
+      <Controller
+        name="title"
+        control={control}
+        render={({ field }) => (
+          <EditableInputSection
+            id="todo-title"
+            value={field.value}
+            placeholder="할 일을 입력하세요"
+            maxLength={TODO_TITLE_MAX_LENGTH}
+            onChange={(value) => {
+              const maxLengthError = validateTextMaxLength(
+                value,
+                TODO_TITLE_MAX_LENGTH
+              );
 
-                if (maxLengthError) {
-                  setInputErrorMessage(maxLengthError);
-                  return;
-                }
+              if (maxLengthError) {
+                setInputErrorMessage(maxLengthError);
+                return;
+              }
 
-                field.onChange(value);
+              field.onChange(value);
 
-                if (inputErrorMessage) {
-                  setInputErrorMessage('');
-                }
-              }}
-              onBlur={() => {
-                field.onBlur();
+              if (inputErrorMessage) {
                 setInputErrorMessage('');
-              }}
-              errorMessage={inputErrorMessage || errors.title?.message}
-              inputRef={field.ref}
-            />
-          )}
-        />
-      }
-      bottom={
-        <div>
-          <p className="text-sm font-semibold text-[#BCBCBC]">상세 설정</p>
+              }
+            }}
+            onBlur={() => {
+              field.onBlur();
+              setInputErrorMessage('');
+            }}
+            errorMessage={inputErrorMessage || errors.title?.message}
+            inputRef={field.ref}
+            className="px-4"
+          />
+        )}
+      />
 
-          <div className="flex flex-col gap-[30px] pt-6">
-            <section className="space-y-4">
-              <p className="text-base font-semibold">마감기한</p>
+      <div className="mt-[26px] mb-[30px] h-3 bg-neutral-100" />
 
-              <AppButton className="text-muted-foreground bg-secondary border-border border text-lg font-semibold">
-                {/* 기본값 오늘 */}
-                2026.03.15 (토) 까지
-              </AppButton>
-            </section>
+      <div className="px-4">
+        <p className="text-sm font-semibold text-[#BCBCBC]">상세 설정</p>
 
-            <section className="space-y-4">
-              <p className="text-base font-semibold">담당자</p>
+        <div className="flex flex-col gap-[30px] pt-6">
+          <section className="space-y-4">
+            <p className="text-base font-semibold">마감기한</p>
 
-              <div className="flex flex-col gap-[10px]">
-                <div className="flex gap-[10px]">
-                  {mockMembers.map((member) => (
-                    <button
-                      key={member.id}
-                      type="button"
-                      className="border-border hover:bg-secondary rounded-full border"
-                    >
-                      {/* 기본값 작성자 */}
-                      <RoundedBadge>{member.name}</RoundedBadge>
-                    </button>
-                  ))}
-                </div>
+            <AppButton className="text-muted-foreground bg-secondary border-border border text-lg font-semibold">
+              {/* 기본값 오늘 */}
+              2026.03.15 (토) 까지
+            </AppButton>
+          </section>
 
-                <AppButton className="text-primary-foreground from-primary bg-gradient-to-r to-zinc-500 text-sm font-medium">
-                  운명에 맡기기
-                </AppButton>
-              </div>
-            </section>
+          <section className="space-y-4">
+            <p className="text-base font-semibold">담당자</p>
 
-            <section className="space-y-4 text-base font-semibold">
-              <div className="flex items-center justify-between">
-                <p>반복</p>
-
-                <ToggleSwitch
-                  checked={isRepeatEnabled}
-                  onCheckedChange={(checked) => {
-                    setIsRepeatEnabled(checked);
-
-                    if (!checked) {
-                      setIsRepeatMenuOpen(false);
-                    }
-                  }}
-                  ariaLabel="반복 설정 토글"
-                />
-              </div>
-
-              {isRepeatEnabled && (
-                <div className="flex flex-col gap-[15px]">
-                  <div
-                    className="relative flex justify-end"
-                    ref={repeatCycleDropdownRef}
+            <div className="flex flex-col gap-[10px]">
+              <div className="flex gap-[10px]">
+                {mockMembers.map((member) => (
+                  <button
+                    key={member.id}
+                    type="button"
+                    className="border-border hover:bg-secondary rounded-full border"
                   >
-                    <button
-                      type="button"
-                      className="flex items-center gap-1"
-                      onClick={() =>
-                        setIsRepeatMenuOpen((prevOpen) => !prevOpen)
-                      }
-                      aria-haspopup="menu"
-                      aria-expanded={isRepeatMenuOpen}
-                    >
-                      <span>{repeatCycle}</span>
-                      <ChevronDown
-                        className={cn(
-                          'h-6 w-6 transition-transform',
-                          isRepeatMenuOpen && 'rotate-180'
-                        )}
-                      />
-                    </button>
-
-                    {isRepeatMenuOpen && (
-                      <ul
-                        role="menu"
-                        className="absolute top-[calc(100%+6px)] right-0 z-10 w-[77px] rounded-md border border-[#898887] bg-[#696867] p-1 text-xs font-medium text-white shadow-md"
-                      >
-                        {REPEAT_CYCLE_OPTIONS.map((option) => (
-                          <li key={option}>
-                            <button
-                              type="button"
-                              role="menuitemradio"
-                              aria-checked={repeatCycle === option}
-                              className="flex w-full items-center gap-1 rounded-md px-2 py-1.5 text-left hover:bg-[#525150]"
-                              onClick={() => {
-                                setRepeatCycle(option);
-                                setIsRepeatMenuOpen(false);
-                              }}
-                            >
-                              <div className="flex gap-1">
-                                <span>
-                                  {repeatCycle === option ? (
-                                    <Check className="h-4 w-4" />
-                                  ) : (
-                                    <div className="h-4 w-4" />
-                                  )}
-                                </span>
-                                <span className="text-xs font-medium">
-                                  {option}
-                                </span>
-                              </div>
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-
-                  {repeatCycle === '매주' && <div>월 ~ 금</div>}
-
-                  <div className="flex flex-col gap-[15px]">
-                    <div>시작 날짜</div>
-                    <div>종료 날짜</div>
-                  </div>
-                </div>
-              )}
-            </section>
-
-            <section className="space-y-4">
-              <p className="text-base font-semibold">메모</p>
-
-              <div className="flex flex-col gap-1">
-                <textarea
-                  name="todo-memo"
-                  id="todo-memo"
-                  placeholder="메모를 입력하세요"
-                  className="border-border bg-secondary h-[125px] resize-none rounded-[10px] border px-4 py-2"
-                />
-
-                <p className="flex justify-end text-xs font-semibold text-[#BCBCBC]">
-                  최대 300글자
-                </p>
+                    {/* 기본값 작성자 */}
+                    <RoundedBadge>{member.name}</RoundedBadge>
+                  </button>
+                ))}
               </div>
-            </section>
-          </div>
+
+              <AppButton className="text-primary-foreground from-primary bg-gradient-to-r to-zinc-500 text-sm font-medium">
+                운명에 맡기기
+              </AppButton>
+            </div>
+          </section>
+
+          <section className="space-y-4 text-base font-semibold">
+            <div className="flex items-center justify-between">
+              <p>반복</p>
+
+              <ToggleSwitch
+                checked={isRepeatEnabled}
+                onCheckedChange={(checked) => {
+                  setIsRepeatEnabled(checked);
+
+                  if (!checked) {
+                    setIsRepeatMenuOpen(false);
+                  }
+                }}
+                ariaLabel="반복 설정 토글"
+              />
+            </div>
+
+            {isRepeatEnabled && (
+              <div className="flex flex-col gap-[15px]">
+                <div
+                  className="relative flex justify-end"
+                  ref={repeatCycleDropdownRef}
+                >
+                  <button
+                    type="button"
+                    className="flex items-center gap-1"
+                    onClick={() => setIsRepeatMenuOpen((prevOpen) => !prevOpen)}
+                    aria-haspopup="menu"
+                    aria-expanded={isRepeatMenuOpen}
+                  >
+                    <span>{repeatCycle}</span>
+                    <ChevronDown
+                      className={cn(
+                        'h-6 w-6 transition-transform',
+                        isRepeatMenuOpen && 'rotate-180'
+                      )}
+                    />
+                  </button>
+
+                  {isRepeatMenuOpen && (
+                    <ul
+                      role="menu"
+                      className="absolute top-[calc(100%+6px)] right-0 z-10 w-[77px] rounded-md border border-[#898887] bg-[#696867] p-1 text-xs font-medium text-white shadow-md"
+                    >
+                      {REPEAT_CYCLE_OPTIONS.map((option) => (
+                        <li key={option}>
+                          <button
+                            type="button"
+                            role="menuitemradio"
+                            aria-checked={repeatCycle === option}
+                            className="flex w-full items-center gap-1 rounded-md px-2 py-1.5 text-left hover:bg-[#525150]"
+                            onClick={() => {
+                              setRepeatCycle(option);
+                              setIsRepeatMenuOpen(false);
+                            }}
+                          >
+                            <div className="flex gap-1">
+                              <span>
+                                {repeatCycle === option ? (
+                                  <Check className="h-4 w-4" />
+                                ) : (
+                                  <div className="h-4 w-4" />
+                                )}
+                              </span>
+                              <span className="text-xs font-medium">
+                                {option}
+                              </span>
+                            </div>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+
+                {repeatCycle === '매주' && <div>월 ~ 금</div>}
+
+                <div className="flex flex-col gap-[15px]">
+                  <div>시작 날짜</div>
+                  <div>종료 날짜</div>
+                </div>
+              </div>
+            )}
+          </section>
+
+          <section className="space-y-4">
+            <p className="text-base font-semibold">메모</p>
+
+            <div className="flex flex-col gap-1">
+              <textarea
+                name="todo-memo"
+                id="todo-memo"
+                placeholder="메모를 입력하세요"
+                className="border-border bg-secondary h-[125px] resize-none rounded-[10px] border px-4 py-2"
+              />
+
+              <p className="flex justify-end text-xs font-semibold text-[#BCBCBC]">
+                최대 300글자
+              </p>
+            </div>
+          </section>
         </div>
-      }
-    />
+      </div>
+    </FormPageLayout>
   );
 };
 

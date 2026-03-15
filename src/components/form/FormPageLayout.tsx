@@ -6,16 +6,14 @@ import { useNavigate } from 'react-router-dom';
 
 type FormPageLayoutProps = {
   title: string;
-  top?: React.ReactNode;
-  bottom?: React.ReactNode;
+  children: React.ReactNode;
   onSubmit: () => void;
   submitDisabled?: boolean;
 };
 
 const FormPageLayout = ({
   title,
-  top,
-  bottom,
+  children,
   onSubmit,
   submitDisabled = false,
 }: FormPageLayoutProps) => {
@@ -50,13 +48,7 @@ const FormPageLayout = ({
         </Button>
       </header>
 
-      <section>
-        <div className="px-4 pt-[30px]">{top}</div>
-
-        <div className="my-[30px] h-3 bg-neutral-100" />
-
-        <div className="px-4">{bottom}</div>
-      </section>
+      <section>{children}</section>
     </div>
   );
 };
