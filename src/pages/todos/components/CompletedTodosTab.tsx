@@ -11,6 +11,7 @@ import RoundedBadge from '@/components/common/RoundedBadge';
 import type { TodoWithLocal } from '@/types/todo';
 import UserAvatar from '@/components/common/UserAvatar';
 import { cn } from '@/lib/utils';
+import { formatStatusDateLabel } from '@/utils/date';
 
 type CompletedTodosTabProps = {
   onTodoClick?: (todo: TodoWithLocal) => void;
@@ -19,7 +20,7 @@ type CompletedTodosTabProps = {
 type CompletedTodoFeedCardProps = {
   userName: string;
   todoTitle: string;
-  dueDate: string;
+  completedDate: string;
   proofImageUrl?: string;
   statusLabel: '완료' | '지연 완료';
   onClick?: () => void;
@@ -32,7 +33,7 @@ type CompletedTodoFeedItemProps = CompletedTodoFeedCardProps & {
 const CompletedTodoFeedCard = ({
   userName,
   todoTitle,
-  dueDate,
+  completedDate,
   proofImageUrl,
   statusLabel,
   onClick,
@@ -68,8 +69,8 @@ const CompletedTodoFeedCard = ({
         )}
       </div>
 
-      {/* 마감일 */}
-      <p className="text-sm font-normal text-slate-400">{dueDate}</p>
+      {/* 완료된 날짜 */}
+      <p className="text-sm font-normal text-slate-400">{completedDate}</p>
     </Card>
   );
 };
@@ -100,6 +101,9 @@ const CompletedTodosTab = ({ onTodoClick }: CompletedTodosTabProps) => {
         {completedTodos.map((todo) => {
           const member = mockMembers.find((m) => m.id === todo.assigneeId);
           const statusLabel = getTodoStatusLabel(todo, MOCK_TODAY);
+          const completedDateLabel = todo.completedAt
+            ? formatStatusDateLabel(todo.completedAt)
+            : '';
 
           if (statusLabel !== '완료' && statusLabel !== '지연 완료') {
             return null;
@@ -112,7 +116,7 @@ const CompletedTodosTab = ({ onTodoClick }: CompletedTodosTabProps) => {
               userName={member?.name ?? '알 수 없음'}
               profileImage={member?.profileImage}
               todoTitle={todo.title}
-              dueDate={todo.local.dueDate} // 임시 포맷
+              completedDate={completedDateLabel}
               statusLabel={statusLabel}
               proofImageUrl={todo.proofImageUrl}
             />

@@ -29,9 +29,11 @@ export const formatDueDateLabel = (dateString: string) => {
 export const formatStatusDateLabel = (dateString: string) => {
   const date = new Date(dateString);
 
-  return `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()} (${
-    WEEKDAY_LABELS[date.getDay()]
-  })`;
+  const year = date.getFullYear();
+  const month = padTwo(date.getMonth() + 1);
+  const day = padTwo(date.getDate());
+
+  return `${year}.${month}.${day} (${WEEKDAY_LABELS[date.getDay()]})`;
 };
 
 // ISO datetime -> 오늘 오전 9:00
