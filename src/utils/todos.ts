@@ -4,8 +4,7 @@ import type {
   TodoStatusLabel,
   TodoWithLocal,
 } from '@/types/todo';
-
-import { toLocalDateTime } from '@/utils/date';
+import { formatStatusDateLabel, toLocalDateTime } from '@/utils/date';
 
 // Todo에 local 시간 정보 붙이기
 export const addLocalToTodos = (todos: Todo[]): TodoWithLocal[] =>
@@ -40,6 +39,41 @@ export const getTodoStatusLabel = (
   }
 
   return delayed ? '지연' : '진행';
+};
+
+// 상태 하단 라벨
+export const getTodoStatusSubLabel = (todo: TodoWithLocal, today: string) => {
+  const statusLabel = getTodoStatusLabel(todo, today);
+
+  const getDelayDays = (fromDate: string, toDate: string) => {
+    const from = new Date(fromDate);
+    const to = new Date(toDate);
+
+    const fromStart = new Date(
+      from.getFullYear(),
+      from.getMonth(),
+      from.getDate()
+    );
+    const toStart = new Date(to.getFullYear(), to.getMonth(), to.getDate());
+
+    return Math.floor(
+      (toStart.getTime() - fromStart.getTime()) / (1000 * 60 * 60 * 24)
+    );
+  };
+
+  if (statusLabel === '지연') {
+    return `${getDelayDays(todo.dueAt, today)}일 지연`;
+  }
+
+  if (statusLabel === '지연 완료' && todo.completedAt) {
+    return `${getDelayDays(todo.dueAt, todo.completedAt)}일 지연, ${formatStatusDateLabel(todo.completedAt)}`;
+  }
+
+  if (statusLabel === '완료' && todo.completedAt) {
+    return formatStatusDateLabel(todo.completedAt);
+  }
+
+  return formatStatusDateLabel(todo.dueAt);
 };
 
 // 상세 보기용 상태

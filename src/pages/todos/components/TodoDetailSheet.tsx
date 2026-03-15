@@ -1,6 +1,10 @@
 import { PencilLine, Trash2 } from 'lucide-react';
 import { formatDueDateLabel, formatStatusDateLabel } from '@/utils/date';
-import { getTodoDetailViewState, getTodoStatusLabel } from '@/utils/todos';
+import {
+  getTodoDetailViewState,
+  getTodoStatusLabel,
+  getTodoStatusSubLabel,
+} from '@/utils/todos';
 
 import BottomSheet from '@/components/common/BottomSheet';
 import { Button } from '@/components/ui/button';
@@ -111,7 +115,7 @@ const TodoDetailSheet = ({
 
                   {todo && (
                     <span className="text-[#ACACAC]">
-                      {formatStatusDateLabel(todo.dueAt)}
+                      {getTodoStatusSubLabel(todo, MOCK_TODAY)}
                     </span>
                   )}
                 </div>
