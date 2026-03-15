@@ -1,6 +1,6 @@
 // types/member.ts
 export type Member = {
-  id: string;
+  id: number;
   name: string;
   profileImage?: string;
 };
