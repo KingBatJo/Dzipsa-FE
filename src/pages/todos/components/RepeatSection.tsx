@@ -1,7 +1,11 @@
-import ToggleSwitch from '@/components/common/ToggleSwitch';
-import { cn } from '@/lib/utils';
 import { Check, ChevronDown } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+
+import ToggleSwitch from '@/components/common/ToggleSwitch';
+import WeekdaySelector, {
+  type WeekDay,
+} from '@/components/form/WeekdaySelector';
+import { cn } from '@/lib/utils';
 
 const REPEAT_CYCLE_OPTIONS = ['매주', '매월'] as const;
 type RepeatCycle = (typeof REPEAT_CYCLE_OPTIONS)[number];
@@ -10,6 +14,7 @@ const RepeatSection = () => {
   const [isRepeatEnabled, setIsRepeatEnabled] = useState(false);
   const [repeatCycle, setRepeatCycle] = useState<RepeatCycle>('매주');
   const [isRepeatMenuOpen, setIsRepeatMenuOpen] = useState(false);
+  const [repeatDays, setRepeatDays] = useState<WeekDay[]>(['월']);
   const repeatCycleDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -59,7 +64,10 @@ const RepeatSection = () => {
 
       {isRepeatEnabled && (
         <div className="flex flex-col gap-[15px]">
-          <div className="relative flex justify-end" ref={repeatCycleDropdownRef}>
+          <div
+            className="relative flex justify-end"
+            ref={repeatCycleDropdownRef}
+          >
             <button
               type="button"
               className="flex items-center gap-1"
@@ -110,7 +118,9 @@ const RepeatSection = () => {
             )}
           </div>
 
-          {repeatCycle === '매주' && <div>월 ~ 금</div>}
+          {repeatCycle === '매주' && (
+            <WeekdaySelector value={repeatDays} onChange={setRepeatDays} />
+          )}
 
           <div className="flex flex-col gap-[15px]">
             <div>시작 날짜</div>
