@@ -1,4 +1,9 @@
-import type { JoinRoomRequest, RoomResponse } from '@/api/room/room.types';
+import type {
+  GetRoomMembersParams,
+  JoinRoomRequest,
+  RoomMemberResponse,
+  RoomResponse,
+} from '@/api/room/room.types';
 
 import { apiClient } from '@/api/client';
 
@@ -13,6 +18,17 @@ export const joinRoom = async (payload: JoinRoomRequest) => {
   const { data } = await apiClient.post<RoomResponse>(
     '/api/rooms/join',
     payload
+  );
+  return data;
+};
+
+// 방 구성원 조회
+export const getRoomMembers = async (params?: GetRoomMembersParams) => {
+  const { data } = await apiClient.get<RoomMemberResponse[]>(
+    '/api/rooms/members',
+    {
+      params,
+    }
   );
   return data;
 };

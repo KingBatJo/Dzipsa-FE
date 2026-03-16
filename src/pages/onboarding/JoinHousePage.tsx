@@ -1,12 +1,13 @@
+import type { RoomMemberResponse, RoomResponse } from '@/api/room/room.types';
+import { getRoomMembers, joinRoom } from '@/api/room/room.api';
+
 import { Button } from '@/components/ui/button';
 import HouseConfirmStep from '@/pages/onboarding/components/HouseConfirmStep';
 import InviteCodeInputStep from '@/pages/onboarding/components/InviteCodeInputStep';
 import { OTP_LENGTH } from '@/constants/onboarding';
 import OnboardingFlowLayout from '@/pages/onboarding/components/OnboardingFlowLayout';
 import ProfileStep from '@/pages/onboarding/components/ProfileStep';
-import type { RoomResponse } from '@/api/room/room.types';
 import { getApiErrorMessage } from '@/api/error';
-import { joinRoom } from '@/api/room/room.api';
 import { toast } from 'sonner';
 import { useAuthStore } from '@/stores/auth.store';
 import { useNavigate } from 'react-router-dom';
@@ -15,7 +16,8 @@ import { useState } from 'react';
 
 const JoinHousePage = () => {
   const navigate = useNavigate();
-  const [joinedRoom, setJoinedRoom] = useState<RoomResponse>();
+  const [joinedRoom, setJoinedRoom] = useState<RoomResponse | null>(null);
+  const [members, setMembers] = useState<RoomMemberResponse[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasError, setHasError] = useState(false);
 
@@ -39,6 +41,14 @@ const JoinHousePage = () => {
     const numericValue = value.replace(/[^0-9]/g, '');
 
     updateJoinFlow({ inviteCode: numericValue });
+
+    if (joinedRoom) {
+      setJoinedRoom(null);
+    }
+
+    if (members.length > 0) {
+      setMembers([]);
+    }
 
     if (hasError) {
       setHasError(false);
@@ -85,10 +95,13 @@ const JoinHousePage = () => {
         setIsSubmitting(true);
 
         const room = await joinRoom({ invitationCode: inviteCode });
+        const roomMembers = await getRoomMembers({ excludeMe: true });
 
         console.log('방 입장: ', room);
+        console.log('방 구성원: ', roomMembers);
 
         setJoinedRoom(room);
+        setMembers(roomMembers);
         setHasError(false);
         setJoinStep('confirm');
       } catch (error) {
@@ -170,7 +183,9 @@ const JoinHousePage = () => {
         />
       )}
 
-      {step === 'confirm' && joinedRoom && <HouseConfirmStep />}
+      {step === 'confirm' && joinedRoom && (
+        <HouseConfirmStep members={members} />
+      )}
 
       {step === 'profile' && (
         <ProfileStep

@@ -22,3 +22,7 @@ export type RoomResponse = {
   createdAt: string;
   updatedAt: string;
 };
+
+export type GetRoomMembersParams = {
+  excludeMe?: boolean;
+};
