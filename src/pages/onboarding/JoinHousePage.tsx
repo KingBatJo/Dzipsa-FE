@@ -26,10 +26,10 @@ const JoinHousePage = () => {
 
   const { step, inviteCode, nickname, selectedProfileId } = joinFlow;
 
-  const user = useAuthStore((state) => state.user);
+  const userNickname = useAuthStore((state) => state.user?.nickname);
 
   const getSafeNickname = (value: string) => {
-    return value.trim() || user?.nickname || '';
+    return value.trim() || userNickname || '';
   };
 
   const handleChangeInviteCode = (value: string) => {

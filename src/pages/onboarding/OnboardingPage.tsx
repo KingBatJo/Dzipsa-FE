@@ -8,15 +8,15 @@ import { useOnboardingStore } from '@/stores/onboarding.store';
 const OnboardingPage = () => {
   const navigate = useNavigate();
 
-  const user = useAuthStore((state) => state.user);
+  const userNickname = useAuthStore((state) => state.user?.nickname);
   const initializeNicknames = useOnboardingStore(
     (state) => state.initializeNicknames
   );
 
   useEffect(() => {
-    if (!user?.nickname) return;
-    initializeNicknames(user.nickname);
-  }, [user?.nickname, initializeNicknames]);
+    if (!userNickname) return;
+    initializeNicknames(userNickname);
+  }, [userNickname, initializeNicknames]);
 
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center py-10">
