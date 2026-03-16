@@ -5,24 +5,31 @@ import { OTP_LENGTH } from '@/constants/onboarding';
 import OnboardingFlowLayout from '@/pages/onboarding/components/OnboardingFlowLayout';
 import ProfileStep from '@/pages/onboarding/components/ProfileStep';
 import { toast } from 'sonner';
+import { useAuthStore } from '@/stores/auth.store';
 import { useNavigate } from 'react-router-dom';
 import { useOnboardingStore } from '@/stores/onboarding.store';
 import { useState } from 'react';
 
 const MOCK_VALID_INVITE_CODE = '123456';
-const MOCK_INIT_NICKNAME = '카카오 닉네임';
 
 const JoinHousePage = () => {
   const navigate = useNavigate();
   const [hasError, setHasError] = useState(false);
 
-  const { joinFlow, setJoinStep, updateJoinFlow, resetOnboarding } =
-    useOnboardingStore();
+  const {
+    joinFlow,
+    setJoinStep,
+    updateJoinFlow,
+    setJoinNickname,
+    resetOnboarding,
+  } = useOnboardingStore();
 
   const { step, inviteCode, nickname, selectedProfileId } = joinFlow;
 
-  const getSafeNickname = (nickname: string) => {
-    return nickname.trim() || MOCK_INIT_NICKNAME;
+  const user = useAuthStore((state) => state.user);
+
+  const getSafeNickname = (value: string) => {
+    return value.trim() || user?.nickname || '';
   };
 
   const handleChangeInviteCode = (value: string) => {
@@ -147,7 +154,7 @@ const JoinHousePage = () => {
         <ProfileStep
           nickname={nickname}
           selectedProfileId={selectedProfileId}
-          onChangeNickname={(value) => updateJoinFlow({ nickname: value })}
+          onChangeNickname={setJoinNickname}
           onChangeProfile={(value) =>
             updateJoinFlow({ selectedProfileId: value })
           }

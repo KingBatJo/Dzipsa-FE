@@ -1,9 +1,22 @@
 import AppButton from '@/components/common/AppButton';
 import dzipsaCharacter from '@/assets/dzipsa.svg';
+import { useAuthStore } from '@/stores/auth.store';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useOnboardingStore } from '@/stores/onboarding.store';
 
 const OnboardingPage = () => {
   const navigate = useNavigate();
+
+  const user = useAuthStore((state) => state.user);
+  const initializeNicknames = useOnboardingStore(
+    (state) => state.initializeNicknames
+  );
+
+  useEffect(() => {
+    if (!user?.nickname) return;
+    initializeNicknames(user.nickname);
+  }, [user?.nickname, initializeNicknames]);
 
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center py-10">

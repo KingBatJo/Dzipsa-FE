@@ -9,6 +9,7 @@ type CreateFlowState = {
   step: CreateHouseStep;
   motto: string;
   nickname: string;
+  isNicknameEdited: boolean;
   selectedProfileId: string;
 };
 
@@ -16,6 +17,7 @@ type JoinFlowState = {
   step: JoinHouseStep;
   inviteCode: string;
   nickname: string;
+  isNicknameEdited: boolean;
   selectedProfileId: string;
 };
 
@@ -25,26 +27,31 @@ type OnboardingState = {
 
   setCreateStep: (step: CreateHouseStep) => void;
   updateCreateFlow: (payload: Partial<CreateFlowState>) => void;
+  setCreateNickname: (nickname: string) => void;
   resetCreateFlow: () => void;
 
   setJoinStep: (step: JoinHouseStep) => void;
   updateJoinFlow: (payload: Partial<JoinFlowState>) => void;
+  setJoinNickname: (nickname: string) => void;
   resetJoinFlow: () => void;
 
+  initializeNicknames: (nickname: string) => void;
   resetOnboarding: () => void;
 };
 
 const CREATE_FLOW_INITIAL_STATE: CreateFlowState = {
   step: 'motto',
   motto: '',
-  nickname: '닉네임',
+  nickname: '',
+  isNicknameEdited: false,
   selectedProfileId: '1',
 };
 
 const JOIN_FLOW_INITIAL_STATE: JoinFlowState = {
   step: 'invite',
   inviteCode: '',
-  nickname: '카카오 닉네임',
+  nickname: '',
+  isNicknameEdited: false,
   selectedProfileId: '1',
 };
 
@@ -72,6 +79,15 @@ export const useOnboardingStore = create<OnboardingState>()(
           },
         })),
 
+      setCreateNickname: (nickname) =>
+        set((state) => ({
+          createFlow: {
+            ...state.createFlow,
+            nickname,
+            isNicknameEdited: true,
+          },
+        })),
+
       resetCreateFlow: () =>
         set({
           createFlow: CREATE_FLOW_INITIAL_STATE,
@@ -95,10 +111,39 @@ export const useOnboardingStore = create<OnboardingState>()(
           },
         })),
 
+      setJoinNickname: (nickname) =>
+        set((state) => ({
+          joinFlow: {
+            ...state.joinFlow,
+            nickname,
+            isNicknameEdited: true,
+          },
+        })),
+
       resetJoinFlow: () =>
         set({
           joinFlow: JOIN_FLOW_INITIAL_STATE,
         }),
+
+      initializeNicknames: (nickname) =>
+        set((state) => ({
+          createFlow: {
+            ...state.createFlow,
+            nickname:
+              !state.createFlow.isNicknameEdited &&
+              !state.createFlow.nickname.trim()
+                ? nickname
+                : state.createFlow.nickname,
+          },
+          joinFlow: {
+            ...state.joinFlow,
+            nickname:
+              !state.joinFlow.isNicknameEdited &&
+              !state.joinFlow.nickname.trim()
+                ? nickname
+                : state.joinFlow.nickname,
+          },
+        })),
 
       // 온보딩 전체 초기화
       resetOnboarding: () =>

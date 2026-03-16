@@ -2,26 +2,33 @@ import { Button } from '@/components/ui/button';
 import HouseWelcomeDialog from '@/pages/onboarding/components/HouseWelcomeDialog';
 import InviteCodeStep from '@/pages/onboarding/components/InviteCodeStep';
 import MottoStep from '@/pages/onboarding/components/MottoStep';
-import OnboardingFlowLayout from './components/OnboardingFlowLayout';
+import OnboardingFlowLayout from '@/pages/onboarding/components/OnboardingFlowLayout';
 import ProfileStep from '@/pages/onboarding/components/ProfileStep';
+import { useAuthStore } from '@/stores/auth.store';
 import { useNavigate } from 'react-router-dom';
 import { useOnboardingStore } from '@/stores/onboarding.store';
 import { useState } from 'react';
 
 const MOCK_INVITE_CODE = '123456';
-const MOCK_INIT_NICKNAME = '닉네임';
 
 const CreateHousePage = () => {
   const navigate = useNavigate();
   const [isCompleteOpen, setIsCompleteOpen] = useState(false);
 
-  const { createFlow, setCreateStep, updateCreateFlow, resetOnboarding } =
-    useOnboardingStore();
+  const {
+    createFlow,
+    setCreateStep,
+    updateCreateFlow,
+    setCreateNickname,
+    resetOnboarding,
+  } = useOnboardingStore();
 
   const { step, motto, nickname, selectedProfileId } = createFlow;
 
-  const getSafeNickname = (nickname: string) => {
-    return nickname.trim() || MOCK_INIT_NICKNAME;
+  const user = useAuthStore((state) => state.user);
+
+  const getSafeNickname = (value: string) => {
+    return value.trim() || user?.nickname || '';
   };
 
   const handleBack = () => {
@@ -124,7 +131,7 @@ const CreateHousePage = () => {
           <ProfileStep
             nickname={nickname}
             selectedProfileId={selectedProfileId}
-            onChangeNickname={(value) => updateCreateFlow({ nickname: value })}
+            onChangeNickname={setCreateNickname}
             onChangeProfile={(value) =>
               updateCreateFlow({ selectedProfileId: value })
             }
