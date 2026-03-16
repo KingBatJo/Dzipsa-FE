@@ -4,16 +4,19 @@ import InviteCodeStep from '@/pages/onboarding/components/InviteCodeStep';
 import MottoStep from '@/pages/onboarding/components/MottoStep';
 import OnboardingFlowLayout from '@/pages/onboarding/components/OnboardingFlowLayout';
 import ProfileStep from '@/pages/onboarding/components/ProfileStep';
+import type { RoomResponse } from '@/api/room/room.types';
+import { createRoom } from '@/api/room/room.api';
+import { toast } from 'sonner';
 import { useAuthStore } from '@/stores/auth.store';
 import { useNavigate } from 'react-router-dom';
 import { useOnboardingStore } from '@/stores/onboarding.store';
 import { useState } from 'react';
 
-const MOCK_INVITE_CODE = '123456';
-
 const CreateHousePage = () => {
   const navigate = useNavigate();
   const [isCompleteOpen, setIsCompleteOpen] = useState(false);
+  const [createdRoom, setCreatedRoom] = useState<RoomResponse>();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
     createFlow,
@@ -47,22 +50,36 @@ const CreateHousePage = () => {
     return;
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (step === 'motto') {
       setCreateStep('profile');
       return;
     }
 
     if (step === 'profile') {
-      setCreateStep('invite');
+      if (createdRoom) {
+        setCreateStep('invite');
+        return;
+      }
+
+      try {
+        setIsSubmitting(true);
+
+        const room = await createRoom({ motto });
+
+        console.log('방 생성 응답:', room);
+
+        setCreatedRoom(room);
+        setCreateStep('invite');
+      } catch (error) {
+        console.error('방 생성 실패:', error);
+        toast('방 생성에 실패했어요. 다시 시도해주세요.');
+      } finally {
+        setIsSubmitting(false);
+      }
+
       return;
     }
-
-    console.log({
-      motto,
-      nickname,
-      selectedProfileId,
-    });
 
     // invite 단계일 때
     setIsCompleteOpen(true);
@@ -91,6 +108,7 @@ const CreateHousePage = () => {
   const buttonLabel = step === 'invite' ? '집 입장하기' : '다음';
 
   const isNextDisabled =
+    isSubmitting ||
     (step === 'motto' && !motto.trim()) ||
     (step === 'profile' && !nickname.trim());
 
@@ -138,7 +156,9 @@ const CreateHousePage = () => {
           />
         )}
 
-        {step === 'invite' && <InviteCodeStep inviteCode={MOCK_INVITE_CODE} />}
+        {step === 'invite' && createdRoom && (
+          <InviteCodeStep inviteCode={createdRoom.invitationCode} />
+        )}
       </OnboardingFlowLayout>
 
       <HouseWelcomeDialog
