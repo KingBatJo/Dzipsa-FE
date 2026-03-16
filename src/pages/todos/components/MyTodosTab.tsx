@@ -1,6 +1,11 @@
 import { Camera, CheckCircle2 } from 'lucide-react';
 import { MOCK_MY_ID, MOCK_TODAY, mockTodoList } from '@/mocks/mockData';
-import { addLocalToTodos, getTodoSections } from '@/utils/todos';
+import {
+  addLocalToTodos,
+  getDateDiffDays,
+  getTodoSections,
+  isTodoDelayed,
+} from '@/utils/todos';
 
 import EmptyState from '@/components/common/EmptyState';
 import ListItemCard from '@/components/common/ListItemCard';
@@ -65,16 +70,24 @@ const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
     <div className="space-y-8">
       {missedTodos.length > 0 && (
         <ListSection title="놓친 할일이 있어요!">
-          {missedTodos.map((todo) => (
-            <ListItemCard
-              key={todo.id}
-              title={todo.title}
-              subtitle={formatDueDateLabel(todo.dueAt)}
-              right={<TodoItemActions />}
-              className="bg-destructive/10"
-              onClick={() => onTodoClick?.(todo)}
-            />
-          ))}
+          {missedTodos.map((todo) => {
+            const isDelayed = isTodoDelayed(todo, today);
+
+            return (
+              <ListItemCard
+                key={todo.id}
+                title={todo.title}
+                subtitle={
+                  isDelayed
+                    ? `D+${getDateDiffDays(todo.dueAt, today)}`
+                    : formatDueDateLabel(todo.dueAt)
+                }
+                right={<TodoItemActions />}
+                className={isDelayed ? 'bg-destructive/10' : undefined}
+                onClick={() => onTodoClick?.(todo)}
+              />
+            );
+          })}
         </ListSection>
       )}
 

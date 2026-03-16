@@ -6,6 +6,7 @@ import {
 } from '@/mocks/mockData';
 import {
   addLocalToTodos,
+  getDateDiffDays,
   getTodoSections,
   isTodoDelayed,
   sortByDueAtThenCreatedAtAsc,
@@ -101,24 +102,28 @@ const TodoListPage = () => {
         {filteredTodos.length === 0 ? (
           <EmptyState message="표시할 할 일이 없어요" />
         ) : (
-          filteredTodos.map((todo) => (
-            <ListItemCard
-              key={todo.id}
-              title={todo.title}
-              subtitle={formatDueDateLabel(todo.dueAt)}
-              className={
-                isTodoDelayed(todo, MOCK_TODAY)
-                  ? 'bg-destructive/10'
-                  : undefined
-              }
-              right={
-                <UserAvatar
-                  src={membersById.get(todo.assigneeId)?.profileImage}
-                />
-              }
-              onClick={() => handleTodoClick(todo)}
-            />
-          ))
+          filteredTodos.map((todo) => {
+            const isDelayed = isTodoDelayed(todo, MOCK_TODAY);
+
+            return (
+              <ListItemCard
+                key={todo.id}
+                title={todo.title}
+                subtitle={
+                  isDelayed
+                    ? `D+${getDateDiffDays(todo.dueAt, MOCK_TODAY)}`
+                    : formatDueDateLabel(todo.dueAt)
+                }
+                className={isDelayed ? 'bg-destructive/10' : undefined}
+                right={
+                  <UserAvatar
+                    src={membersById.get(todo.assigneeId)?.profileImage}
+                  />
+                }
+                onClick={() => handleTodoClick(todo)}
+              />
+            );
+          })
         )}
       </div>
 
