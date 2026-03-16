@@ -15,7 +15,7 @@ import ListSection from '@/components/common/ListSection';
 import MembersSection from '@/pages/home/components/MembersSection';
 import MottoSection from '@/pages/home/components/MottoSection';
 import UserAvatar from '@/components/common/UserAvatar';
-import { formatDueAt } from '@/utils/date';
+import { formatDueDateLabel } from '@/utils/date';
 
 const HomePage = () => {
   const myId = MOCK_MY_ID;
@@ -42,7 +42,7 @@ const HomePage = () => {
             <ListItemCard
               key={todo.id}
               title={todo.title}
-              subtitle={formatDueAt(todo.dueAt)}
+              subtitle={formatDueDateLabel(todo.dueAt)}
               right={<UserAvatar src={PROFILE_IMAGE} />}
               onClick={() => {}}
             />

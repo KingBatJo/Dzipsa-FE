@@ -14,7 +14,7 @@ import TodoDetailSheet from '@/pages/todos/components/TodoDetailSheet';
 import type { TodoWithLocal } from '@/types/todo';
 import UserAvatar from '@/components/common/UserAvatar';
 import { X } from 'lucide-react';
-import { formatDueAt } from '@/utils/date';
+import { formatDueDateLabel } from '@/utils/date';
 import { useState } from 'react';
 
 type TodoListCategory = 'today' | 'missed' | 'all';
@@ -98,7 +98,7 @@ const TodoListPage = () => {
             <ListItemCard
               key={todo.id}
               title={todo.title}
-              subtitle={formatDueAt(todo.dueAt)}
+              subtitle={formatDueDateLabel(todo.dueAt)}
               right={
                 <UserAvatar
                   src={membersById.get(todo.assigneeId)?.profileImage}

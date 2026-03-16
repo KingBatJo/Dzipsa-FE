@@ -6,7 +6,7 @@ import EmptyState from '@/components/common/EmptyState';
 import ListItemCard from '@/components/common/ListItemCard';
 import ListSection from '@/components/common/ListSection';
 import type { TodoWithLocal } from '@/types/todo';
-import { formatDueAt } from '@/utils/date';
+import { formatDueDateLabel } from '@/utils/date';
 
 type MyTodosTabProps = {
   onTodoClick?: (todo: TodoWithLocal) => void;
@@ -69,7 +69,7 @@ const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
             <ListItemCard
               key={todo.id}
               title={todo.title}
-              subtitle={formatDueAt(todo.dueAt)}
+              subtitle={formatDueDateLabel(todo.dueAt)}
               right={<TodoItemActions />}
               className="bg-destructive/10"
               onClick={() => onTodoClick?.(todo)}
@@ -86,7 +86,7 @@ const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
             <ListItemCard
               key={todo.id}
               title={todo.title}
-              subtitle={formatDueAt(todo.dueAt)}
+              subtitle={formatDueDateLabel(todo.dueAt)}
               right={<TodoItemActions />}
               onClick={() => onTodoClick?.(todo)}
             />
@@ -102,7 +102,7 @@ const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
             <ListItemCard
               key={todo.id}
               title={todo.title}
-              subtitle={formatDueAt(todo.dueAt)}
+              subtitle={formatDueDateLabel(todo.dueAt)}
               right={<TodoItemActions />}
               onClick={() => onTodoClick?.(todo)}
             />
