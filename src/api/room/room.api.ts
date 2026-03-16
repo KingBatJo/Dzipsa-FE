@@ -1,14 +1,10 @@
-import type {
-  CreateRoomRequest,
-  JoinRoomRequest,
-  RoomResponse,
-} from '@/api/room/room.types';
+import type { JoinRoomRequest, RoomResponse } from '@/api/room/room.types';
 
 import { apiClient } from '@/api/client';
 
 // 방 생성
-export const createRoom = async (payload: CreateRoomRequest) => {
-  const { data } = await apiClient.post<RoomResponse>('/api/rooms', payload);
+export const createRoom = async () => {
+  const { data } = await apiClient.post<RoomResponse>('/api/rooms');
   return data;
 };
 

@@ -6,6 +6,7 @@ import OnboardingFlowLayout from '@/pages/onboarding/components/OnboardingFlowLa
 import ProfileStep from '@/pages/onboarding/components/ProfileStep';
 import type { RoomResponse } from '@/api/room/room.types';
 import { createRoom } from '@/api/room/room.api';
+import { getApiErrorMessage } from '@/api/error';
 import { toast } from 'sonner';
 import { useAuthStore } from '@/stores/auth.store';
 import { useNavigate } from 'react-router-dom';
@@ -34,6 +35,31 @@ const CreateHousePage = () => {
     return value.trim() || userNickname || '';
   };
 
+  const moveToInvite = async () => {
+    if (createdRoom) {
+      setCreateStep('invite');
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+
+      const room = await createRoom();
+
+      console.log('방 생성 응답:', room);
+
+      setCreatedRoom(room);
+      setCreateStep('invite');
+    } catch (error) {
+      const message = getApiErrorMessage(error);
+
+      console.error('방 생성 실패:', message, error);
+      toast('방 생성에 실패했어요. 다시 시도해주세요.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleBack = () => {
     if (step === 'profile') {
       setCreateStep('motto');
@@ -57,27 +83,7 @@ const CreateHousePage = () => {
     }
 
     if (step === 'profile') {
-      if (createdRoom) {
-        setCreateStep('invite');
-        return;
-      }
-
-      try {
-        setIsSubmitting(true);
-
-        const room = await createRoom({ motto });
-
-        console.log('방 생성 응답:', room);
-
-        setCreatedRoom(room);
-        setCreateStep('invite');
-      } catch (error) {
-        console.error('방 생성 실패:', error);
-        toast('방 생성에 실패했어요. 다시 시도해주세요.');
-      } finally {
-        setIsSubmitting(false);
-      }
-
+      await moveToInvite();
       return;
     }
 
@@ -85,7 +91,7 @@ const CreateHousePage = () => {
     setIsCompleteOpen(true);
   };
 
-  const handleSkip = () => {
+  const handleSkip = async () => {
     if (step === 'motto') {
       setCreateStep('profile');
       return;
@@ -95,7 +101,7 @@ const CreateHousePage = () => {
       updateCreateFlow({
         nickname: getSafeNickname(nickname),
       });
-      setCreateStep('invite');
+      await moveToInvite();
       return;
     }
   };
@@ -118,6 +124,7 @@ const CreateHousePage = () => {
         <Button
           variant="link"
           onClick={handleSkip}
+          disabled={isSubmitting}
           className="h-fit p-0 font-semibold text-[#888888]"
         >
           Skip

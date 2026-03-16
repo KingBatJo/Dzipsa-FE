@@ -1,8 +1,3 @@
-export type CreateRoomRequest = {
-  name?: string;
-  motto: string;
-};
-
 export type JoinRoomRequest = {
   invitationCode: string;
 };
