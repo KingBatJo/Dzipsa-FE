@@ -7,6 +7,7 @@ import {
 import {
   addLocalToTodos,
   getTodoSections,
+  isTodoDelayed,
   sortByDueAtThenCreatedAtAsc,
 } from '@/utils/todos';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -105,6 +106,11 @@ const TodoListPage = () => {
               key={todo.id}
               title={todo.title}
               subtitle={formatDueDateLabel(todo.dueAt)}
+              className={
+                isTodoDelayed(todo, MOCK_TODAY)
+                  ? 'bg-destructive/10'
+                  : undefined
+              }
               right={
                 <UserAvatar
                   src={membersById.get(todo.assigneeId)?.profileImage}
