@@ -1,5 +1,4 @@
 import { PencilLine, Trash2 } from 'lucide-react';
-import { formatDueDateLabel, formatStatusDateLabel } from '@/utils/date';
 import {
   getTodoDetailViewState,
   getTodoStatusLabel,
@@ -12,6 +11,8 @@ import { MOCK_TODAY } from '@/mocks/mockData';
 import type { ReactNode } from 'react';
 import type { TodoWithLocal } from '@/types/todo';
 import UserAvatar from '@/components/common/UserAvatar';
+import { formatDueDateLabel } from '@/utils/date';
+import { useNavigate } from 'react-router-dom';
 
 type TodoDetailSheetProps = {
   open: boolean;
@@ -50,6 +51,7 @@ const TodoDetailSheet = ({
   assigneeImage,
 }: TodoDetailSheetProps) => {
   const viewState = todo ? getTodoDetailViewState(todo, myId) : null;
+  const navigate = useNavigate();
 
   return (
     <BottomSheet
@@ -65,7 +67,13 @@ const TodoDetailSheet = ({
             </h2>
 
             {viewState?.canEdit && (
-              <button type="button" className="text-[#A3A3A3]">
+              <button
+                type="button"
+                onClick={() => {
+                  navigate(`/todos/${todo?.id}/edit`, { state: { todo } });
+                }}
+                className="text-[#A3A3A3]"
+              >
                 <PencilLine className="h-6 w-6" />
               </button>
             )}

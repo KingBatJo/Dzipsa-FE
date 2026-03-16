@@ -20,8 +20,9 @@ import RuleCreatePage from '@/pages/rules/RuleCreatePage';
 import RulesPage from '@/pages/rules/RulesPage';
 import SignupCompletePage from '@/pages/login/SignupCompletePage';
 import { TODO_TABS } from '@/constants/todos';
-import TodoCreatePage from '@/pages/todos/TodoCreatePage';
 import TermsPage from '@/pages/login/TermsPage';
+import TodoCreatePage from '@/pages/todos/TodoCreatePage';
+import TodoEditPage from '@/pages/todos/TodoEditPage';
 import TodosPage from '@/pages/todos/TodosPage';
 
 const Router = () => {
@@ -63,6 +64,7 @@ const Router = () => {
 
               <Route path="/rules/new" element={<RuleCreatePage />} />
               <Route path="/todos/new" element={<TodoCreatePage />} />
+              <Route path="/todos/:todoId/edit" element={<TodoEditPage />} />
             </Route>
           </Route>
 

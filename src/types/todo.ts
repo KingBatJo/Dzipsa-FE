@@ -36,6 +36,22 @@ export type TodoDetailViewState = {
 
 export type RepeatType = (typeof REPEAT_TYPE_OPTIONS)[number];
 
+export type RepeatValue = {
+  enabled: boolean;
+  type: RepeatType;
+  days: WeekDay[];
+  startDate: Date;
+  endDate: Date | null;
+};
+
+export type TodoFormValues = {
+  title: string;
+  memo: string;
+  dueDate: Date | null;
+  assigneeId: number;
+  repeatValue: RepeatValue;
+};
+
 export type TodoCreateRequest = {
   title: string;
   roomId: number;
