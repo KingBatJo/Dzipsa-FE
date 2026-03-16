@@ -14,12 +14,11 @@ import { Controller, useForm } from 'react-hook-form';
 import AppButton from '@/components/common/AppButton';
 import RepeatSection from '@/pages/todos/components/RepeatSection';
 import { formatDate } from '@/utils/date';
-import type { WeekDay } from '@/components/form/WeekdaySelector';
 import { cn } from '@/lib/utils';
 import DateWheelDialog from '@/components/form/DateWheelDialog';
 import ErrorTooltip from '@/components/form/ErrorTooltip';
 import RandomAssignOverlay from '@/pages/todos/components/RandomAssignOverlay';
-import type { RepeatType, RepeatValue, TodoFormValues } from '@/types/todo';
+import type { RepeatValue, TodoFormValues } from '@/types/todo';
 import { createDefaultRepeatValue } from '@/utils/todoForm';
 
 type TodoFormMode = 'create' | 'edit';

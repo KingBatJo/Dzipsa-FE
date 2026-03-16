@@ -8,8 +8,7 @@ import WeekdaySelector, {
 import DateWheelDialog from '@/components/form/DateWheelDialog';
 import { cn } from '@/lib/utils';
 import { formatDate } from '@/utils/date';
-import type { RepeatValue } from '@/pages/todos/TodoCreatePage';
-import type { RepeatType } from '@/types/todo';
+import type { RepeatType, RepeatValue } from '@/types/todo';
 import { REPEAT_TYPE_OPTIONS } from '@/constants/todos';
 
 type DateFieldType = 'start' | 'end';
