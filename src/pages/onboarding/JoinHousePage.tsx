@@ -6,22 +6,20 @@ import OnboardingFlowLayout from '@/pages/onboarding/components/OnboardingFlowLa
 import ProfileStep from '@/pages/onboarding/components/ProfileStep';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import { useOnboardingStore } from '@/stores/onboarding.store';
 import { useState } from 'react';
 
 const MOCK_VALID_INVITE_CODE = '123456';
 const MOCK_INIT_NICKNAME = '카카오 닉네임';
 
-type JoinHouseStep = 'invite' | 'confirm' | 'profile';
-
 const JoinHousePage = () => {
   const navigate = useNavigate();
-
-  const [step, setStep] = useState<JoinHouseStep>('invite');
-  const [inviteCode, setInviteCode] = useState('');
   const [hasError, setHasError] = useState(false);
 
-  const [nickname, setNickname] = useState(MOCK_INIT_NICKNAME);
-  const [selectedProfileId, setSelectedProfileId] = useState(0);
+  const { joinFlow, setJoinStep, updateJoinFlow, resetOnboarding } =
+    useOnboardingStore();
+
+  const { step, inviteCode, nickname, selectedProfileId } = joinFlow;
 
   const getSafeNickname = (nickname: string) => {
     return nickname.trim() || MOCK_INIT_NICKNAME;
@@ -30,7 +28,7 @@ const JoinHousePage = () => {
   const handleChangeInviteCode = (value: string) => {
     const numericValue = value.replace(/[^0-9]/g, '');
 
-    setInviteCode(numericValue);
+    updateJoinFlow({ inviteCode: numericValue });
 
     if (hasError) {
       setHasError(false);
@@ -44,12 +42,13 @@ const JoinHousePage = () => {
     }
 
     if (step === 'confirm') {
-      setStep('invite');
+      setJoinStep('invite');
       return;
     }
 
     if (step === 'profile') {
-      setStep('confirm');
+      setJoinStep('confirm');
+      return;
     }
   };
 
@@ -61,6 +60,7 @@ const JoinHousePage = () => {
       selectedProfileId,
     });
 
+    resetOnboarding();
     navigate('/home', { replace: true });
   };
 
@@ -76,12 +76,12 @@ const JoinHousePage = () => {
       }
 
       setHasError(false);
-      setStep('confirm');
+      setJoinStep('confirm');
       return;
     }
 
     if (step === 'confirm') {
-      setStep('profile');
+      setJoinStep('profile');
       return;
     }
 
@@ -92,6 +92,10 @@ const JoinHousePage = () => {
 
   const handleSkip = () => {
     if (step !== 'profile') return;
+
+    updateJoinFlow({
+      nickname: getSafeNickname(nickname),
+    });
     handleComplete();
   };
 
@@ -143,8 +147,10 @@ const JoinHousePage = () => {
         <ProfileStep
           nickname={nickname}
           selectedProfileId={selectedProfileId}
-          onChangeNickname={setNickname}
-          onChangeProfile={setSelectedProfileId}
+          onChangeNickname={(value) => updateJoinFlow({ nickname: value })}
+          onChangeProfile={(value) =>
+            updateJoinFlow({ selectedProfileId: value })
+          }
         />
       )}
     </OnboardingFlowLayout>

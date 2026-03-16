@@ -9,12 +9,12 @@ export const MOTTO_TEMPLATES = [
 ] as const;
 
 export const PROFILE_OPTIONS = [
-  { id: 0, imageUrl: Profile, alt: '기본 프로필 1' },
-  { id: 1, imageUrl: Profile, alt: '기본 프로필 2' },
-  { id: 2, imageUrl: Profile, alt: '기본 프로필 3' },
-  { id: 3, imageUrl: Profile, alt: '기본 프로필 4' },
-  { id: 4, imageUrl: Profile, alt: '기본 프로필 5' },
-  { id: 5, imageUrl: Profile, alt: '기본 프로필 6' },
+  { id: '1', imageUrl: Profile, alt: '기본 프로필 1' },
+  { id: '2', imageUrl: Profile, alt: '기본 프로필 2' },
+  { id: '3', imageUrl: Profile, alt: '기본 프로필 3' },
+  { id: '4', imageUrl: Profile, alt: '기본 프로필 4' },
+  { id: '5', imageUrl: Profile, alt: '기본 프로필 5' },
+  { id: '6', imageUrl: Profile, alt: '기본 프로필 6' },
 ] as const;
 
 export const APP_URL = import.meta.env.VITE_APP_URL;

@@ -1,7 +1,7 @@
 import type { MeResponse } from '@/api/auth/auth.types';
 
-const MOCK_TERMS_AGREED = true;
-const MOCK_ONBOARDING_COMPLETED = true;
+const MOCK_TERMS_AGREED = false;
+const MOCK_ONBOARDING_COMPLETED = false;
 
 export const hasAgreedToTerms = (user: MeResponse | null) => {
   if (!user) return false;

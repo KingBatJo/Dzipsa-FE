@@ -12,9 +12,9 @@ import { RefreshCw } from 'lucide-react';
 
 type ProfileStepProps = {
   nickname: string;
-  selectedProfileId: number;
+  selectedProfileId: string;
   onChangeNickname: (nickname: string) => void;
-  onChangeProfile: (profileId: number) => void;
+  onChangeProfile: (profileId: string) => void;
 };
 
 const ProfileStep = ({
@@ -32,7 +32,7 @@ const ProfileStep = ({
     PROFILE_OPTIONS.find((profile) => profile.id === selectedProfileId) ??
     PROFILE_OPTIONS[0];
 
-  const handleSelectProfile = (profileId: number) => {
+  const handleSelectProfile = (profileId: string) => {
     onChangeProfile(profileId);
     setIsProfileSheetOpen(false);
   };

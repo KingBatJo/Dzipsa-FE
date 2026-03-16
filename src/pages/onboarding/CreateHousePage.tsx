@@ -5,22 +5,20 @@ import MottoStep from '@/pages/onboarding/components/MottoStep';
 import OnboardingFlowLayout from './components/OnboardingFlowLayout';
 import ProfileStep from '@/pages/onboarding/components/ProfileStep';
 import { useNavigate } from 'react-router-dom';
+import { useOnboardingStore } from '@/stores/onboarding.store';
 import { useState } from 'react';
 
 const MOCK_INVITE_CODE = '123456';
 const MOCK_INIT_NICKNAME = '닉네임';
 
-type CreateHouseStep = 'motto' | 'profile' | 'invite';
-
 const CreateHousePage = () => {
   const navigate = useNavigate();
-
-  const [step, setStep] = useState<CreateHouseStep>('motto');
   const [isCompleteOpen, setIsCompleteOpen] = useState(false);
 
-  const [motto, setMotto] = useState('');
-  const [nickname, setNickname] = useState(MOCK_INIT_NICKNAME);
-  const [selectedProfileId, setSelectedProfileId] = useState(0);
+  const { createFlow, setCreateStep, updateCreateFlow, resetOnboarding } =
+    useOnboardingStore();
+
+  const { step, motto, nickname, selectedProfileId } = createFlow;
 
   const getSafeNickname = (nickname: string) => {
     return nickname.trim() || MOCK_INIT_NICKNAME;
@@ -28,27 +26,28 @@ const CreateHousePage = () => {
 
   const handleBack = () => {
     if (step === 'profile') {
-      setStep('motto');
+      setCreateStep('motto');
       return;
     }
 
     if (step === 'invite') {
-      setStep('profile');
+      setCreateStep('profile');
       return;
     }
 
     // motto 단계일 때
     navigate('/onboarding');
+    return;
   };
 
   const handleNext = () => {
     if (step === 'motto') {
-      setStep('profile');
+      setCreateStep('profile');
       return;
     }
 
     if (step === 'profile') {
-      setStep('invite');
+      setCreateStep('invite');
       return;
     }
 
@@ -64,15 +63,22 @@ const CreateHousePage = () => {
 
   const handleSkip = () => {
     if (step === 'motto') {
-      setStep('profile');
+      setCreateStep('profile');
       return;
     }
 
     if (step === 'profile') {
-      setNickname((prev) => getSafeNickname(prev));
-      setStep('invite');
+      updateCreateFlow({
+        nickname: getSafeNickname(nickname),
+      });
+      setCreateStep('invite');
       return;
     }
+  };
+
+  const handleConfirm = () => {
+    resetOnboarding();
+    navigate('/home', { replace: true });
   };
 
   const buttonLabel = step === 'invite' ? '집 입장하기' : '다음';
@@ -108,15 +114,20 @@ const CreateHousePage = () => {
         bottomSlot={bottomSlot}
       >
         {step === 'motto' && (
-          <MottoStep motto={motto} onChangeMotto={setMotto} />
+          <MottoStep
+            motto={motto}
+            onChangeMotto={(value) => updateCreateFlow({ motto: value })}
+          />
         )}
 
         {step === 'profile' && (
           <ProfileStep
             nickname={nickname}
             selectedProfileId={selectedProfileId}
-            onChangeNickname={setNickname}
-            onChangeProfile={setSelectedProfileId}
+            onChangeNickname={(value) => updateCreateFlow({ nickname: value })}
+            onChangeProfile={(value) =>
+              updateCreateFlow({ selectedProfileId: value })
+            }
           />
         )}
 
@@ -126,7 +137,7 @@ const CreateHousePage = () => {
       <HouseWelcomeDialog
         open={isCompleteOpen}
         userName={getSafeNickname(nickname)}
-        onConfirm={() => navigate('/home', { replace: true })}
+        onConfirm={handleConfirm}
       />
     </>
   );
