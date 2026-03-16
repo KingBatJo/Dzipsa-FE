@@ -4,7 +4,11 @@ import {
   mockMembers,
   mockTodoList,
 } from '@/mocks/mockData';
-import { addLocalToTodos, getTodoSections } from '@/utils/todos';
+import {
+  addLocalToTodos,
+  getTodoSections,
+  sortByDueAtThenCreatedAtAsc,
+} from '@/utils/todos';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import EmptyState from '@/components/common/EmptyState';
@@ -30,7 +34,9 @@ const TodoListPage = () => {
   const { todayTodos, missedTodos } = getTodoSections(todos, MOCK_TODAY);
   const membersById = new Map(mockMembers.map((member) => [member.id, member]));
 
-  const activeTodos = todos.filter((todo) => !todo.completed);
+  const activeTodos = todos
+    .filter((todo) => !todo.completed)
+    .sort(sortByDueAtThenCreatedAtAsc);
   const todayActiveTodos = todayTodos.filter((todo) => !todo.completed);
 
   const getTodoListData = () => {

@@ -6,6 +6,7 @@ export type Todo = {
   id: number;
   title: string;
   dueAt: string;
+  createdAt: string;
   assigneeId: number;
   memo?: string;
   completed: boolean;

@@ -1,10 +1,22 @@
-import type {
+﻿import type {
   Todo,
   TodoDetailViewState,
   TodoStatusLabel,
   TodoWithLocal,
 } from '@/types/todo';
 import { formatStatusDateLabel, toLocalDateTime } from '@/utils/date';
+
+export const sortByCreatedAtAsc = (a: TodoWithLocal, b: TodoWithLocal) =>
+  a.createdAt.localeCompare(b.createdAt);
+
+export const sortByDueAtThenCreatedAtAsc = (
+  a: TodoWithLocal,
+  b: TodoWithLocal
+) => {
+  const dueCompare = a.dueAt.localeCompare(b.dueAt);
+  if (dueCompare !== 0) return dueCompare;
+  return a.createdAt.localeCompare(b.createdAt);
+};
 
 // Todo에 local 시간 정보 붙이기
 export const addLocalToTodos = (todos: Todo[]): TodoWithLocal[] =>
@@ -103,17 +115,17 @@ export const getTodoSections = (todos: TodoWithLocal[], today: string) => {
   // 오늘 할 일 (완료 포함 - 요약용)
   const todayTodos = todos
     .filter((t) => t.local.dueDate === today)
-    .sort((a, b) => a.dueAt.localeCompare(b.dueAt)); // 오래된 순
+    .sort(sortByCreatedAtAsc); // 오래된 순
 
   // 놓친 할 일 (미완료만)
   const missedTodos = todos
     .filter((t) => t.local.dueDate < today && !t.completed)
-    .sort((a, b) => a.dueAt.localeCompare(b.dueAt)); // 오래된 순
+    .sort(sortByDueAtThenCreatedAtAsc); // 오래된 순
 
   // 예정된 할 일 (미완료만)
   const upcomingTodos = todos
     .filter((t) => t.local.dueDate > today && !t.completed)
-    .sort((a, b) => a.dueAt.localeCompare(b.dueAt)); // 오래된 순
+    .sort(sortByDueAtThenCreatedAtAsc); // 오래된 순
 
   // 완료된 할 일
   const completedTodos = todos
