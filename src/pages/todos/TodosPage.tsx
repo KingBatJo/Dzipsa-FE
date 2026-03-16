@@ -78,12 +78,12 @@ const TodosPage = () => {
 
       {/* 할일 추가 플로팅 버튼 */}
       <div
-        className={`fixed bottom-20 left-1/2 z-10 w-full -translate-x-1/2 p-4 ${MOBILE_MAX_WIDTH}`}
+        className={`pointer-events-none fixed bottom-20 left-1/2 z-10 w-full -translate-x-1/2 p-4 ${MOBILE_MAX_WIDTH}`}
       >
         <div className="flex justify-end">
           <Button
             onClick={() => navigate('/todos/new', { state: { fromTab: tab } })}
-            className="h-15 w-15 rounded-full"
+            className="pointer-events-auto h-15 w-15 rounded-full"
           >
             <span className="-translate-y-0.5 text-3xl font-light">+</span>
           </Button>
