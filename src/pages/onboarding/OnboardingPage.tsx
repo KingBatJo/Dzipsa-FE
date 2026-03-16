@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import AppButton from '@/components/common/AppButton';
 import dzipsaCharacter from '@/assets/dzipsa.svg';
 import { useNavigate } from 'react-router-dom';
 
@@ -33,21 +33,19 @@ const OnboardingPage = () => {
         <p className="text-base font-semibold">어떤 방법으로 시작할까요?</p>
 
         <div className="flex w-full flex-col gap-3 px-4 text-sm leading-5 font-medium">
-          <Button
-            type="button"
+          <AppButton
             onClick={() => navigate('/onboarding/create', { replace: true })}
-            className="h-12"
+            className="bg-primary text-primary-foreground hover:bg-primary/90"
           >
             새 집 만들기
-          </Button>
+          </AppButton>
 
-          <Button
-            type="button"
+          <AppButton
             onClick={() => navigate('/onboarding/join', { replace: true })}
-            className="h-12 bg-neutral-500 hover:bg-neutral-600"
+            className="text-primary-foreground bg-neutral-500 hover:bg-neutral-600"
           >
             초대코드로 입장하기
-          </Button>
+          </AppButton>
         </div>
       </div>
 

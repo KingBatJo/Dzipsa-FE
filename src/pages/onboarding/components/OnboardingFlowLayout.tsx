@@ -1,5 +1,6 @@
 import { HEADER_HEIGHT_CLASS, MOBILE_MAX_WIDTH } from '@/constants/layout';
 
+import AppButton from '@/components/common/AppButton';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft } from 'lucide-react';
 
@@ -38,14 +39,13 @@ const OnboardingFlowLayout = ({
 
       <footer className={`fixed bottom-0 ${MOBILE_MAX_WIDTH} w-full pb-9`}>
         <div className="flex flex-col gap-6 px-4">
-          <Button
-            type="button"
+          <AppButton
             onClick={onNext}
             disabled={isNextDisabled}
-            className="h-12 w-full rounded-[10px]"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 h-12 w-full rounded-[10px]"
           >
             {nextLabel}
-          </Button>
+          </AppButton>
 
           {bottomSlot}
         </div>

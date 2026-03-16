@@ -3,7 +3,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import AppEntryRoute from '@/routes/AppEntryRoute';
 import AppLayout from '@/components/layout/AppLayout';
 import AuthCallbackPage from '@/pages/login/AuthCallbackPage';
-import AuthInitializer from './AuthInitializer';
+import AuthInitializer from '@/routes/AuthInitializer';
 import CreateHousePage from '@/pages/onboarding/CreateHousePage';
 import HomePage from '@/pages/home/HomePage';
 import JoinHousePage from '@/pages/onboarding/JoinHousePage';
@@ -21,6 +21,9 @@ import RulesPage from '@/pages/rules/RulesPage';
 import SignupCompletePage from '@/pages/login/SignupCompletePage';
 import { TODO_TABS } from '@/constants/todos';
 import TermsPage from '@/pages/login/TermsPage';
+import TodoCreatePage from '@/pages/todos/TodoCreatePage';
+import TodoEditPage from '@/pages/todos/TodoEditPage';
+import TodoListPage from '@/pages/todos/TodoListPage';
 import TodosPage from '@/pages/todos/TodosPage';
 
 const Router = () => {
@@ -61,6 +64,16 @@ const Router = () => {
               <Route path="/mypage" element={<MyPage />} />
 
               <Route path="/rules/new" element={<RuleCreatePage />} />
+              <Route path="/todos/new" element={<TodoCreatePage />} />
+              <Route path="/todos/:todoId/edit" element={<TodoEditPage />} />
+              <Route
+                path="/todos/list/category/:type"
+                element={<TodoListPage />}
+              />
+              <Route
+                path="/todos/list/member/:memberId"
+                element={<TodoListPage />}
+              />
             </Route>
           </Route>
 

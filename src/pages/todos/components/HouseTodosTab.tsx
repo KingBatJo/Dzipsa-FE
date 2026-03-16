@@ -7,12 +7,9 @@ import {
 import { addLocalToTodos, getTodoSections } from '@/utils/todos';
 
 import { Card } from '@/components/ui/card';
-import EmptyState from '@/components/common/EmptyState';
-import ListItemCard from '@/components/common/ListItemCard';
-import ListSection from '@/components/common/ListSection';
-import { User2 } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import UserAvatar from '@/components/common/UserAvatar';
-import { formatDueAt } from '@/utils/date';
+import dzipsaCharacter from '@/assets/dzipsa.svg';
 
 type HouseTodosSummaryProps = {
   total: number;
@@ -22,19 +19,29 @@ type HouseTodosSummaryProps = {
   message: string;
 };
 
-// 남은 할 일에 따른 안내 메시지
+type HouseTodosTabProps = {
+  onCategoryClick?: (type: 'today' | 'missed' | 'all') => void;
+  onMemberClick?: (memberId: number) => void;
+};
+
+type SummaryItemProps = {
+  title: string;
+  count: number;
+  onClick?: () => void;
+  left?: React.ReactNode;
+};
+
 const getTodosSummaryMessage = (
   remaining: number,
   myRemaining: number,
   userName: string
 ) => {
-  if (remaining === 0) return '남은 할 일이 없어요';
-  if (myRemaining === 0) return `남은 할 일 중 ${userName}님의 할 일은 없어요`;
+  if (remaining === 0) return '오늘 할 일이 없어요';
+  if (myRemaining === 0) return `오늘 할 일 중 ${userName}님의 할 일이 없어요`;
 
-  return `${userName}님은 할 일 ${myRemaining}개가 남아있어요`;
+  return `남은 할 일 중 ${userName}님의 할 일이 ${myRemaining}개 남있어요`;
 };
 
-// 상단 요약 카드
 const HouseTodosSummary = ({
   total,
   completed,
@@ -45,116 +52,122 @@ const HouseTodosSummary = ({
   const remaining = Math.max(total - completed, 0);
 
   return (
-    <Card className="relative mb-4 rounded-md border-none bg-[#BDBDBD] p-4">
-      <div className="text-sm font-medium">
-        <p>
-          오늘 할 일 {total}개 중 {completed}개가 완료되었어요!
-        </p>
-        <p>{message}</p>
-        <p>{getTodosSummaryMessage(remaining, myRemaining, userName)}</p>
-      </div>
+    <Card className="relative mb-4 flex items-center rounded-md border-none bg-[#BDBDBD] py-[10px] pr-4">
+      <img src={dzipsaCharacter} className="h-20 w-20" />
 
-      {/* 임시 */}
-      <User2 className="absolute -right-3 -bottom-3 h-38 w-38 text-[#DEDEDE]" />
+      <div className="text-center text-xs font-semibold">
+        <p>
+          오늘 우리집 할 일 {total}개 중 벌써 {completed}개가 완료됐어요
+        </p>
+        <p>{getTodosSummaryMessage(remaining, myRemaining, userName)}</p>
+        <p>{message}</p>
+      </div>
     </Card>
   );
 };
 
-const HouseTodosTab = () => {
-  // 임시
+const SummaryItem = ({ title, count, onClick, left }: SummaryItemProps) => {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="hover:bg-secondary flex w-full items-center justify-between rounded-lg border border-[#DDDDDD] px-4 py-4"
+    >
+      <div className="flex items-center gap-2">
+        {left}
+        <span className="text-base font-semibold">{title}</span>
+      </div>
+
+      <div className="flex items-center gap-1">
+        <span className="text-sm font-semibold">{count}건</span>
+        <ChevronRight className="text-muted-foreground h-5 w-5" />
+      </div>
+    </button>
+  );
+};
+
+const HouseTodosTab = ({
+  onCategoryClick,
+  onMemberClick,
+}: HouseTodosTabProps) => {
   const myId = MOCK_MY_ID;
   const today = MOCK_TODAY;
 
-  const myName = mockMembers.find((m) => m.id === myId)?.name ?? '나';
-  const membersById = new Map(mockMembers.map((m) => [m.id, m]));
-
+  const myName = mockMembers.find((member) => member.id === myId)?.name ?? '';
   const todos = addLocalToTodos(mockTodoList);
 
-  // 할 일 섹션 분류
-  const { todayTodos, missedTodos, upcomingTodos } = getTodoSections(
-    todos,
-    today
-  );
+  const { todayTodos, missedTodos } = getTodoSections(todos, today);
 
-  // todayTodos 돌면서 통계 계산
+  const activeTodos = todos.filter((todo) => !todo.completed);
+  const todayActiveTodos = todayTodos.filter((todo) => !todo.completed);
+
   const { total, completed, myRemaining } = todayTodos.reduce(
-    (acc, t) => {
-      acc.total += 1;
-      if (t.completed) acc.completed += 1;
-      if (t.assigneeId === myId && !t.completed) acc.myRemaining += 1;
-      return acc;
+    (accumulator, todo) => {
+      accumulator.total += 1;
+      if (todo.completed) accumulator.completed += 1;
+      if (todo.assigneeId === myId && !todo.completed)
+        accumulator.myRemaining += 1;
+      return accumulator;
     },
     { total: 0, completed: 0, myRemaining: 0 }
   );
 
-  // 놓친 할 일 (미완료만 - 렌더링용)
-  const visibleTodayTodos = todayTodos.filter((t) => !t.completed);
+  const memberTodoCounts = mockMembers
+    .filter((member) => member.id !== myId)
+    .map((member) => ({
+      memberId: member.id,
+      name: member.name,
+      profileImage: member.profileImage,
+      count: activeTodos.filter((todo) => todo.assigneeId === member.id).length,
+    }));
 
   return (
-    <div className="space-y-8">
-      {missedTodos.length > 0 && (
-        <ListSection title="놓친 할 일이 있어요!">
-          {missedTodos.map((todo) => (
-            <ListItemCard
-              key={todo.id}
-              title={todo.title}
-              subtitle={formatDueAt(todo.dueAt)}
-              right={
-                <UserAvatar
-                  src={membersById.get(todo.assigneeId)?.profileImage}
-                />
-              }
-              className="bg-destructive/10"
+    <div className="space-y-5">
+      <HouseTodosSummary
+        total={total}
+        completed={completed}
+        myRemaining={myRemaining}
+        userName={myName}
+        message="우리집을 위해 힘내볼까요?"
+      />
+
+      <section className="space-y-3">
+        <h2 className="text-base font-semibold">전체 할 일</h2>
+
+        <div className="space-y-2">
+          <SummaryItem
+            title="오늘 할 일"
+            count={todayActiveTodos.length}
+            onClick={() => onCategoryClick?.('today')}
+          />
+          <SummaryItem
+            title="지연된 할 일"
+            count={missedTodos.length}
+            onClick={() => onCategoryClick?.('missed')}
+          />
+          <SummaryItem
+            title="모든 할 일"
+            count={activeTodos.length}
+            onClick={() => onCategoryClick?.('all')}
+          />
+        </div>
+      </section>
+
+      <section className="space-y-3">
+        <h2 className="text-base font-semibold">구성원 할 일</h2>
+
+        <div className="space-y-2">
+          {memberTodoCounts.map((member) => (
+            <SummaryItem
+              key={member.memberId}
+              title={member.name}
+              count={member.count}
+              left={<UserAvatar src={member.profileImage} />}
+              onClick={() => onMemberClick?.(member.memberId)}
             />
           ))}
-        </ListSection>
-      )}
-
-      <ListSection title="오늘 할 일">
-        <HouseTodosSummary
-          total={total}
-          completed={completed}
-          myRemaining={myRemaining}
-          userName={myName}
-          message="오늘 하루 정말 수고하셨어요!"
-        />
-
-        {visibleTodayTodos.length === 0 ? (
-          <EmptyState message="오늘 할 일이 없어요" />
-        ) : (
-          visibleTodayTodos.map((todo) => (
-            <ListItemCard
-              key={todo.id}
-              title={todo.title}
-              subtitle={formatDueAt(todo.dueAt)}
-              right={
-                <UserAvatar
-                  src={membersById.get(todo.assigneeId)?.profileImage}
-                />
-              }
-            />
-          ))
-        )}
-      </ListSection>
-
-      <ListSection title="예정된 모든 할 일">
-        {upcomingTodos.length === 0 ? (
-          <EmptyState message="예정된 할 일이 없어요" />
-        ) : (
-          upcomingTodos.map((todo) => (
-            <ListItemCard
-              key={todo.id}
-              title={todo.title}
-              subtitle={formatDueAt(todo.dueAt)}
-              right={
-                <UserAvatar
-                  src={membersById.get(todo.assigneeId)?.profileImage}
-                />
-              }
-            />
-          ))
-        )}
-      </ListSection>
+        </div>
+      </section>
     </div>
   );
 };

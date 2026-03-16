@@ -6,7 +6,7 @@ import {
 } from '@/utils/validators';
 
 import { Card } from '@/components/ui/card';
-import EditableInput from '@/pages/onboarding/components/EditableInput';
+import EditableInputSection from '@/components/form/EditableInputSection';
 import { cn } from '@/lib/utils';
 
 type MottoStepProps = {
@@ -52,21 +52,16 @@ const MottoStep = ({ motto, onChangeMotto }: MottoStepProps) => {
       </section>
 
       {/* 가훈 입력 */}
-      <section className="flex flex-col gap-1">
-        <EditableInput
-          id="motto"
-          ref={inputRef}
-          value={motto}
-          placeholder="우리집의 가훈을 정해보세요"
-          errorMessage={errorMessage}
-          onChange={handleChange}
-          onBlur={handleBlur}
-        />
-
-        <div className="flex justify-end text-xs font-semibold text-[#BCBCBC]">
-          최대 {MOTTO_MAX_LENGTH}글자
-        </div>
-      </section>
+      <EditableInputSection
+        id="motto"
+        value={motto}
+        placeholder="우리집의 가훈을 정해보세요"
+        maxLength={MOTTO_MAX_LENGTH}
+        errorMessage={errorMessage}
+        onChange={handleChange}
+        onBlur={handleBlur}
+        inputRef={inputRef}
+      />
 
       {/* 가훈 템플릿 */}
       <section className="flex flex-col gap-2 pt-5">

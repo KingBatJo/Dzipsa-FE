@@ -21,19 +21,24 @@ const ListItemCard = ({
   <Card
     role={onClick ? 'button' : undefined}
     tabIndex={onClick ? 0 : undefined}
-    onClick={onClick}
+    onClick={(event) => {
+      if (!onClick) return;
+      event.currentTarget.blur();
+      onClick();
+    }}
     className={cn(
-      'flex items-center rounded-md border-[#D4D4D4] p-4',
+      'flex items-center rounded-md border-[#D4D4D4] p-4 shadow-none',
+      onClick && 'hover:cursor-pointer',
       className
     )}
   >
     <div className="flex min-w-0 flex-1 items-center gap-4">
       {left && <div className="shrink-0">{left}</div>}
 
-      <div className="min-w-0 flex-1">
-        <p className="truncate text-base font-medium">{title}</p>
+      <div className="min-w-0 flex-1 space-y-1">
+        <p className="truncate text-sm font-semibold">{title}</p>
         {subtitle && (
-          <p className="text-muted-foreground text-xs font-normal">
+          <p className="text-muted-foreground text-[10px] font-semibold">
             {subtitle}
           </p>
         )}

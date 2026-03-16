@@ -3,3 +3,5 @@ export const TODO_TABS = {
   HOUSE: 'house',
   COMPLETED: 'completed',
 } as const;
+
+export const REPEAT_TYPE_OPTIONS = ['매주', '매월'] as const;
