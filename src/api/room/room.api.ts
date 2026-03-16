@@ -20,3 +20,8 @@ export const joinRoom = async (payload: JoinRoomRequest) => {
   );
   return data;
 };
+
+// 방 나가기
+export const leaveRoom = async () => {
+  await apiClient.delete('/api/rooms/leave');
+};

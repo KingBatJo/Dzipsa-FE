@@ -1,7 +1,9 @@
 import { Button } from '@/components/ui/button';
 import { HEADER_HEIGHT_CLASS } from '@/constants/layout';
 import { X } from 'lucide-react';
+import { leaveRoom } from '@/api/room/room.api';
 import { logout } from '@/api/auth/auth.api';
+import { toast } from 'sonner';
 import { useAuthStore } from '@/stores/auth.store';
 import { useNavigate } from 'react-router-dom';
 
@@ -20,6 +22,17 @@ const MyPage = () => {
       navigate('/login', { replace: true });
     } catch (error) {
       console.error('로그아웃 실패: ', error);
+    }
+  };
+
+  const handleLeaveRoom = async () => {
+    try {
+      await leaveRoom();
+      toast('방에서 나갔어요.');
+      navigate('/onboarding', { replace: true });
+    } catch (error) {
+      console.error('방 나가기 실패:', error);
+      toast('방 나가기에 실패했어요.');
     }
   };
 
@@ -49,7 +62,7 @@ const MyPage = () => {
 
       <div className="bg-secondary h-[13px]" />
 
-      <section className="flex flex-col items-center py-4">
+      <section className="flex flex-col items-center gap-2 py-4">
         <Button
           type="button"
           variant="destructive"
@@ -57,6 +70,10 @@ const MyPage = () => {
           className="text-white"
         >
           로그아웃
+        </Button>
+
+        <Button type="button" variant="outline" onClick={handleLeaveRoom}>
+          방 나가기
         </Button>
       </section>
     </div>
