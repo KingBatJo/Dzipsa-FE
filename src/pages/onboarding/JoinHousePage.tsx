@@ -4,16 +4,19 @@ import InviteCodeInputStep from '@/pages/onboarding/components/InviteCodeInputSt
 import { OTP_LENGTH } from '@/constants/onboarding';
 import OnboardingFlowLayout from '@/pages/onboarding/components/OnboardingFlowLayout';
 import ProfileStep from '@/pages/onboarding/components/ProfileStep';
+import type { RoomResponse } from '@/api/room/room.types';
+import { getApiErrorMessage } from '@/api/error';
+import { joinRoom } from '@/api/room/room.api';
 import { toast } from 'sonner';
 import { useAuthStore } from '@/stores/auth.store';
 import { useNavigate } from 'react-router-dom';
 import { useOnboardingStore } from '@/stores/onboarding.store';
 import { useState } from 'react';
 
-const MOCK_VALID_INVITE_CODE = '123456';
-
 const JoinHousePage = () => {
   const navigate = useNavigate();
+  const [joinedRoom, setJoinedRoom] = useState<RoomResponse>();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasError, setHasError] = useState(false);
 
   const {
@@ -71,19 +74,37 @@ const JoinHousePage = () => {
     navigate('/home', { replace: true });
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (step === 'invite') {
-      if (inviteCode !== MOCK_VALID_INVITE_CODE) {
-        setHasError(true);
-        toast('존재하지 않는 집입니다. 코드를 다시 입력해보세요', {
-          id: 'invalid-invite-code',
-          duration: 2000,
-        });
+      if (joinedRoom) {
+        setJoinStep('confirm');
         return;
       }
 
-      setHasError(false);
-      setJoinStep('confirm');
+      try {
+        setIsSubmitting(true);
+
+        const room = await joinRoom({ invitationCode: inviteCode });
+
+        console.log('방 입장: ', room);
+
+        setJoinedRoom(room);
+        setHasError(false);
+        setJoinStep('confirm');
+      } catch (error) {
+        const message = getApiErrorMessage(error);
+
+        console.error('방 입장 실패: ', message, error);
+
+        setHasError(true);
+        toast(message, {
+          id: 'invalid-invite-code',
+          duration: 2000,
+        });
+      } finally {
+        setIsSubmitting(false);
+      }
+
       return;
     }
 
@@ -114,6 +135,7 @@ const JoinHousePage = () => {
         : '다음';
 
   const isNextDisabled =
+    isSubmitting ||
     (step === 'invite' ? inviteCode.length !== OTP_LENGTH : false) ||
     (step === 'profile' && !nickname.trim());
 
@@ -148,7 +170,7 @@ const JoinHousePage = () => {
         />
       )}
 
-      {step === 'confirm' && <HouseConfirmStep />}
+      {step === 'confirm' && joinedRoom && <HouseConfirmStep />}
 
       {step === 'profile' && (
         <ProfileStep
