@@ -112,12 +112,14 @@ const HouseTodosTab = ({
     { total: 0, completed: 0, myRemaining: 0 }
   );
 
-  const memberTodoCounts = mockMembers.map((member) => ({
-    memberId: member.id,
-    name: member.name,
-    profileImage: member.profileImage,
-    count: activeTodos.filter((todo) => todo.assigneeId === member.id).length,
-  }));
+  const memberTodoCounts = mockMembers
+    .filter((member) => member.id !== myId)
+    .map((member) => ({
+      memberId: member.id,
+      name: member.name,
+      profileImage: member.profileImage,
+      count: activeTodos.filter((todo) => todo.assigneeId === member.id).length,
+    }));
 
   return (
     <div className="space-y-5">
