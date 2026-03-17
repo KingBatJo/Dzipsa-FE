@@ -4,6 +4,8 @@ import AgeConfirmDialog from './AgeConfirmDialog';
 import BottomSheet from '@/components/common/BottomSheet';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 type PendingAction = 'age' | 'all' | null;
 
@@ -20,6 +22,8 @@ const TermsAgreementSheet = ({
   isSubmitting,
   onAgree,
 }: TermsAgreementSheetProps) => {
+  const navigate = useNavigate();
+
   const [agreements, setAgreements] = useState({
     age: false,
     service: false,
@@ -164,7 +168,7 @@ const TermsAgreementSheet = ({
             </label>
 
             {/* 서비스 이용약관 */}
-            <label className="flex items-center gap-3 px-4">
+            <div className="flex items-center gap-3 px-4">
               <Checkbox
                 checked={agreements.service}
                 onCheckedChange={(checked) =>
@@ -173,11 +177,20 @@ const TermsAgreementSheet = ({
                 disabled={isSubmitting}
                 className="border-neutral-200"
               />
-              <span>[필수] 디집사 서비스 이용약관</span>
-            </label>
+
+              <Button
+                type="button"
+                variant="link"
+                onClick={() => navigate('/signup/terms/service')}
+                className="group flex h-fit w-full items-center justify-between p-0"
+              >
+                <span>[필수] 디집사 서비스 이용약관</span>
+                <ChevronRight className="text-muted-foreground group-hover:text-primary h-4 w-4" />
+              </Button>
+            </div>
 
             {/* 개인정보 처리방침 */}
-            <label className="flex items-center gap-3 px-4">
+            <div className="flex items-center gap-3 px-4">
               <Checkbox
                 checked={agreements.privacy}
                 onCheckedChange={(checked) =>
@@ -186,8 +199,17 @@ const TermsAgreementSheet = ({
                 disabled={isSubmitting}
                 className="border-neutral-200"
               />
-              <span>[필수] 디집사 개인정보 처리방침</span>
-            </label>
+
+              <Button
+                type="button"
+                variant="link"
+                onClick={() => navigate('/signup/terms/privacy')}
+                className="group flex h-fit w-full items-center justify-between p-0"
+              >
+                <span>[필수] 디집사 개인정보 처리방침</span>
+                <ChevronRight className="text-muted-foreground group-hover:text-primary h-4 w-4" />
+              </Button>
+            </div>
           </div>
 
           <Button

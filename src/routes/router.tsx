@@ -22,6 +22,7 @@ import RuleCreatePage from '@/pages/rules/RuleCreatePage';
 import RulesPage from '@/pages/rules/RulesPage';
 import SignupCompletePage from '@/pages/login/SignupCompletePage';
 import { TODO_TABS } from '@/constants/todos';
+import TermsDetailPage from '@/pages/login/TermsDetailPage';
 import TermsPage from '@/pages/login/TermsPage';
 import TermsRoute from '@/routes/TermsRoute';
 import TodoCreatePage from '@/pages/todos/TodoCreatePage';
@@ -46,6 +47,7 @@ const Router = () => {
             {/* 약관동의 */}
             <Route element={<TermsRoute />}>
               <Route path="/signup/terms" element={<TermsPage />} />
+              <Route path="/signup/terms/:type" element={<TermsDetailPage />} />
             </Route>
             <Route path="/signup/complete" element={<SignupCompletePage />} />
 
