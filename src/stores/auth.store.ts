@@ -8,6 +8,7 @@ type AuthState = {
 
   setAccessToken: (token: string | null) => void;
   setUser: (user: MeResponse | null) => void;
+  updateUser: (payload: Partial<MeResponse>) => void;
   setAuthChecked: (checked: boolean) => void;
   clearAuth: () => void;
 };
@@ -26,6 +27,11 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({
       user,
     }),
+
+  updateUser: (payload) =>
+    set((state) => ({
+      user: state.user ? { ...state.user, ...payload } : state.user,
+    })),
 
   setAuthChecked: (checked) =>
     set({

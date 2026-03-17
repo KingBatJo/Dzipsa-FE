@@ -37,6 +37,7 @@ const JoinHousePage = () => {
   const { step, inviteCode, nickname, selectedProfileId } = joinFlow;
 
   const userNickname = useAuthStore((state) => state.user?.nickname);
+  const updateUser = useAuthStore((state) => state.updateUser);
 
   const getSafeNickname = (value: string) => {
     return value.trim() || userNickname || '';
@@ -78,13 +79,15 @@ const JoinHousePage = () => {
     }
   };
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
     const safeNickname = getSafeNickname(nickname);
 
     console.log({
       nickname: safeNickname,
       selectedProfileId,
     });
+
+    updateUser({ hasRoom: true });
 
     resetOnboarding();
     navigate('/home', { replace: true });

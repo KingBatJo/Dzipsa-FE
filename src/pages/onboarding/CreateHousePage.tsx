@@ -30,6 +30,7 @@ const CreateHousePage = () => {
   const { step, motto, nickname, selectedProfileId } = createFlow;
 
   const userNickname = useAuthStore((state) => state.user?.nickname);
+  const updateUser = useAuthStore((state) => state.updateUser);
 
   const getSafeNickname = (value: string) => {
     return value.trim() || userNickname || '';
@@ -106,7 +107,9 @@ const CreateHousePage = () => {
     }
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
+    updateUser({ hasRoom: true });
+
     resetOnboarding();
     navigate('/home', { replace: true });
   };

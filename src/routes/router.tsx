@@ -12,6 +12,7 @@ import MyPage from '@/pages/mypage/MyPage';
 import NotFoundPage from '@/pages/NotFoundPage';
 import NotificationPage from '@/pages/notification/NotificationPage';
 import OnboardingPage from '@/pages/onboarding/OnboardingPage';
+import OnboardingRoute from '@/routes/OnboardingRoute';
 import ProtectedRoute from '@/routes/ProtectedRoute';
 import PublicOnlyRoute from '@/routes/PublicOnlyRoute';
 import RootLayout from '@/components/layout/RootLayout';
@@ -21,6 +22,7 @@ import RulesPage from '@/pages/rules/RulesPage';
 import SignupCompletePage from '@/pages/login/SignupCompletePage';
 import { TODO_TABS } from '@/constants/todos';
 import TermsPage from '@/pages/login/TermsPage';
+import TermsRoute from '@/routes/TermsRoute';
 import TodoCreatePage from '@/pages/todos/TodoCreatePage';
 import TodoEditPage from '@/pages/todos/TodoEditPage';
 import TodoListPage from '@/pages/todos/TodoListPage';
@@ -40,13 +42,18 @@ const Router = () => {
           <Route path="/auth/callback" element={<AuthCallbackPage />} />
 
           <Route element={<ProtectedRoute />}>
-            <Route path="/signup/terms" element={<TermsPage />} />
+            {/* 약관동의 */}
+            <Route element={<TermsRoute />}>
+              <Route path="/signup/terms" element={<TermsPage />} />
+            </Route>
             <Route path="/signup/complete" element={<SignupCompletePage />} />
 
             {/* 온보딩 */}
-            <Route path="/onboarding" element={<OnboardingPage />} />
-            <Route path="/onboarding/create" element={<CreateHousePage />} />
-            <Route path="/onboarding/join" element={<JoinHousePage />} />
+            <Route element={<OnboardingRoute />}>
+              <Route path="/onboarding" element={<OnboardingPage />} />
+              <Route path="/onboarding/create" element={<CreateHousePage />} />
+              <Route path="/onboarding/join" element={<JoinHousePage />} />
+            </Route>
 
             <Route element={<AppEntryRoute />}>
               {/* 헤더 포함 */}

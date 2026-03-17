@@ -1,6 +1,5 @@
-import { agreeToTerms, getMe } from '@/api/auth/auth.api';
-
 import TermsAgreementSheet from '@/pages/login/components/TermsAgreementSheet';
+import { agreeToTerms } from '@/api/auth/auth.api';
 import { getApiErrorMessage } from '@/api/error';
 import { toast } from 'sonner';
 import { useAuthStore } from '@/stores/auth.store';
@@ -9,7 +8,7 @@ import { useState } from 'react';
 
 const TermsPage = () => {
   const navigate = useNavigate();
-  const setUser = useAuthStore((state) => state.setUser);
+  const updateUser = useAuthStore((state) => state.updateUser);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleAgree = async () => {
@@ -18,8 +17,9 @@ const TermsPage = () => {
 
       await agreeToTerms();
 
-      const me = await getMe();
-      setUser(me);
+      updateUser({ termsAgreed: true });
+
+      navigate('/signup/complete', { replace: true });
     } catch (error) {
       const message = getApiErrorMessage(error);
       console.error(message);
@@ -27,8 +27,6 @@ const TermsPage = () => {
     } finally {
       setIsSubmitting(false);
     }
-
-    navigate('/signup/complete', { replace: true });
   };
 
   return (

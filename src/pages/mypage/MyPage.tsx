@@ -11,6 +11,7 @@ const MyPage = () => {
   const navigate = useNavigate();
 
   const user = useAuthStore((state) => state.user);
+  const updateUser = useAuthStore((state) => state.updateUser);
   const clearAuth = useAuthStore((state) => state.clearAuth);
 
   const handleLogout = async () => {
@@ -28,7 +29,11 @@ const MyPage = () => {
   const handleLeaveRoom = async () => {
     try {
       await leaveRoom();
+
+      updateUser({ hasRoom: false });
+
       toast('방에서 나갔어요.');
+
       navigate('/onboarding', { replace: true });
     } catch (error) {
       console.error('방 나가기 실패:', error);
