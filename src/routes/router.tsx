@@ -46,8 +46,9 @@ const Router = () => {
           <Route element={<ProtectedRoute />}>
             {/* 약관동의 */}
             <Route element={<TermsRoute />}>
-              <Route path="/signup/terms" element={<TermsPage />} />
-              <Route path="/signup/terms/:type" element={<TermsDetailPage />} />
+              <Route path="/signup/terms" element={<TermsPage />}>
+                <Route path=":type" element={<TermsDetailPage />} />
+              </Route>
             </Route>
             <Route path="/signup/complete" element={<SignupCompletePage />} />
 
