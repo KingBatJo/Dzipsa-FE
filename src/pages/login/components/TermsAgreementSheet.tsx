@@ -7,19 +7,21 @@ import { Checkbox } from '@/components/ui/checkbox';
 type TermsAgreementSheetProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  isSubmitting?: boolean;
   onAgree: () => void;
 };
 
 const TermsAgreementSheet = ({
   open,
   onOpenChange,
+  isSubmitting,
   onAgree,
 }: TermsAgreementSheetProps) => {
   const [serviceChecked, setServiceChecked] = useState(false);
   const [privacyChecked, setPrivacyChecked] = useState(false);
 
   const isAllChecked = serviceChecked && privacyChecked;
-  const isSubmitDisabled = !isAllChecked;
+  const isSubmitDisabled = !isAllChecked || isSubmitting;
 
   const handleAllCheckedChange = (checked: boolean) => {
     setServiceChecked(checked);
@@ -49,6 +51,7 @@ const TermsAgreementSheet = ({
               onCheckedChange={(checked) =>
                 handleAllCheckedChange(checked === true)
               }
+              disabled={isSubmitting}
               className="border-neutral-200"
             />
             <span>모두 동의하기</span>
@@ -58,6 +61,7 @@ const TermsAgreementSheet = ({
             <Checkbox
               checked={serviceChecked}
               onCheckedChange={(checked) => setServiceChecked(checked === true)}
+              disabled={isSubmitting}
               className="border-neutral-200"
             />
             <span>[필수] 디집사 서비스 이용약관</span>
@@ -67,6 +71,7 @@ const TermsAgreementSheet = ({
             <Checkbox
               checked={privacyChecked}
               onCheckedChange={(checked) => setPrivacyChecked(checked === true)}
+              disabled={isSubmitting}
               className="border-neutral-200"
             />
             <span>[필수] 디집사 개인정보 처리방침</span>

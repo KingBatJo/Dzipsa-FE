@@ -37,3 +37,8 @@ export const getMe = async () => {
   const { data } = await apiClient.get<MeResponse>('/api/auth/me');
   return data;
 };
+
+// 이용약관 동의
+export const agreeToTerms = async () => {
+  await apiClient.post('/api/users/me/terms-agreement');
+};
