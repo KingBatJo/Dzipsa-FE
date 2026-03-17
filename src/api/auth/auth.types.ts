@@ -1,5 +1,10 @@
 export type SocialProvider = 'kakao' | 'naver';
 
+export type UpdateMeRequest = {
+  nickname: string;
+  profileImageUrl: string;
+};
+
 export type RefreshResponse = {
   accessToken: string;
 };

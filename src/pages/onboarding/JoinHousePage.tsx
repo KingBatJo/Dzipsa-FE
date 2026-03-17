@@ -13,6 +13,7 @@ import OnboardingFlowLayout from '@/pages/onboarding/components/OnboardingFlowLa
 import ProfileStep from '@/pages/onboarding/components/ProfileStep';
 import { getApiErrorMessage } from '@/api/error';
 import { toast } from 'sonner';
+import { updateMe } from '@/api/auth/auth.api';
 import { useAuthStore } from '@/stores/auth.store';
 import { useNavigate } from 'react-router-dom';
 import { useOnboardingStore } from '@/stores/onboarding.store';
@@ -41,6 +42,19 @@ const JoinHousePage = () => {
 
   const getSafeNickname = (value: string) => {
     return value.trim() || userNickname || '';
+  };
+
+  const submitProfile = async () => {
+    const safeNickname = getSafeNickname(nickname);
+
+    const updatedUser = await updateMe({
+      nickname: safeNickname,
+      profileImageUrl: selectedProfileId,
+    });
+
+    console.log('내 정보 수정 응답:', updatedUser);
+
+    updateUser(updatedUser);
   };
 
   const handleChangeInviteCode = (value: string) => {
@@ -80,17 +94,26 @@ const JoinHousePage = () => {
   };
 
   const handleComplete = async () => {
-    const safeNickname = getSafeNickname(nickname);
+    try {
+      setIsSubmitting(true);
 
-    console.log({
-      nickname: safeNickname,
-      selectedProfileId,
-    });
+      await submitProfile();
+      updateUser({ hasRoom: true });
 
-    updateUser({ hasRoom: true });
+      resetOnboarding();
+      navigate('/home', { replace: true });
+    } catch (error) {
+      const message = getApiErrorMessage(error);
 
-    resetOnboarding();
-    navigate('/home', { replace: true });
+      console.error('내 정보 수정 실패:', message, error);
+
+      toast(message, {
+        id: 'update-me-error',
+        duration: 2000,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleNext = async () => {
@@ -169,17 +192,17 @@ const JoinHousePage = () => {
     }
 
     if (step === 'profile') {
-      handleComplete();
+      await handleComplete();
     }
   };
 
-  const handleSkip = () => {
+  const handleSkip = async () => {
     if (step !== 'profile') return;
 
     updateJoinFlow({
       nickname: getSafeNickname(nickname),
     });
-    handleComplete();
+    await handleComplete();
   };
 
   const buttonLabel =

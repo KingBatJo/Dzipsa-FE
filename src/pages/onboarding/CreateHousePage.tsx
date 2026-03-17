@@ -8,6 +8,7 @@ import type { RoomResponse } from '@/api/room/room.types';
 import { createRoom } from '@/api/room/room.api';
 import { getApiErrorMessage } from '@/api/error';
 import { toast } from 'sonner';
+import { updateMe } from '@/api/auth/auth.api';
 import { useAuthStore } from '@/stores/auth.store';
 import { useNavigate } from 'react-router-dom';
 import { useOnboardingStore } from '@/stores/onboarding.store';
@@ -42,23 +43,25 @@ const CreateHousePage = () => {
       return;
     }
 
-    try {
-      setIsSubmitting(true);
+    const room = await createRoom();
 
-      const room = await createRoom();
+    console.log('방 생성 응답:', room);
 
-      console.log('방 생성 응답:', room);
+    setCreatedRoom(room);
+    setCreateStep('invite');
+  };
 
-      setCreatedRoom(room);
-      setCreateStep('invite');
-    } catch (error) {
-      const message = getApiErrorMessage(error);
+  const submitProfile = async () => {
+    const safeNickName = getSafeNickname(nickname);
 
-      console.error('방 생성 실패:', message, error);
-      toast('방 생성에 실패했어요. 다시 시도해주세요.');
-    } finally {
-      setIsSubmitting(false);
-    }
+    const updatedUser = await updateMe({
+      nickname: safeNickName,
+      profileImageUrl: selectedProfileId,
+    });
+
+    console.log('내 정보 수정 응답:', updatedUser);
+
+    updateUser(updatedUser);
   };
 
   const handleBack = () => {
@@ -84,7 +87,24 @@ const CreateHousePage = () => {
     }
 
     if (step === 'profile') {
-      await moveToInvite();
+      try {
+        setIsSubmitting(true);
+
+        await submitProfile();
+        await moveToInvite();
+      } catch (error) {
+        const message = getApiErrorMessage(error);
+
+        console.error('프로필 설정 또는 방 생성 실패:', message, error);
+
+        toast(message, {
+          id: 'create-house-profile-error',
+          duration: 2000,
+        });
+      } finally {
+        setIsSubmitting(false);
+      }
+
       return;
     }
 
@@ -102,8 +122,24 @@ const CreateHousePage = () => {
       updateCreateFlow({
         nickname: getSafeNickname(nickname),
       });
-      await moveToInvite();
-      return;
+
+      try {
+        setIsSubmitting(true);
+
+        await submitProfile();
+        await moveToInvite();
+      } catch (error) {
+        const message = getApiErrorMessage(error);
+
+        console.error('프로필 설정 또는 방 생성 실패:', message, error);
+
+        toast(message, {
+          id: 'create-house-profile-error',
+          duration: 2000,
+        });
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
