@@ -16,7 +16,7 @@ import RepeatSection from '@/pages/todos/components/RepeatSection';
 import { formatDate } from '@/utils/date';
 import { cn } from '@/lib/utils';
 import DateWheelDialog from '@/components/form/DateWheelDialog';
-import ErrorTooltip from '@/components/form/ErrorTooltip';
+import ErrorToolTip from '@/components/form/TempErrorToolTip';
 import RandomAssignOverlay from '@/pages/todos/components/RandomAssignOverlay';
 import type { RepeatValue, TodoFormValues } from '@/types/todo';
 import { createDefaultRepeatValue } from '@/utils/todoForm';
@@ -276,7 +276,7 @@ const TodoForm = ({ mode, initialValues, onSubmit }: TodoFormProps) => {
               name="memo"
               control={control}
               render={({ field }) => (
-                <ErrorTooltip
+                <ErrorToolTip
                   message={memoErrorMessage || errors.memo?.message}
                 >
                   <div className="flex flex-col gap-1">
@@ -319,7 +319,7 @@ const TodoForm = ({ mode, initialValues, onSubmit }: TodoFormProps) => {
                       최대 300글자
                     </p>
                   </div>
-                </ErrorTooltip>
+                </ErrorToolTip>
               )}
             />
           </section>

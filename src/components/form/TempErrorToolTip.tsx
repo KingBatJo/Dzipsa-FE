@@ -5,12 +5,12 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
-type ErrorTooltipProps = {
+type ErrorToolTipProps = {
   message?: string;
   children: React.ReactNode;
 };
 
-const ErrorTooltip = ({ message, children }: ErrorTooltipProps) => {
+const ErrorToolTip = ({ message, children }: ErrorToolTipProps) => {
   return (
     <TooltipProvider delayDuration={0}>
       <Tooltip open={Boolean(message)}>
@@ -31,4 +31,4 @@ const ErrorTooltip = ({ message, children }: ErrorTooltipProps) => {
   );
 };
 
-export default ErrorTooltip;
+export default ErrorToolTip;
