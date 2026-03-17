@@ -54,3 +54,7 @@ export type GetUsedProfileImagesParams = {
 export type GetUsedProfileImagesResponse = {
   usedImages: string[];
 };
+
+export type InvitationCodeResponse = {
+  invitationCode: string;
+};

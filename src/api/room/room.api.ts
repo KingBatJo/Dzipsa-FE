@@ -3,6 +3,7 @@ import type {
   GetRoomMembersParams,
   GetUsedProfileImagesParams,
   GetUsedProfileImagesResponse,
+  InvitationCodeResponse,
   JoinRoomRequest,
   MyRoomResponse,
   RoomMemberResponse,
@@ -60,4 +61,20 @@ export const getUsedProfileImages = async (
 // 방 나가기
 export const leaveRoom = async () => {
   await apiClient.delete('/api/rooms/leave');
+};
+
+// 초대 코드 조회
+export const getInvitationCode = async () => {
+  const { data } = await apiClient.get<InvitationCodeResponse>(
+    '/api/rooms/invitation-code'
+  );
+  return data;
+};
+
+// 초대 코드 재발급
+export const reissueInvitationCode = async () => {
+  const { data } = await apiClient.post<InvitationCodeResponse>(
+    '/api/rooms/invitation-code/reissue'
+  );
+  return data;
 };
