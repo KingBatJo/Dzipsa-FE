@@ -15,6 +15,7 @@ import OnboardingPage from '@/pages/onboarding/OnboardingPage';
 import OnboardingRoute from '@/routes/OnboardingRoute';
 import ProtectedRoute from '@/routes/ProtectedRoute';
 import PublicOnlyRoute from '@/routes/PublicOnlyRoute';
+import RoomInvitationPage from '@/pages/mypage/RoomInvitationPage';
 import RootLayout from '@/components/layout/RootLayout';
 import RootRedirect from '@/routes/RootRedirect';
 import RuleCreatePage from '@/pages/rules/RuleCreatePage';
@@ -68,7 +69,12 @@ const Router = () => {
               </Route>
 
               <Route path="/notifications" element={<NotificationPage />} />
+
               <Route path="/mypage" element={<MyPage />} />
+              <Route
+                path="/mypage/invitation"
+                element={<RoomInvitationPage />}
+              />
 
               <Route path="/rules/new" element={<RuleCreatePage />} />
               <Route path="/todos/new" element={<TodoCreatePage />} />

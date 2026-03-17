@@ -72,6 +72,10 @@ const MyPage = () => {
       <div className="bg-secondary h-[13px]" />
 
       <section className="flex flex-col items-center gap-2 py-4">
+        <Button type="button" onClick={() => navigate('/mypage/invitation')}>
+          내 방 초대
+        </Button>
+
         <Button
           type="button"
           variant="destructive"
