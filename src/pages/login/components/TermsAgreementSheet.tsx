@@ -17,24 +17,31 @@ const TermsAgreementSheet = ({
   isSubmitting,
   onAgree,
 }: TermsAgreementSheetProps) => {
-  const [ageChecked, setAgeChecked] = useState(false);
-  const [serviceChecked, setServiceChecked] = useState(false);
-  const [privacyChecked, setPrivacyChecked] = useState(false);
+  const [agreements, setAgreements] = useState({
+    age: false,
+    service: false,
+    privacy: false,
+  });
 
-  const isAllChecked = ageChecked && serviceChecked && privacyChecked;
+  const isAllChecked =
+    agreements.age && agreements.service && agreements.privacy;
   const isSubmitDisabled = !isAllChecked || isSubmitting;
 
   const handleAllCheckedChange = (checked: boolean) => {
-    setAgeChecked(checked);
-    setServiceChecked(checked);
-    setPrivacyChecked(checked);
+    setAgreements({
+      age: checked,
+      service: checked,
+      privacy: checked,
+    });
   };
 
   useEffect(() => {
     if (!open) {
-      setAgeChecked(false);
-      setServiceChecked(false);
-      setPrivacyChecked(false);
+      setAgreements({
+        age: false,
+        service: false,
+        privacy: false,
+      });
     }
   }, [open]);
 
@@ -71,8 +78,13 @@ const TermsAgreementSheet = ({
           {/* 만 14세 이상 */}
           <label className="flex items-center gap-3 px-4">
             <Checkbox
-              checked={ageChecked}
-              onCheckedChange={(checked) => setAgeChecked(checked === true)}
+              checked={agreements.age}
+              onCheckedChange={(checked) =>
+                setAgreements((prev) => ({
+                  ...prev,
+                  age: checked === true,
+                }))
+              }
               disabled={isSubmitting}
               className="border-neutral-200"
             />
@@ -82,8 +94,13 @@ const TermsAgreementSheet = ({
           {/* 서비스 이용약관 */}
           <label className="flex items-center gap-3 px-4">
             <Checkbox
-              checked={serviceChecked}
-              onCheckedChange={(checked) => setServiceChecked(checked === true)}
+              checked={agreements.service}
+              onCheckedChange={(checked) =>
+                setAgreements((prev) => ({
+                  ...prev,
+                  service: checked === true,
+                }))
+              }
               disabled={isSubmitting}
               className="border-neutral-200"
             />
@@ -93,8 +110,13 @@ const TermsAgreementSheet = ({
           {/* 개인정보 처리방침 */}
           <label className="flex items-center gap-3 px-4">
             <Checkbox
-              checked={privacyChecked}
-              onCheckedChange={(checked) => setPrivacyChecked(checked === true)}
+              checked={agreements.privacy}
+              onCheckedChange={(checked) =>
+                setAgreements((prev) => ({
+                  ...prev,
+                  privacy: checked === true,
+                }))
+              }
               disabled={isSubmitting}
               className="border-neutral-200"
             />
