@@ -156,6 +156,7 @@ const CreateHousePage = () => {
           <ProfileStep
             nickname={nickname}
             selectedProfileId={selectedProfileId}
+            usedProfileIds={[]}
             onChangeNickname={setCreateNickname}
             onChangeProfile={(value) =>
               updateCreateFlow({ selectedProfileId: value })
