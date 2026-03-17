@@ -1,10 +1,14 @@
+import { OTP_LENGTH, PROFILE_OPTIONS } from '@/constants/onboarding';
 import type { RoomMemberResponse, RoomResponse } from '@/api/room/room.types';
-import { getRoomMembers, joinRoom } from '@/api/room/room.api';
+import {
+  getRoomMembers,
+  getUsedProfileImages,
+  joinRoom,
+} from '@/api/room/room.api';
 
 import { Button } from '@/components/ui/button';
 import HouseConfirmStep from '@/pages/onboarding/components/HouseConfirmStep';
 import InviteCodeInputStep from '@/pages/onboarding/components/InviteCodeInputStep';
-import { OTP_LENGTH } from '@/constants/onboarding';
 import OnboardingFlowLayout from '@/pages/onboarding/components/OnboardingFlowLayout';
 import ProfileStep from '@/pages/onboarding/components/ProfileStep';
 import { getApiErrorMessage } from '@/api/error';
@@ -18,6 +22,7 @@ const JoinHousePage = () => {
   const navigate = useNavigate();
   const [joinedRoom, setJoinedRoom] = useState<RoomResponse | null>(null);
   const [members, setMembers] = useState<RoomMemberResponse[]>([]);
+  const [usedProfileIds, setUsedProfileIds] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasError, setHasError] = useState(false);
 
@@ -67,6 +72,7 @@ const JoinHousePage = () => {
     }
 
     if (step === 'profile') {
+      setUsedProfileIds([]);
       setJoinStep('confirm');
       return;
     }
@@ -122,7 +128,40 @@ const JoinHousePage = () => {
     }
 
     if (step === 'confirm') {
-      setJoinStep('profile');
+      try {
+        setIsSubmitting(true);
+
+        const { usedImages } = await getUsedProfileImages();
+        setUsedProfileIds(usedImages);
+
+        console.log('사용 중인 프로필 id: ', usedImages);
+
+        const isCurrentSelectedUsed = usedImages.includes(selectedProfileId);
+
+        if (isCurrentSelectedUsed) {
+          const availableProfile = PROFILE_OPTIONS.find(
+            (profile) => !usedImages.includes(profile.id)
+          );
+
+          if (availableProfile) {
+            updateJoinFlow({ selectedProfileId: availableProfile.id });
+          }
+        }
+
+        setJoinStep('profile');
+      } catch (error) {
+        const message = getApiErrorMessage(error);
+
+        console.error('사용 중인 프로필 이미지 조회 실패: ', message, error);
+
+        toast(message, {
+          id: 'used-profile-images-error',
+          duration: 2000,
+        });
+      } finally {
+        setIsSubmitting(false);
+      }
+
       return;
     }
 
@@ -191,6 +230,7 @@ const JoinHousePage = () => {
         <ProfileStep
           nickname={nickname}
           selectedProfileId={selectedProfileId}
+          usedProfileIds={usedProfileIds}
           onChangeNickname={setJoinNickname}
           onChangeProfile={(value) =>
             updateJoinFlow({ selectedProfileId: value })

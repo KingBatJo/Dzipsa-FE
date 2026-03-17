@@ -13,6 +13,7 @@ import { RefreshCw } from 'lucide-react';
 type ProfileStepProps = {
   nickname: string;
   selectedProfileId: string;
+  usedProfileIds: string[];
   onChangeNickname: (nickname: string) => void;
   onChangeProfile: (profileId: string) => void;
 };
@@ -20,6 +21,7 @@ type ProfileStepProps = {
 const ProfileStep = ({
   nickname,
   selectedProfileId,
+  usedProfileIds,
   onChangeNickname,
   onChangeProfile,
 }: ProfileStepProps) => {
@@ -33,6 +35,12 @@ const ProfileStep = ({
     PROFILE_OPTIONS[0];
 
   const handleSelectProfile = (profileId: string) => {
+    const isUsed = usedProfileIds.includes(profileId);
+
+    if (isUsed && profileId !== selectedProfileId) {
+      return;
+    }
+
     onChangeProfile(profileId);
     setIsProfileSheetOpen(false);
   };
@@ -107,6 +115,7 @@ const ProfileStep = ({
         onOpenChange={setIsProfileSheetOpen}
         profiles={PROFILE_OPTIONS}
         selectedProfileId={selectedProfileId}
+        usedProfileIds={usedProfileIds}
         onSelectProfile={handleSelectProfile}
       />
     </div>

@@ -1,5 +1,7 @@
 import type {
   GetRoomMembersParams,
+  GetUsedProfileImagesParams,
+  GetUsedProfileImagesResponse,
   JoinRoomRequest,
   RoomMemberResponse,
   RoomResponse,
@@ -30,6 +32,20 @@ export const getRoomMembers = async (params?: GetRoomMembersParams) => {
       params,
     }
   );
+  return data;
+};
+
+// 사용 중인 프로필 조회
+export const getUsedProfileImages = async (
+  params?: GetUsedProfileImagesParams
+) => {
+  const { data } = await apiClient.get<GetUsedProfileImagesResponse>(
+    '/api/rooms/used-profile-images',
+    {
+      params,
+    }
+  );
+
   return data;
 };
 

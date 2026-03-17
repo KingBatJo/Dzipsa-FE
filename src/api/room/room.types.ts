@@ -26,3 +26,11 @@ export type RoomResponse = {
 export type GetRoomMembersParams = {
   excludeMe?: boolean;
 };
+
+export type GetUsedProfileImagesParams = {
+  invitationCode?: string;
+};
+
+export type GetUsedProfileImagesResponse = {
+  usedImages: string[];
+};
