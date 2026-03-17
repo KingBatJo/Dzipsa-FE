@@ -142,7 +142,6 @@
     left: 50% !important;
     right: auto !important;
     width: calc(100% - 32px) !important;
-    max-width: max-content !important;
     transform: translateX(-50%) !important;
   }
 }
