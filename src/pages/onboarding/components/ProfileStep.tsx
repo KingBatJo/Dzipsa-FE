@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import EditableInputSection from '@/components/form/EditableInputSection';
 import ProfilePickerSheet from '@/pages/onboarding/components/ProfilePickerSheet';
 import { RefreshCw } from 'lucide-react';
+import { getProfileOptionById } from '@/api/room/room.utils';
 
 type ProfileStepProps = {
   nickname: string;
@@ -30,9 +31,7 @@ const ProfileStep = ({
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const selectedProfile =
-    PROFILE_OPTIONS.find((profile) => profile.id === selectedProfileId) ??
-    PROFILE_OPTIONS[0];
+  const selectedProfile = getProfileOptionById(selectedProfileId);
 
   const handleSelectProfile = (profileId: string) => {
     const isUsed = usedProfileIds.includes(profileId);

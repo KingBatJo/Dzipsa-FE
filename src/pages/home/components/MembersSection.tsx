@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import type { RoomMemberResponse } from '@/api/room/room.types';
 import UserAvatar from '@/components/common/UserAvatar';
+import { getProfileOptionById } from '@/api/room/room.utils';
 
 type MembersSectionProps = {
   members: RoomMemberResponse[];
@@ -16,15 +17,19 @@ const MembersSection = ({ members }: MembersSectionProps) => {
       aria-label="멤버 목록"
       className="scrollbar-hide mx-1 flex snap-x snap-mandatory gap-2 overflow-x-auto py-1"
     >
-      {members.map((member) => (
-        <div key={member.id} className="shrink-0 snap-start">
-          <UserAvatar
-            size="lg"
-            src={member.profileImageUrl}
-            alt={`${member.nickname} 프로필`}
-          />
-        </div>
-      ))}
+      {members.map((member) => {
+        const profile = getProfileOptionById(member.profileImageUrl);
+
+        return (
+          <div key={member.id} className="shrink-0 snap-start">
+            <UserAvatar
+              size="lg"
+              src={profile.imageUrl}
+              alt={`${member.nickname} 프로필`}
+            />
+          </div>
+        );
+      })}
 
       {canAdd && (
         // 임시. 추후 초대 코드로 연결

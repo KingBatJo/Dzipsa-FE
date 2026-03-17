@@ -1,7 +1,7 @@
-import Profile from '@/assets/profile.svg';
 import type { RoomMemberResponse } from '@/api/room/room.types';
 import UserProfile from '@/components/common/UserProfile';
 import dzipsaCharacter from '@/assets/dzipsa.svg';
+import { getProfileOptionById } from '@/api/room/room.utils';
 
 type HouseConfirmStepProps = {
   members: RoomMemberResponse[];
@@ -22,9 +22,17 @@ const HouseConfirmStep = ({ members }: HouseConfirmStepProps) => {
         <p className="text-sm font-semibold text-[#BCBCBC]">우리집 구성원</p>
 
         <div className="grid grid-cols-5 gap-4">
-          {members.map((member) => (
-            <UserProfile key={member.id} name={member.nickname} src={Profile} />
-          ))}
+          {members.map((member) => {
+            const profile = getProfileOptionById(member.profileImageUrl);
+
+            return (
+              <UserProfile
+                key={member.id}
+                name={member.nickname}
+                src={profile.imageUrl}
+              />
+            );
+          })}
         </div>
       </section>
     </div>
