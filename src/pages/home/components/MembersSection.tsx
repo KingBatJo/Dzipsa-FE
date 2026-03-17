@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
-import type { Member } from '@/types/member';
+import type { RoomMemberResponse } from '@/api/room/room.types';
 import UserAvatar from '@/components/common/UserAvatar';
 
 type MembersSectionProps = {
-  members: Member[];
+  members: RoomMemberResponse[];
 };
 
 const MAX_MEMBERS = 6;
@@ -20,8 +20,8 @@ const MembersSection = ({ members }: MembersSectionProps) => {
         <div key={member.id} className="shrink-0 snap-start">
           <UserAvatar
             size="lg"
-            src={member.profileImage}
-            alt={`${member.name} 프로필`}
+            src={member.profileImageUrl}
+            alt={`${member.nickname} 프로필`}
           />
         </div>
       ))}

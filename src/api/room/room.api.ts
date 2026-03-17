@@ -1,8 +1,10 @@
 import type {
+  CreateRoomRequest,
   GetRoomMembersParams,
   GetUsedProfileImagesParams,
   GetUsedProfileImagesResponse,
   JoinRoomRequest,
+  MyRoomResponse,
   RoomMemberResponse,
   RoomResponse,
 } from '@/api/room/room.types';
@@ -10,8 +12,8 @@ import type {
 import { apiClient } from '@/api/client';
 
 // 방 생성
-export const createRoom = async () => {
-  const { data } = await apiClient.post<RoomResponse>('/api/rooms');
+export const createRoom = async (payload: CreateRoomRequest) => {
+  const { data } = await apiClient.post<RoomResponse>('/api/rooms', payload);
   return data;
 };
 
@@ -21,6 +23,12 @@ export const joinRoom = async (payload: JoinRoomRequest) => {
     '/api/rooms/join',
     payload
   );
+  return data;
+};
+
+// 내 방 조회
+export const getMyRoom = async () => {
+  const { data } = await apiClient.get<MyRoomResponse>('/api/rooms/me');
   return data;
 };
 

@@ -43,7 +43,10 @@ const CreateHousePage = () => {
       return;
     }
 
-    const room = await createRoom();
+    const room = await createRoom({
+      name: null,
+      motto: motto.trim() || null,
+    });
 
     console.log('방 생성 응답:', room);
 

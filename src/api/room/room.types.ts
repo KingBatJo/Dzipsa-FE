@@ -1,3 +1,8 @@
+export type CreateRoomRequest = {
+  name: string | null;
+  motto: string | null;
+};
+
 export type JoinRoomRequest = {
   invitationCode: string;
 };
@@ -11,13 +16,28 @@ export type RoomMemberResponse = {
 export type RoomResponse = {
   id: number;
   name: string;
-  motto: string;
+  motto: string | null;
   ownerId: number;
   membersCount: number;
   score: number;
   invitationCode: string;
-  ruleWarningCount: string;
-  delayTaskCount: string;
+  ruleWarningCount: string | null;
+  delayTaskCount: string | null;
+  members: RoomMemberResponse[];
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type MyRoomResponse = {
+  id: number;
+  name: string;
+  motto: string | null;
+  ownerId: number;
+  membersCount: number;
+  score: number;
+  invitationCode: string | null;
+  ruleWarningCount: string | null;
+  delayTaskCount: string | null;
   members: RoomMemberResponse[];
   createdAt: string;
   updatedAt: string;
