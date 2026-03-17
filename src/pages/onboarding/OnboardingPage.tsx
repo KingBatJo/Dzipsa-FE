@@ -38,7 +38,7 @@ const OnboardingPage = () => {
         <img
           src={dzipsaCharacter}
           alt="디집사 캐릭터"
-          className="h-full w-full"
+          className="h-[188px] w-[213px]"
         />
       </div>
 

@@ -78,7 +78,11 @@ const ProfileStep = ({
 
       <section className="flex justify-center pb-14">
         <div className="relative">
-          <img src={selectedProfile.imageUrl} alt={selectedProfile.alt} />
+          <img
+            src={selectedProfile.imageUrl}
+            alt={selectedProfile.alt}
+            className="h-[140px] w-[140px]"
+          />
 
           <Button
             onClick={() => setIsProfileSheetOpen(true)}
