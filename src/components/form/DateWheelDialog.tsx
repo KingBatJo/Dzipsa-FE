@@ -1,6 +1,6 @@
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { useEffect, useMemo, useState } from 'react';
 
+import AppDialog from '@/components/common/AppDialog';
 import { Button } from '@/components/ui/button';
 import Picker from 'react-mobile-picker';
 import { cn } from '@/lib/utils';
@@ -115,51 +115,49 @@ const DateWheelDialog = ({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        aria-describedby={undefined}
-        className="w-[293px] overflow-hidden rounded-[19px] border-none bg-white p-0 shadow-lg [&>button]:hidden"
-      >
-        <DialogTitle className="sr-only">날짜 선택</DialogTitle>
-
-        <div className="flex flex-col justify-between px-4 pt-8 pb-4">
-          <div className="px-4">
-            <Picker
-              value={pickerValue}
-              onChange={(nextValue) =>
-                handlePickerChange(nextValue as PickerDateValue)
-              }
-              wheelMode="natural"
-              itemHeight={52}
-              height={156}
-              className="flex items-start justify-center [&>div:last-child]:hidden"
-            >
-              <DateWheelColumn name="year" options={yearOptions} />
-              <DateWheelColumn name="month" options={monthOptions} />
-              <DateWheelColumn name="day" options={dayOptions} />
-            </Picker>
-          </div>
-
-          <div className="flex items-center justify-center gap-3 pt-8">
-            <Button
-              type="button"
-              className="border-primary hover:bg-secondary bg-primary-foreground h-12 w-[125px] rounded-lg border text-[#171717]"
-              onClick={() => onOpenChange(false)}
-            >
-              취소
-            </Button>
-
-            <Button
-              type="button"
-              className="bg-primary text-primary-foreground h-12 w-[125px] rounded-lg"
-              onClick={handleConfirm}
-            >
-              확인
-            </Button>
-          </div>
+    <AppDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      title="날짜 선택"
+      contentClassName="w-[293px] overflow-hidden"
+    >
+      <div className="flex flex-col justify-between pt-4">
+        <div className="px-4">
+          <Picker
+            value={pickerValue}
+            onChange={(nextValue) =>
+              handlePickerChange(nextValue as PickerDateValue)
+            }
+            wheelMode="natural"
+            itemHeight={52}
+            height={156}
+            className="flex items-start justify-center [&>div:last-child]:hidden"
+          >
+            <DateWheelColumn name="year" options={yearOptions} />
+            <DateWheelColumn name="month" options={monthOptions} />
+            <DateWheelColumn name="day" options={dayOptions} />
+          </Picker>
         </div>
-      </DialogContent>
-    </Dialog>
+
+        <div className="flex items-center justify-center gap-3 pt-8">
+          <Button
+            type="button"
+            className="border-primary hover:bg-secondary bg-primary-foreground h-12 w-[125px] rounded-lg border text-[#171717]"
+            onClick={() => onOpenChange(false)}
+          >
+            취소
+          </Button>
+
+          <Button
+            type="button"
+            className="bg-primary text-primary-foreground h-12 w-[125px] rounded-lg"
+            onClick={handleConfirm}
+          >
+            확인
+          </Button>
+        </div>
+      </div>
+    </AppDialog>
   );
 };
 
