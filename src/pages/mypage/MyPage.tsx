@@ -6,6 +6,7 @@ import { logout } from '@/api/auth/auth.api';
 import { toast } from 'sonner';
 import { useAuthStore } from '@/stores/auth.store';
 import { useNavigate } from 'react-router-dom';
+import { useOnboardingStore } from '@/stores/onboarding.store';
 
 const MyPage = () => {
   const navigate = useNavigate();
@@ -13,11 +14,13 @@ const MyPage = () => {
   const user = useAuthStore((state) => state.user);
   const updateUser = useAuthStore((state) => state.updateUser);
   const clearAuth = useAuthStore((state) => state.clearAuth);
+  const resetOnboarding = useOnboardingStore((state) => state.resetOnboarding);
 
   const handleLogout = async () => {
     try {
       await logout();
 
+      resetOnboarding();
       clearAuth();
 
       navigate('/login', { replace: true });
@@ -30,6 +33,7 @@ const MyPage = () => {
     try {
       await leaveRoom();
 
+      resetOnboarding();
       updateUser({ hasRoom: false });
 
       toast('방에서 나갔어요.');
