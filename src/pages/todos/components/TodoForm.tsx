@@ -16,7 +16,7 @@ import RepeatSection from '@/pages/todos/components/RepeatSection';
 import { formatDate } from '@/utils/date';
 import { cn } from '@/lib/utils';
 import DateWheelDialog from '@/components/form/DateWheelDialog';
-import ErrorToolTip from '@/components/form/TempErrorToolTip';
+import ErrorToolTip from '@/components/form/ErrorToolTip';
 import RandomAssignOverlay from '@/pages/todos/components/RandomAssignOverlay';
 import type { RepeatValue, TodoFormValues } from '@/types/todo';
 import { createDefaultRepeatValue } from '@/utils/todoForm';
