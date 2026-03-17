@@ -1,15 +1,31 @@
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+
 import TermsAgreementSheet from '@/pages/login/components/TermsAgreementSheet';
 import { agreeToTerms } from '@/api/auth/auth.api';
 import { getApiErrorMessage } from '@/api/error';
 import { toast } from 'sonner';
 import { useAuthStore } from '@/stores/auth.store';
-import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+
+export type Agreements = {
+  age: boolean;
+  service: boolean;
+  privacy: boolean;
+};
 
 const TermsPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const updateUser = useAuthStore((state) => state.updateUser);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [agreements, setAgreements] = useState<Agreements>({
+    age: false,
+    service: false,
+    privacy: false,
+  });
+
+  const isDetailPage = location.pathname !== '/signup/terms';
 
   const handleAgree = async () => {
     try {
@@ -30,16 +46,24 @@ const TermsPage = () => {
   };
 
   return (
-    <TermsAgreementSheet
-      open={true}
-      onOpenChange={(open) => {
-        if (!open) {
-          navigate(-1);
-        }
-      }}
-      isSubmitting={isSubmitting}
-      onAgree={handleAgree}
-    />
+    <>
+      {!isDetailPage && (
+        <TermsAgreementSheet
+          open={true}
+          onOpenChange={(open) => {
+            if (!open) {
+              navigate(-1);
+            }
+          }}
+          isSubmitting={isSubmitting}
+          agreements={agreements}
+          onChangeAgreements={setAgreements}
+          onAgree={handleAgree}
+        />
+      )}
+
+      <Outlet />
+    </>
   );
 };
 

@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
-
 import AgeConfirmDialog from './AgeConfirmDialog';
+import type { Agreements } from '../TermsPage';
 import BottomSheet from '@/components/common/BottomSheet';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
 type PendingAction = 'age' | 'all' | null;
 
@@ -13,6 +13,8 @@ type TermsAgreementSheetProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   isSubmitting?: boolean;
+  agreements: Agreements;
+  onChangeAgreements: React.Dispatch<React.SetStateAction<Agreements>>;
   onAgree: () => void;
 };
 
@@ -20,15 +22,11 @@ const TermsAgreementSheet = ({
   open,
   onOpenChange,
   isSubmitting,
+  agreements,
+  onChangeAgreements,
   onAgree,
 }: TermsAgreementSheetProps) => {
   const navigate = useNavigate();
-
-  const [agreements, setAgreements] = useState({
-    age: false,
-    service: false,
-    privacy: false,
-  });
 
   const [ageConfirmOpen, setAgeConfirmOpen] = useState(false);
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
@@ -39,11 +37,22 @@ const TermsAgreementSheet = ({
 
   // 모든 약관 체크 상태 초기화
   const resetAgreements = () => {
-    setAgreements({
+    onChangeAgreements({
       age: false,
       service: false,
       privacy: false,
     });
+  };
+
+  // 특정 약관 항목 체크 상태 업데이트
+  const updateAgreement = (
+    key: 'age' | 'service' | 'privacy',
+    checked: boolean
+  ) => {
+    onChangeAgreements((prev) => ({
+      ...prev,
+      [key]: checked,
+    }));
   };
 
   // 모두 동의 체크/해제
@@ -59,7 +68,7 @@ const TermsAgreementSheet = ({
       return;
     }
 
-    setAgreements({
+    onChangeAgreements({
       age: checked,
       service: checked,
       privacy: checked,
@@ -69,10 +78,7 @@ const TermsAgreementSheet = ({
   // 나이 체크/해제
   const handleAgeCheckedChange = (checked: boolean) => {
     if (!checked) {
-      setAgreements((prev) => ({
-        ...prev,
-        age: false,
-      }));
+      updateAgreement('age', false);
       return;
     }
 
@@ -87,7 +93,7 @@ const TermsAgreementSheet = ({
     }
 
     if (pendingAction === 'all') {
-      setAgreements({
+      onChangeAgreements({
         age: true,
         service: true,
         privacy: true,
@@ -103,25 +109,6 @@ const TermsAgreementSheet = ({
     setAgeConfirmOpen(false);
     setPendingAction(null);
   };
-
-  // 특정 약관 항목 체크 상태 업데이트
-  const updateAgreement = (
-    key: 'age' | 'service' | 'privacy',
-    checked: boolean
-  ) => {
-    setAgreements((prev) => ({
-      ...prev,
-      [key]: checked,
-    }));
-  };
-
-  useEffect(() => {
-    if (!open) {
-      resetAgreements();
-      setAgeConfirmOpen(false);
-      setPendingAction(null);
-    }
-  }, [open]);
 
   return (
     <>
