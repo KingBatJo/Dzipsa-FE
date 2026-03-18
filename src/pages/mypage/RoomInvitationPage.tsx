@@ -1,49 +1,47 @@
-import { getInvitationCode, reissueInvitationCode } from '@/api/room/room.api';
-import { useEffect, useState } from 'react';
+﻿import {
+  useInvitationCodeQuery,
+  useReissueInvitationCodeMutation,
+} from '@/api/room/room.query';
 
 import BackHeader from '@/components/layout/BackHeader';
 import { Button } from '@/components/ui/button';
 import InviteCodeCard from '@/components/common/InviteCodeCard';
 import { getApiErrorMessage } from '@/api/error';
 import { toast } from 'sonner';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const RoomInvitationPage = () => {
   const navigate = useNavigate();
-  const [inviteCode, setInviteCode] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+
+  const {
+    data: invitationCodeData,
+    isLoading,
+    isError,
+    error,
+  } = useInvitationCodeQuery();
+  const { mutateAsync: reissueMutate, isPending: isReissuing } =
+    useReissueInvitationCodeMutation();
+
+  const inviteCode = invitationCodeData?.invitationCode ?? '';
 
   useEffect(() => {
-    const fetchInvitationCode = async () => {
-      try {
-        setIsLoading(true);
+    if (!isError) return;
 
-        const { invitationCode } = await getInvitationCode();
-        setInviteCode(invitationCode);
-      } catch (error) {
-        const message = getApiErrorMessage(error);
+    const message = getApiErrorMessage(error);
 
-        console.error('초대 코드 조회 실패: ', message, error);
-        toast(message, {
-          id: 'invitation-code-error',
-          duration: 2000,
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchInvitationCode();
-  }, []);
+    console.error('초대 코드 조회 실패: ', message, error);
+    toast(message, {
+      id: 'invitation-code-error',
+      duration: 2000,
+    });
+  }, [isError, error]);
 
   const handleReissue = async () => {
     try {
-      setIsLoading(true);
+      await reissueMutate();
 
-      const { invitationCode } = await reissueInvitationCode();
-      setInviteCode(invitationCode);
-
-      toast('초대 코드가 재발급되었어요', {
+      toast('초대 코드가 재발급되었어요.', {
         id: 'reissue-invitation-code-success',
         duration: 2000,
       });
@@ -55,8 +53,6 @@ const RoomInvitationPage = () => {
         id: 'reissue-invitation-code-error',
         duration: 2000,
       });
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -80,7 +76,7 @@ const RoomInvitationPage = () => {
 
         <Button
           onClick={handleReissue}
-          disabled={isLoading || !inviteCode}
+          disabled={isLoading || isReissuing || !inviteCode}
           className="bg-muted-foreground rounded-lg"
         >
           코드 재발급 하기

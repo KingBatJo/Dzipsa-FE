@@ -1,3 +1,5 @@
+﻿import { useMeQuery, useUpdateMeMutation } from '@/api/auth/auth.query';
+
 import { Button } from '@/components/ui/button';
 import HouseWelcomeDialog from '@/pages/onboarding/components/HouseWelcomeDialog';
 import InviteCodeStep from '@/pages/onboarding/components/InviteCodeStep';
@@ -5,11 +7,11 @@ import MottoStep from '@/pages/onboarding/components/MottoStep';
 import OnboardingFlowLayout from '@/pages/onboarding/components/OnboardingFlowLayout';
 import ProfileStep from '@/pages/onboarding/components/ProfileStep';
 import type { RoomResponse } from '@/api/room/room.types';
-import { createRoom } from '@/api/room/room.api';
 import { getApiErrorMessage } from '@/api/error';
+import { queryClient } from '@/lib/queryClient';
+import { queryKeys } from '@/lib/queryKeys';
 import { toast } from 'sonner';
-import { updateMe } from '@/api/auth/auth.api';
-import { useAuthStore } from '@/stores/auth.store';
+import { useCreateRoomMutation } from '@/api/room/room.query';
 import { useNavigate } from 'react-router-dom';
 import { useOnboardingStore } from '@/stores/onboarding.store';
 import { useState } from 'react';
@@ -29,12 +31,12 @@ const CreateHousePage = () => {
   } = useOnboardingStore();
 
   const { step, motto, nickname, selectedProfileId } = createFlow;
-
-  const userNickname = useAuthStore((state) => state.user?.nickname);
-  const updateUser = useAuthStore((state) => state.updateUser);
+  const { data: me } = useMeQuery();
+  const { mutateAsync: updateMeMutate } = useUpdateMeMutation();
+  const { mutateAsync: createRoomMutate } = useCreateRoomMutation();
 
   const getSafeNickname = (value: string) => {
-    return value.trim() || userNickname || '';
+    return value.trim() || me?.nickname || '';
   };
 
   const moveToInvite = async () => {
@@ -43,28 +45,22 @@ const CreateHousePage = () => {
       return;
     }
 
-    const room = await createRoom({
+    const room = await createRoomMutate({
       name: null,
       motto: motto.trim() || null,
     });
-
-    console.log('방 생성 응답:', room);
 
     setCreatedRoom(room);
     setCreateStep('invite');
   };
 
   const submitProfile = async () => {
-    const safeNickName = getSafeNickname(nickname);
+    const safeNickname = getSafeNickname(nickname);
 
-    const updatedUser = await updateMe({
-      nickname: safeNickName,
+    await updateMeMutate({
+      nickname: safeNickname,
       profileImageUrl: selectedProfileId,
     });
-
-    console.log('내 정보 수정 응답:', updatedUser);
-
-    updateUser(updatedUser);
   };
 
   const handleBack = () => {
@@ -78,9 +74,7 @@ const CreateHousePage = () => {
       return;
     }
 
-    // motto 단계일 때
     navigate('/onboarding');
-    return;
   };
 
   const handleNext = async () => {
@@ -111,7 +105,6 @@ const CreateHousePage = () => {
       return;
     }
 
-    // invite 단계일 때
     setIsCompleteOpen(true);
   };
 
@@ -147,7 +140,7 @@ const CreateHousePage = () => {
   };
 
   const handleConfirm = async () => {
-    updateUser({ hasRoom: true });
+    await queryClient.invalidateQueries({ queryKey: queryKeys.auth.me });
 
     resetOnboarding();
     navigate('/home', { replace: true });

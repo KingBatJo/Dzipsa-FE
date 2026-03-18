@@ -1,26 +1,24 @@
-// 루트 경로("/") 접근 시 로그인 여부에 따라 초기 페이지로 분기
-
-import { hasAgreedToTerms, hasRoom } from '@/api/auth/auth.utils';
+﻿import { hasAgreedToTerms, hasRoom } from '@/api/auth/auth.utils';
 
 import { Navigate } from 'react-router-dom';
-import { useAuthStore } from '@/stores/auth.store';
+import { useAuthGuardMe } from '@/hooks/useAuthGuardMe';
 
+// 루트 경로("/") 접근 시 인증/온보딩 상태에 따라 초기 진입 페이지로 분기
 const RootRedirect = () => {
-  const accessToken = useAuthStore((state) => state.accessToken);
-  const isAuthChecked = useAuthStore((state) => state.isAuthChecked);
-  const user = useAuthStore((state) => state.user);
+  const { me, isChecking, shouldRedirectToLogin } = useAuthGuardMe();
 
-  if (!isAuthChecked) return null;
+  if (isChecking) return null;
 
-  if (!accessToken) {
+  // 인증 정보가 유효하지 않으면 로그인으로 이동
+  if (shouldRedirectToLogin || !me) {
     return <Navigate to="/login" replace />;
   }
 
-  if (!hasAgreedToTerms(user)) {
+  if (!hasAgreedToTerms(me)) {
     return <Navigate to="/signup/terms" replace />;
   }
 
-  if (!hasRoom(user)) {
+  if (!hasRoom(me)) {
     return <Navigate to="/onboarding" replace />;
   }
 

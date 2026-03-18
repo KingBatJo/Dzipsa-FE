@@ -21,8 +21,8 @@ export type RoomResponse = {
   membersCount: number;
   score: number;
   invitationCode: string;
-  ruleWarningCount: string | null;
-  delayTaskCount: string | null;
+  ruleWarningCount: number | null;
+  delayTaskCount: number | null;
   members: RoomMemberResponse[];
   createdAt: string;
   updatedAt: string;
@@ -36,8 +36,8 @@ export type MyRoomResponse = {
   membersCount: number;
   score: number;
   invitationCode: string | null;
-  ruleWarningCount: string | null;
-  delayTaskCount: string | null;
+  ruleWarningCount: number | null;
+  delayTaskCount: number | null;
   members: RoomMemberResponse[];
   createdAt: string;
   updatedAt: string;
@@ -57,4 +57,5 @@ export type GetUsedProfileImagesResponse = {
 
 export type InvitationCodeResponse = {
   invitationCode: string;
+  reissueAvailableAt: string;
 };

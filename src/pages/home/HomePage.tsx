@@ -1,11 +1,10 @@
-import {
+﻿import {
   MOCK_MY_ID,
   MOCK_TODAY,
   PROFILE_IMAGE,
   mockTodoList,
 } from '@/mocks/mockData';
 import { addLocalToTodos, getTodoSections } from '@/utils/todos';
-import { useEffect, useState } from 'react';
 
 import DashboardSection from '@/pages/home/components/DashboardSection';
 import EmptyState from '@/components/common/EmptyState';
@@ -13,15 +12,15 @@ import ListItemCard from '@/components/common/ListItemCard';
 import ListSection from '@/components/common/ListSection';
 import MembersSection from '@/pages/home/components/MembersSection';
 import MottoSection from '@/pages/home/components/MottoSection';
-import type { MyRoomResponse } from '@/api/room/room.types';
 import UserAvatar from '@/components/common/UserAvatar';
 import { formatDueDateLabel } from '@/utils/date';
 import { getApiErrorMessage } from '@/api/error';
-import { getMyRoom } from '@/api/room/room.api';
 import { toast } from 'sonner';
+import { useEffect } from 'react';
+import { useMyRoomQuery } from '@/api/room/room.query';
 
 const HomePage = () => {
-  const [room, setRoom] = useState<MyRoomResponse | null>(null);
+  const { data: room, isError, error } = useMyRoomQuery();
 
   const myId = MOCK_MY_ID;
   const today = MOCK_TODAY;
@@ -35,21 +34,13 @@ const HomePage = () => {
   const missedCount = missedTodos.length;
 
   useEffect(() => {
-    const fetchMyRoom = async () => {
-      try {
-        const data = await getMyRoom();
-        console.log('내 방 조회: ', data);
-        setRoom(data);
-      } catch (error) {
-        const message = getApiErrorMessage(error);
+    if (!isError) return;
 
-        console.error('내 방 조회 실패:', message, error);
-        toast(message);
-      }
-    };
+    const message = getApiErrorMessage(error);
 
-    fetchMyRoom();
-  }, []);
+    console.error('우리 방 조회 실패:', message, error);
+    toast(message);
+  }, [isError, error]);
 
   return (
     <div className="space-y-4 p-4">

@@ -1,15 +1,17 @@
+﻿import { Outlet, useLocation } from 'react-router-dom';
 import { getMe, refresh } from '@/api/auth/auth.api';
 import { useEffect, useRef, useState } from 'react';
 
-import { Outlet } from 'react-router-dom';
+import { queryClient } from '@/lib/queryClient';
+import { queryKeys } from '@/lib/queryKeys';
 import { useAuthStore } from '@/stores/auth.store';
 
 const AuthInitializer = () => {
   const [isInitializing, setIsInitializing] = useState(true);
   const hasInitialized = useRef(false);
+  const { pathname } = useLocation();
 
   const setAccessToken = useAuthStore((state) => state.setAccessToken);
-  const setUser = useAuthStore((state) => state.setUser);
   const setAuthChecked = useAuthStore((state) => state.setAuthChecked);
   const clearAuth = useAuthStore((state) => state.clearAuth);
 
@@ -18,13 +20,21 @@ const AuthInitializer = () => {
     if (hasInitialized.current) return;
     hasInitialized.current = true;
 
+    if (pathname.startsWith('/auth/callback')) {
+      setAuthChecked(true);
+      setIsInitializing(false);
+      return;
+    }
+
     const initializeAuth = async () => {
       try {
         const { accessToken } = await refresh();
         setAccessToken(accessToken);
 
-        const me = await getMe();
-        setUser(me);
+        await queryClient.fetchQuery({
+          queryKey: queryKeys.auth.me,
+          queryFn: getMe,
+        });
       } catch (error) {
         console.error('초기 인증 실패:', error);
         clearAuth();
@@ -35,7 +45,7 @@ const AuthInitializer = () => {
     };
 
     initializeAuth();
-  }, [setAccessToken, setUser, setAuthChecked, clearAuth]);
+  }, [pathname, setAccessToken, setAuthChecked, clearAuth]);
 
   if (isInitializing) {
     return (

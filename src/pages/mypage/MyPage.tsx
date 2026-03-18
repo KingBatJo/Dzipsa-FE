@@ -1,24 +1,25 @@
+﻿import { useLogoutMutation, useMeQuery } from '@/api/auth/auth.query';
+import { useLeaveRoomMutation } from '@/api/room/room.query';
 import { Button } from '@/components/ui/button';
 import { HEADER_HEIGHT_CLASS } from '@/constants/layout';
-import { X } from 'lucide-react';
-import { leaveRoom } from '@/api/room/room.api';
-import { logout } from '@/api/auth/auth.api';
-import { toast } from 'sonner';
-import { useAuthStore } from '@/stores/auth.store';
-import { useNavigate } from 'react-router-dom';
 import { useOnboardingStore } from '@/stores/onboarding.store';
+import { useAuthStore } from '@/stores/auth.store';
+import { X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 const MyPage = () => {
   const navigate = useNavigate();
 
-  const user = useAuthStore((state) => state.user);
-  const updateUser = useAuthStore((state) => state.updateUser);
+  const { data: me } = useMeQuery();
+  const { mutateAsync: logoutMutate } = useLogoutMutation();
+  const { mutateAsync: leaveRoomMutate } = useLeaveRoomMutation();
   const clearAuth = useAuthStore((state) => state.clearAuth);
   const resetOnboarding = useOnboardingStore((state) => state.resetOnboarding);
 
   const handleLogout = async () => {
     try {
-      await logout();
+      await logoutMutate();
 
       resetOnboarding();
       clearAuth();
@@ -31,17 +32,16 @@ const MyPage = () => {
 
   const handleLeaveRoom = async () => {
     try {
-      await leaveRoom();
+      await leaveRoomMutate();
 
       resetOnboarding();
-      updateUser({ hasRoom: false });
 
       toast('방에서 나갔어요.');
 
       navigate('/onboarding', { replace: true });
     } catch (error) {
       console.error('방 나가기 실패:', error);
-      toast('방 나가기에 실패했어요.');
+      toast('방 나가기에 실패했어요');
     }
   };
 
@@ -65,8 +65,8 @@ const MyPage = () => {
 
       <section className="flex flex-col items-center py-4">
         프로필
-        <p className="text-lg font-semibold">{user?.nickname ?? '-'}</p>
-        <p className="text-sm text-neutral-500">{user?.email ?? '-'}</p>
+        <p className="text-lg font-semibold">{me?.nickname ?? '-'}</p>
+        <p className="text-sm text-neutral-500">{me?.email ?? '-'}</p>
       </section>
 
       <div className="bg-secondary h-[13px]" />

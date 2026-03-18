@@ -1,7 +1,9 @@
-import { hasAgreedToTerms, hasRoom } from '@/api/auth/auth.utils';
+﻿import { hasAgreedToTerms, hasRoom } from '@/api/auth/auth.utils';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { getMe } from '@/api/auth/auth.api';
+import { queryClient } from '@/lib/queryClient';
+import { queryKeys } from '@/lib/queryKeys';
 import { useAuthStore } from '@/stores/auth.store';
 import { useEffect } from 'react';
 
@@ -10,7 +12,6 @@ const AuthCallbackPage = () => {
   const [searchParams] = useSearchParams();
 
   const setAccessToken = useAuthStore((state) => state.setAccessToken);
-  const setUser = useAuthStore((state) => state.setUser);
   const clearAuth = useAuthStore((state) => state.clearAuth);
 
   useEffect(() => {
@@ -36,8 +37,10 @@ const AuthCallbackPage = () => {
       window.history.replaceState({}, '', window.location.pathname);
 
       try {
-        const me = await getMe();
-        setUser(me);
+        const me = await queryClient.fetchQuery({
+          queryKey: queryKeys.auth.me,
+          queryFn: getMe,
+        });
 
         // 약관 미동의 사용자는 약관 동의 화면으로 이동
         if (!hasAgreedToTerms(me)) {
@@ -66,7 +69,7 @@ const AuthCallbackPage = () => {
     };
 
     initializeAuth();
-  }, [navigate, searchParams, setAccessToken, setUser, clearAuth]);
+  }, [navigate, searchParams, setAccessToken, clearAuth]);
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4">
