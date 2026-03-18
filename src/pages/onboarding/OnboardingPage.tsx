@@ -1,6 +1,6 @@
 import AppButton from '@/components/common/AppButton';
+import { useMeQuery } from '@/api/auth/auth.query';
 import dzipsaCharacter from '@/assets/dzipsa.svg';
-import { useAuthStore } from '@/stores/auth.store';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useOnboardingStore } from '@/stores/onboarding.store';
@@ -8,7 +8,8 @@ import { useOnboardingStore } from '@/stores/onboarding.store';
 const OnboardingPage = () => {
   const navigate = useNavigate();
 
-  const userNickname = useAuthStore((state) => state.user?.nickname);
+  const { data: me } = useMeQuery();
+  const userNickname = me?.nickname;
   const initializeNicknames = useOnboardingStore(
     (state) => state.initializeNicknames
   );
