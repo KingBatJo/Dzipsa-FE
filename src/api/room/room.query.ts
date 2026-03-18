@@ -2,6 +2,7 @@ import type { MeResponse } from '@/api/auth/auth.types';
 import {
   createRoom,
   getInvitationCode,
+  getMyRoom,
   leaveRoom,
   reissueInvitationCode,
 } from '@/api/room/room.api';
@@ -13,6 +14,13 @@ import { queryKeys } from '@/lib/queryKeys';
 export const useCreateRoomMutation = () => {
   return useMutation({
     mutationFn: (payload: CreateRoomRequest) => createRoom(payload),
+  });
+};
+
+export const useMyRoomQuery = () => {
+  return useQuery({
+    queryKey: queryKeys.room.myRoom,
+    queryFn: getMyRoom,
   });
 };
 
