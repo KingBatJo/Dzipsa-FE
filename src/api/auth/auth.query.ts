@@ -22,7 +22,6 @@ export const useMeQuery = ({ enabled = true }: UseMeQueryParams = {}) => {
 };
 
 // Mutations
-
 // 약관 동의
 export const useAgreeToTermsMutation = () => {
   return useMutation({
