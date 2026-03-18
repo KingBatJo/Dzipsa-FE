@@ -9,17 +9,20 @@ import { Button } from '@/components/ui/button';
 import EditableInputSection from '@/components/form/EditableInputSection';
 import ProfilePickerSheet from '@/pages/onboarding/components/ProfilePickerSheet';
 import { RefreshCw } from 'lucide-react';
+import { getProfileOptionById } from '@/api/room/room.utils';
 
 type ProfileStepProps = {
   nickname: string;
-  selectedProfileId: number;
+  selectedProfileId: string;
+  usedProfileIds: string[];
   onChangeNickname: (nickname: string) => void;
-  onChangeProfile: (profileId: number) => void;
+  onChangeProfile: (profileId: string) => void;
 };
 
 const ProfileStep = ({
   nickname,
   selectedProfileId,
+  usedProfileIds,
   onChangeNickname,
   onChangeProfile,
 }: ProfileStepProps) => {
@@ -28,11 +31,15 @@ const ProfileStep = ({
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const selectedProfile =
-    PROFILE_OPTIONS.find((profile) => profile.id === selectedProfileId) ??
-    PROFILE_OPTIONS[0];
+  const selectedProfile = getProfileOptionById(selectedProfileId);
 
-  const handleSelectProfile = (profileId: number) => {
+  const handleSelectProfile = (profileId: string) => {
+    const isUsed = usedProfileIds.includes(profileId);
+
+    if (isUsed && profileId !== selectedProfileId) {
+      return;
+    }
+
     onChangeProfile(profileId);
     setIsProfileSheetOpen(false);
   };
@@ -71,7 +78,11 @@ const ProfileStep = ({
 
       <section className="flex justify-center pb-14">
         <div className="relative">
-          <img src={selectedProfile.imageUrl} alt={selectedProfile.alt} />
+          <img
+            src={selectedProfile.imageUrl}
+            alt={selectedProfile.alt}
+            className="h-[140px] w-[140px]"
+          />
 
           <Button
             onClick={() => setIsProfileSheetOpen(true)}
@@ -107,6 +118,7 @@ const ProfileStep = ({
         onOpenChange={setIsProfileSheetOpen}
         profiles={PROFILE_OPTIONS}
         selectedProfileId={selectedProfileId}
+        usedProfileIds={usedProfileIds}
         onSelectProfile={handleSelectProfile}
       />
     </div>

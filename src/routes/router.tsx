@@ -12,15 +12,19 @@ import MyPage from '@/pages/mypage/MyPage';
 import NotFoundPage from '@/pages/NotFoundPage';
 import NotificationPage from '@/pages/notification/NotificationPage';
 import OnboardingPage from '@/pages/onboarding/OnboardingPage';
+import OnboardingRoute from '@/routes/OnboardingRoute';
 import ProtectedRoute from '@/routes/ProtectedRoute';
 import PublicOnlyRoute from '@/routes/PublicOnlyRoute';
+import RoomInvitationPage from '@/pages/mypage/RoomInvitationPage';
 import RootLayout from '@/components/layout/RootLayout';
 import RootRedirect from '@/routes/RootRedirect';
 import RuleCreatePage from '@/pages/rules/RuleCreatePage';
 import RulesPage from '@/pages/rules/RulesPage';
 import SignupCompletePage from '@/pages/login/SignupCompletePage';
 import { TODO_TABS } from '@/constants/todos';
+import TermsDetailPage from '@/pages/login/TermsDetailPage';
 import TermsPage from '@/pages/login/TermsPage';
+import TermsRoute from '@/routes/TermsRoute';
 import TodoCreatePage from '@/pages/todos/TodoCreatePage';
 import TodoEditPage from '@/pages/todos/TodoEditPage';
 import TodoListPage from '@/pages/todos/TodoListPage';
@@ -40,13 +44,20 @@ const Router = () => {
           <Route path="/auth/callback" element={<AuthCallbackPage />} />
 
           <Route element={<ProtectedRoute />}>
-            <Route path="/signup/terms" element={<TermsPage />} />
+            {/* 약관동의 */}
+            <Route element={<TermsRoute />}>
+              <Route path="/signup/terms" element={<TermsPage />}>
+                <Route path=":type" element={<TermsDetailPage />} />
+              </Route>
+            </Route>
             <Route path="/signup/complete" element={<SignupCompletePage />} />
 
             {/* 온보딩 */}
-            <Route path="/onboarding" element={<OnboardingPage />} />
-            <Route path="/onboarding/create" element={<CreateHousePage />} />
-            <Route path="/onboarding/join" element={<JoinHousePage />} />
+            <Route element={<OnboardingRoute />}>
+              <Route path="/onboarding" element={<OnboardingPage />} />
+              <Route path="/onboarding/create" element={<CreateHousePage />} />
+              <Route path="/onboarding/join" element={<JoinHousePage />} />
+            </Route>
 
             <Route element={<AppEntryRoute />}>
               {/* 헤더 포함 */}
@@ -61,7 +72,12 @@ const Router = () => {
               </Route>
 
               <Route path="/notifications" element={<NotificationPage />} />
+
               <Route path="/mypage" element={<MyPage />} />
+              <Route
+                path="/mypage/invitation"
+                element={<RoomInvitationPage />}
+              />
 
               <Route path="/rules/new" element={<RuleCreatePage />} />
               <Route path="/todos/new" element={<TodoCreatePage />} />

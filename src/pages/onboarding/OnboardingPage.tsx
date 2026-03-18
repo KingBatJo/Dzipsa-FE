@@ -1,9 +1,22 @@
 import AppButton from '@/components/common/AppButton';
 import dzipsaCharacter from '@/assets/dzipsa.svg';
+import { useAuthStore } from '@/stores/auth.store';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useOnboardingStore } from '@/stores/onboarding.store';
 
 const OnboardingPage = () => {
   const navigate = useNavigate();
+
+  const userNickname = useAuthStore((state) => state.user?.nickname);
+  const initializeNicknames = useOnboardingStore(
+    (state) => state.initializeNicknames
+  );
+
+  useEffect(() => {
+    if (!userNickname) return;
+    initializeNicknames(userNickname);
+  }, [userNickname, initializeNicknames]);
 
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center py-10">
@@ -25,7 +38,7 @@ const OnboardingPage = () => {
         <img
           src={dzipsaCharacter}
           alt="디집사 캐릭터"
-          className="h-full w-full"
+          className="h-[188px] w-[213px]"
         />
       </div>
 

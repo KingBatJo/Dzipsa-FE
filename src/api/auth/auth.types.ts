@@ -1,5 +1,10 @@
 export type SocialProvider = 'kakao' | 'naver';
 
+export type UpdateMeRequest = {
+  nickname: string;
+  profileImageUrl: string;
+};
+
 export type RefreshResponse = {
   accessToken: string;
 };
@@ -11,9 +16,8 @@ export type MeResponse = {
   providerType: 'KAKAO' | 'NAVER';
   profileImageUrl: string;
   role: 'USER' | 'ADMIN';
-  // 추후 약관 동의 여부, 룸 소속 여부 추가 예정
-  isOnboardingCompleted?: boolean;
-  termsAgreed?: boolean;
+  termsAgreed: boolean;
+  hasRoom: boolean;
 };
 
 export type AuthErrorCode =

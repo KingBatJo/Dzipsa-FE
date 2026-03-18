@@ -1,4 +1,4 @@
-import { hasAgreedToTerms, isOnboardingCompleted } from '@/api/auth/auth.utils';
+import { hasAgreedToTerms, hasRoom } from '@/api/auth/auth.utils';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { getMe } from '@/api/auth/auth.api';
@@ -39,14 +39,14 @@ const AuthCallbackPage = () => {
         const me = await getMe();
         setUser(me);
 
-        // 약관 동의 시
+        // 약관 미동의 사용자는 약관 동의 화면으로 이동
         if (!hasAgreedToTerms(me)) {
           navigate('/signup/terms', { replace: true });
           return;
         }
 
-        // 온보딩 완료 시
-        if (!isOnboardingCompleted(me)) {
+        // 방 미소속 사용자는 온보딩으로 이동
+        if (!hasRoom(me)) {
           navigate('/onboarding', { replace: true });
           return;
         }

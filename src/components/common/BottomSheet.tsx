@@ -15,6 +15,7 @@ type BottomSheetProps = {
   className?: string;
   title?: string;
   description?: string;
+  dismissible?: boolean;
 };
 
 const BottomSheet = ({
@@ -24,12 +25,14 @@ const BottomSheet = ({
   className,
   title = '바텀 시트',
   description = '하단에서 열리는 시트 콘텐츠입니다.',
+  dismissible = true,
 }: BottomSheetProps) => {
   return (
-    <Drawer open={open} onOpenChange={onOpenChange}>
+    <Drawer open={open} onOpenChange={onOpenChange} dismissible={dismissible}>
       <DrawerContent
         className={cn(
           'mx-auto w-full rounded-t-[16px]',
+          !dismissible && '[&>div:first-child]:hidden',
           className,
           MOBILE_MAX_WIDTH
         )}

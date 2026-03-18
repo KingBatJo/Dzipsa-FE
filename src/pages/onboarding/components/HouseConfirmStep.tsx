@@ -1,8 +1,13 @@
-import Profile from '@/assets/profile.svg';
+import type { RoomMemberResponse } from '@/api/room/room.types';
 import UserProfile from '@/components/common/UserProfile';
 import dzipsaCharacter from '@/assets/dzipsa.svg';
+import { getProfileOptionById } from '@/api/room/room.utils';
 
-const HouseConfirmStep = () => {
+type HouseConfirmStepProps = {
+  members: RoomMemberResponse[];
+};
+
+const HouseConfirmStep = ({ members }: HouseConfirmStepProps) => {
   return (
     <div className="flex flex-col items-center pt-30">
       <section className="pb-6 text-center text-lg leading-6 font-semibold">
@@ -17,9 +22,17 @@ const HouseConfirmStep = () => {
         <p className="text-sm font-semibold text-[#BCBCBC]">우리집 구성원</p>
 
         <div className="grid grid-cols-5 gap-4">
-          {Array.from({ length: 5 }, (_, index) => (
-            <UserProfile key={index} name="짱구짱구" src={Profile} />
-          ))}
+          {members.map((member) => {
+            const profile = getProfileOptionById(member.profileImageUrl);
+
+            return (
+              <UserProfile
+                key={member.id}
+                name={member.nickname}
+                src={profile.imageUrl}
+              />
+            );
+          })}
         </div>
       </section>
     </div>

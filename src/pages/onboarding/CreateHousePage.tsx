@@ -2,82 +2,161 @@ import { Button } from '@/components/ui/button';
 import HouseWelcomeDialog from '@/pages/onboarding/components/HouseWelcomeDialog';
 import InviteCodeStep from '@/pages/onboarding/components/InviteCodeStep';
 import MottoStep from '@/pages/onboarding/components/MottoStep';
-import OnboardingFlowLayout from './components/OnboardingFlowLayout';
+import OnboardingFlowLayout from '@/pages/onboarding/components/OnboardingFlowLayout';
 import ProfileStep from '@/pages/onboarding/components/ProfileStep';
+import type { RoomResponse } from '@/api/room/room.types';
+import { createRoom } from '@/api/room/room.api';
+import { getApiErrorMessage } from '@/api/error';
+import { toast } from 'sonner';
+import { updateMe } from '@/api/auth/auth.api';
+import { useAuthStore } from '@/stores/auth.store';
 import { useNavigate } from 'react-router-dom';
+import { useOnboardingStore } from '@/stores/onboarding.store';
 import { useState } from 'react';
-
-const MOCK_INVITE_CODE = '123456';
-const MOCK_INIT_NICKNAME = '닉네임';
-
-type CreateHouseStep = 'motto' | 'profile' | 'invite';
 
 const CreateHousePage = () => {
   const navigate = useNavigate();
-
-  const [step, setStep] = useState<CreateHouseStep>('motto');
   const [isCompleteOpen, setIsCompleteOpen] = useState(false);
+  const [createdRoom, setCreatedRoom] = useState<RoomResponse>();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [motto, setMotto] = useState('');
-  const [nickname, setNickname] = useState(MOCK_INIT_NICKNAME);
-  const [selectedProfileId, setSelectedProfileId] = useState(0);
+  const {
+    createFlow,
+    setCreateStep,
+    updateCreateFlow,
+    setCreateNickname,
+    resetOnboarding,
+  } = useOnboardingStore();
 
-  const getSafeNickname = (nickname: string) => {
-    return nickname.trim() || MOCK_INIT_NICKNAME;
+  const { step, motto, nickname, selectedProfileId } = createFlow;
+
+  const userNickname = useAuthStore((state) => state.user?.nickname);
+  const updateUser = useAuthStore((state) => state.updateUser);
+
+  const getSafeNickname = (value: string) => {
+    return value.trim() || userNickname || '';
+  };
+
+  const moveToInvite = async () => {
+    if (createdRoom) {
+      setCreateStep('invite');
+      return;
+    }
+
+    const room = await createRoom({
+      name: null,
+      motto: motto.trim() || null,
+    });
+
+    console.log('방 생성 응답:', room);
+
+    setCreatedRoom(room);
+    setCreateStep('invite');
+  };
+
+  const submitProfile = async () => {
+    const safeNickName = getSafeNickname(nickname);
+
+    const updatedUser = await updateMe({
+      nickname: safeNickName,
+      profileImageUrl: selectedProfileId,
+    });
+
+    console.log('내 정보 수정 응답:', updatedUser);
+
+    updateUser(updatedUser);
   };
 
   const handleBack = () => {
     if (step === 'profile') {
-      setStep('motto');
+      setCreateStep('motto');
       return;
     }
 
     if (step === 'invite') {
-      setStep('profile');
+      setCreateStep('profile');
       return;
     }
 
     // motto 단계일 때
     navigate('/onboarding');
+    return;
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (step === 'motto') {
-      setStep('profile');
+      setCreateStep('profile');
       return;
     }
 
     if (step === 'profile') {
-      setStep('invite');
+      try {
+        setIsSubmitting(true);
+
+        await submitProfile();
+        await moveToInvite();
+      } catch (error) {
+        const message = getApiErrorMessage(error);
+
+        console.error('프로필 설정 또는 방 생성 실패:', message, error);
+
+        toast(message, {
+          id: 'create-house-profile-error',
+          duration: 2000,
+        });
+      } finally {
+        setIsSubmitting(false);
+      }
+
       return;
     }
-
-    console.log({
-      motto,
-      nickname,
-      selectedProfileId,
-    });
 
     // invite 단계일 때
     setIsCompleteOpen(true);
   };
 
-  const handleSkip = () => {
+  const handleSkip = async () => {
     if (step === 'motto') {
-      setStep('profile');
+      setCreateStep('profile');
       return;
     }
 
     if (step === 'profile') {
-      setNickname((prev) => getSafeNickname(prev));
-      setStep('invite');
-      return;
+      updateCreateFlow({
+        nickname: getSafeNickname(nickname),
+      });
+
+      try {
+        setIsSubmitting(true);
+
+        await submitProfile();
+        await moveToInvite();
+      } catch (error) {
+        const message = getApiErrorMessage(error);
+
+        console.error('프로필 설정 또는 방 생성 실패:', message, error);
+
+        toast(message, {
+          id: 'create-house-profile-error',
+          duration: 2000,
+        });
+      } finally {
+        setIsSubmitting(false);
+      }
     }
+  };
+
+  const handleConfirm = async () => {
+    updateUser({ hasRoom: true });
+
+    resetOnboarding();
+    navigate('/home', { replace: true });
   };
 
   const buttonLabel = step === 'invite' ? '집 입장하기' : '다음';
 
   const isNextDisabled =
+    isSubmitting ||
     (step === 'motto' && !motto.trim()) ||
     (step === 'profile' && !nickname.trim());
 
@@ -87,6 +166,7 @@ const CreateHousePage = () => {
         <Button
           variant="link"
           onClick={handleSkip}
+          disabled={isSubmitting}
           className="h-fit p-0 font-semibold text-[#888888]"
         >
           Skip
@@ -108,25 +188,33 @@ const CreateHousePage = () => {
         bottomSlot={bottomSlot}
       >
         {step === 'motto' && (
-          <MottoStep motto={motto} onChangeMotto={setMotto} />
+          <MottoStep
+            motto={motto}
+            onChangeMotto={(value) => updateCreateFlow({ motto: value })}
+          />
         )}
 
         {step === 'profile' && (
           <ProfileStep
             nickname={nickname}
             selectedProfileId={selectedProfileId}
-            onChangeNickname={setNickname}
-            onChangeProfile={setSelectedProfileId}
+            usedProfileIds={[]}
+            onChangeNickname={setCreateNickname}
+            onChangeProfile={(value) =>
+              updateCreateFlow({ selectedProfileId: value })
+            }
           />
         )}
 
-        {step === 'invite' && <InviteCodeStep inviteCode={MOCK_INVITE_CODE} />}
+        {step === 'invite' && createdRoom && (
+          <InviteCodeStep inviteCode={createdRoom.invitationCode} />
+        )}
       </OnboardingFlowLayout>
 
       <HouseWelcomeDialog
         open={isCompleteOpen}
         userName={getSafeNickname(nickname)}
-        onConfirm={() => navigate('/home', { replace: true })}
+        onConfirm={handleConfirm}
       />
     </>
   );

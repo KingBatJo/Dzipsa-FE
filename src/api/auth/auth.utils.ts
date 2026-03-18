@@ -1,18 +1,13 @@
 import type { MeResponse } from '@/api/auth/auth.types';
 
-const MOCK_TERMS_AGREED = true;
-const MOCK_ONBOARDING_COMPLETED = true;
-
 export const hasAgreedToTerms = (user: MeResponse | null) => {
   if (!user) return false;
 
-  // 임시 (테스트용)
-  return MOCK_TERMS_AGREED;
+  return user.termsAgreed;
 };
 
-export const isOnboardingCompleted = (user: MeResponse | null) => {
+export const hasRoom = (user: MeResponse | null) => {
   if (!user) return false;
 
-  // 임시 (테스트용)
-  return MOCK_ONBOARDING_COMPLETED;
+  return user.hasRoom;
 };

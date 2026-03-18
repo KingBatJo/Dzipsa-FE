@@ -1,8 +1,6 @@
-import { HEADER_HEIGHT_CLASS, MOBILE_MAX_WIDTH } from '@/constants/layout';
-
 import AppButton from '@/components/common/AppButton';
-import { Button } from '@/components/ui/button';
-import { ChevronLeft } from 'lucide-react';
+import BackHeader from '@/components/layout/BackHeader';
+import { MOBILE_MAX_WIDTH } from '@/constants/layout';
 
 type OnboardingFlowLayoutProps = {
   children: React.ReactNode;
@@ -23,17 +21,7 @@ const OnboardingFlowLayout = ({
 }: OnboardingFlowLayoutProps) => {
   return (
     <div>
-      <header className={`${HEADER_HEIGHT_CLASS} flex items-center p-4`}>
-        <Button
-          type="button"
-          onClick={onBack}
-          aria-label="뒤로가기"
-          variant="ghost"
-          className="h-fit p-1.5"
-        >
-          <ChevronLeft />
-        </Button>
-      </header>
+      <BackHeader onBack={onBack} />
 
       <div className="px-4 pb-40">{children}</div>
 

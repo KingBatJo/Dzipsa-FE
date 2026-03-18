@@ -2,7 +2,7 @@ import { forwardRef, useRef, useState } from 'react';
 
 import ClearX from '@/assets/icon/clear_x.svg';
 import { Edit3 } from 'lucide-react';
-import ErrorTooltip from '@/components/form/ErrorTooltip';
+import ErrorToolTip from '@/components/form/ErrorToolTip';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 
@@ -56,7 +56,7 @@ const EditableInput = forwardRef<HTMLInputElement, EditableInputProps>(
     };
 
     return (
-      <ErrorTooltip message={errorMessage}>
+      <ErrorToolTip message={errorMessage}>
         <div
           className={cn(
             'bg-secondary flex h-12 items-center gap-1 rounded-[10px] border px-4 shadow-xs transition-all duration-200',
@@ -101,7 +101,7 @@ const EditableInput = forwardRef<HTMLInputElement, EditableInputProps>(
             )}
           </button>
         </div>
-      </ErrorTooltip>
+      </ErrorToolTip>
     );
   }
 );

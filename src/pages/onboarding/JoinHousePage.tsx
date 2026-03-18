@@ -1,36 +1,74 @@
+import { OTP_LENGTH, PROFILE_OPTIONS } from '@/constants/onboarding';
+import type { RoomMemberResponse, RoomResponse } from '@/api/room/room.types';
+import {
+  getRoomMembers,
+  getUsedProfileImages,
+  joinRoom,
+} from '@/api/room/room.api';
+
 import { Button } from '@/components/ui/button';
 import HouseConfirmStep from '@/pages/onboarding/components/HouseConfirmStep';
 import InviteCodeInputStep from '@/pages/onboarding/components/InviteCodeInputStep';
-import { OTP_LENGTH } from '@/constants/onboarding';
 import OnboardingFlowLayout from '@/pages/onboarding/components/OnboardingFlowLayout';
 import ProfileStep from '@/pages/onboarding/components/ProfileStep';
+import { getApiErrorMessage } from '@/api/error';
 import { toast } from 'sonner';
+import { updateMe } from '@/api/auth/auth.api';
+import { useAuthStore } from '@/stores/auth.store';
 import { useNavigate } from 'react-router-dom';
+import { useOnboardingStore } from '@/stores/onboarding.store';
 import { useState } from 'react';
-
-const MOCK_VALID_INVITE_CODE = '123456';
-const MOCK_INIT_NICKNAME = '카카오 닉네임';
-
-type JoinHouseStep = 'invite' | 'confirm' | 'profile';
 
 const JoinHousePage = () => {
   const navigate = useNavigate();
-
-  const [step, setStep] = useState<JoinHouseStep>('invite');
-  const [inviteCode, setInviteCode] = useState('');
+  const [joinedRoom, setJoinedRoom] = useState<RoomResponse | null>(null);
+  const [members, setMembers] = useState<RoomMemberResponse[]>([]);
+  const [usedProfileIds, setUsedProfileIds] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasError, setHasError] = useState(false);
 
-  const [nickname, setNickname] = useState(MOCK_INIT_NICKNAME);
-  const [selectedProfileId, setSelectedProfileId] = useState(0);
+  const {
+    joinFlow,
+    setJoinStep,
+    updateJoinFlow,
+    setJoinNickname,
+    resetOnboarding,
+  } = useOnboardingStore();
 
-  const getSafeNickname = (nickname: string) => {
-    return nickname.trim() || MOCK_INIT_NICKNAME;
+  const { step, inviteCode, nickname, selectedProfileId } = joinFlow;
+
+  const userNickname = useAuthStore((state) => state.user?.nickname);
+  const updateUser = useAuthStore((state) => state.updateUser);
+
+  const getSafeNickname = (value: string) => {
+    return value.trim() || userNickname || '';
+  };
+
+  const submitProfile = async () => {
+    const safeNickname = getSafeNickname(nickname);
+
+    const updatedUser = await updateMe({
+      nickname: safeNickname,
+      profileImageUrl: selectedProfileId,
+    });
+
+    console.log('내 정보 수정 응답:', updatedUser);
+
+    updateUser(updatedUser);
   };
 
   const handleChangeInviteCode = (value: string) => {
     const numericValue = value.replace(/[^0-9]/g, '');
 
-    setInviteCode(numericValue);
+    updateJoinFlow({ inviteCode: numericValue });
+
+    if (joinedRoom) {
+      setJoinedRoom(null);
+    }
+
+    if (members.length > 0) {
+      setMembers([]);
+    }
 
     if (hasError) {
       setHasError(false);
@@ -44,55 +82,128 @@ const JoinHousePage = () => {
     }
 
     if (step === 'confirm') {
-      setStep('invite');
+      setJoinStep('invite');
       return;
     }
 
     if (step === 'profile') {
-      setStep('confirm');
+      setUsedProfileIds([]);
+      setJoinStep('confirm');
+      return;
     }
   };
 
-  const handleComplete = () => {
-    const safeNickname = getSafeNickname(nickname);
+  const handleComplete = async () => {
+    try {
+      setIsSubmitting(true);
 
-    console.log({
-      nickname: safeNickname,
-      selectedProfileId,
-    });
+      await submitProfile();
+      updateUser({ hasRoom: true });
 
-    navigate('/home', { replace: true });
+      resetOnboarding();
+      navigate('/home', { replace: true });
+    } catch (error) {
+      const message = getApiErrorMessage(error);
+
+      console.error('내 정보 수정 실패:', message, error);
+
+      toast(message, {
+        id: 'update-me-error',
+        duration: 2000,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (step === 'invite') {
-      if (inviteCode !== MOCK_VALID_INVITE_CODE) {
-        setHasError(true);
-        toast('존재하지 않는 집입니다. 코드를 다시 입력해보세요', {
-          id: 'invalid-invite-code',
-          duration: 2000,
-        });
+      if (joinedRoom) {
+        setJoinStep('confirm');
         return;
       }
 
-      setHasError(false);
-      setStep('confirm');
+      try {
+        setIsSubmitting(true);
+
+        const room = await joinRoom({ invitationCode: inviteCode });
+        const roomMembers = await getRoomMembers({ excludeMe: true });
+
+        console.log('방 입장: ', room);
+        console.log('방 구성원: ', roomMembers);
+
+        setJoinedRoom(room);
+        setMembers(roomMembers);
+        setHasError(false);
+        setJoinStep('confirm');
+      } catch (error) {
+        const message = getApiErrorMessage(error);
+
+        console.error('방 입장 실패: ', message, error);
+
+        setHasError(true);
+        toast(message, {
+          id: 'invalid-invite-code',
+          duration: 2000,
+        });
+      } finally {
+        setIsSubmitting(false);
+      }
+
       return;
     }
 
     if (step === 'confirm') {
-      setStep('profile');
+      try {
+        setIsSubmitting(true);
+
+        const { usedImages } = await getUsedProfileImages();
+        console.log('사용 중인 프로필 id: ', usedImages);
+
+        const usedByOthers = members.map((member) => member.profileImageUrl);
+        setUsedProfileIds(usedByOthers);
+
+        const isCurrentSelectedUsed = usedImages.includes(selectedProfileId);
+
+        if (isCurrentSelectedUsed) {
+          const availableProfile = PROFILE_OPTIONS.find(
+            (profile) => !usedImages.includes(profile.id)
+          );
+
+          if (availableProfile) {
+            updateJoinFlow({ selectedProfileId: availableProfile.id });
+          }
+        }
+
+        setJoinStep('profile');
+      } catch (error) {
+        const message = getApiErrorMessage(error);
+
+        console.error('사용 중인 프로필 이미지 조회 실패: ', message, error);
+
+        toast(message, {
+          id: 'used-profile-images-error',
+          duration: 2000,
+        });
+      } finally {
+        setIsSubmitting(false);
+      }
+
       return;
     }
 
     if (step === 'profile') {
-      handleComplete();
+      await handleComplete();
     }
   };
 
-  const handleSkip = () => {
+  const handleSkip = async () => {
     if (step !== 'profile') return;
-    handleComplete();
+
+    updateJoinFlow({
+      nickname: getSafeNickname(nickname),
+    });
+    await handleComplete();
   };
 
   const buttonLabel =
@@ -103,6 +214,7 @@ const JoinHousePage = () => {
         : '다음';
 
   const isNextDisabled =
+    isSubmitting ||
     (step === 'invite' ? inviteCode.length !== OTP_LENGTH : false) ||
     (step === 'profile' && !nickname.trim());
 
@@ -137,14 +249,19 @@ const JoinHousePage = () => {
         />
       )}
 
-      {step === 'confirm' && <HouseConfirmStep />}
+      {step === 'confirm' && joinedRoom && (
+        <HouseConfirmStep members={members} />
+      )}
 
       {step === 'profile' && (
         <ProfileStep
           nickname={nickname}
           selectedProfileId={selectedProfileId}
-          onChangeNickname={setNickname}
-          onChangeProfile={setSelectedProfileId}
+          usedProfileIds={usedProfileIds}
+          onChangeNickname={setJoinNickname}
+          onChangeProfile={(value) =>
+            updateJoinFlow({ selectedProfileId: value })
+          }
         />
       )}
     </OnboardingFlowLayout>

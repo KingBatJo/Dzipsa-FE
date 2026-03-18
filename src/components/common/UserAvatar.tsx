@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { CircleUserRound, LucideUserPlus2 } from 'lucide-react';
 
+import { LucideUserPlus2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 type UserAvatarProps = {
@@ -41,8 +41,8 @@ const UserAvatar = ({
             )}
           />
         ) : (
-          // 유저 기본 fallback 아이콘
-          <CircleUserRound className={cn(avatarSizes[size])} />
+          // 유저 기본 fallback
+          <div className="bg-secondary h-full w-full"></div>
         )}
       </AvatarFallback>
     </Avatar>
