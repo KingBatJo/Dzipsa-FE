@@ -1,6 +1,8 @@
-import { getMe } from '@/api/auth/auth.api';
+import { getMe, logout } from '@/api/auth/auth.api';
+import { useMutation, useQuery } from '@tanstack/react-query';
+
+import { queryClient } from '@/lib/queryClient';
 import { queryKeys } from '@/lib/queryKeys';
-import { useQuery } from '@tanstack/react-query';
 
 type UseMeQueryParams = {
   enabled?: boolean;
@@ -11,5 +13,14 @@ export const useMeQuery = ({ enabled = true }: UseMeQueryParams = {}) => {
     queryKey: queryKeys.auth.me,
     queryFn: getMe,
     enabled,
+  });
+};
+
+export const useLogoutMutation = () => {
+  return useMutation({
+    mutationFn: logout,
+    onSuccess: () => {
+      queryClient.removeQueries({ queryKey: queryKeys.auth.me });
+    },
   });
 };
