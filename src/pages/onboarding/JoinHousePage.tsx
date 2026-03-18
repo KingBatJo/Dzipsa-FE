@@ -158,9 +158,10 @@ const JoinHousePage = () => {
         setIsSubmitting(true);
 
         const { usedImages } = await getUsedProfileImages();
-        setUsedProfileIds(usedImages);
-
         console.log('사용 중인 프로필 id: ', usedImages);
+
+        const usedByOthers = members.map((member) => member.profileImageUrl);
+        setUsedProfileIds(usedByOthers);
 
         const isCurrentSelectedUsed = usedImages.includes(selectedProfileId);
 
