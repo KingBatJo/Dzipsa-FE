@@ -1,13 +1,34 @@
 import type { MeResponse } from '@/api/auth/auth.types';
-import { createRoom, leaveRoom } from '@/api/room/room.api';
+import {
+  createRoom,
+  getInvitationCode,
+  leaveRoom,
+  reissueInvitationCode,
+} from '@/api/room/room.api';
 import type { CreateRoomRequest } from '@/api/room/room.types';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { queryClient } from '@/lib/queryClient';
 import { queryKeys } from '@/lib/queryKeys';
 
 export const useCreateRoomMutation = () => {
   return useMutation({
     mutationFn: (payload: CreateRoomRequest) => createRoom(payload),
+  });
+};
+
+export const useInvitationCodeQuery = () => {
+  return useQuery({
+    queryKey: queryKeys.room.invitationCode,
+    queryFn: getInvitationCode,
+  });
+};
+
+export const useReissueInvitationCodeMutation = () => {
+  return useMutation({
+    mutationFn: reissueInvitationCode,
+    onSuccess: (data) => {
+      queryClient.setQueryData(queryKeys.room.invitationCode, data);
+    },
   });
 };
 
