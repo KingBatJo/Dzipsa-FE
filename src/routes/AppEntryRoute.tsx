@@ -1,38 +1,19 @@
-// 약관에 동의하고 방에 소속된 사용자만
-// 메인 앱 영역(/home 등)에 접근할 수 있도록 제한
-
-import { Navigate, Outlet } from 'react-router-dom';
+﻿import { Navigate, Outlet } from 'react-router-dom';
 import { hasAgreedToTerms, hasRoom } from '@/api/auth/auth.utils';
 
-import { useAuthStore } from '@/stores/auth.store';
-import { useMeQuery } from '@/api/auth/auth.query';
+import { useAuthGuardMe } from '@/hooks/useAuthGuardMe';
 
+// 앱 메인 영역 가드: 약관 동의 + 방 소속 사용자만 접근 허용
 const AppEntryRoute = () => {
-  const accessToken = useAuthStore((state) => state.accessToken);
-  const isAuthChecked = useAuthStore((state) => state.isAuthChecked);
-  const {
-    data: me,
-    isLoading,
-    isError,
-  } = useMeQuery({
-    enabled: !!accessToken && isAuthChecked,
-  });
+  const { me, isChecking, shouldRedirectToLogin } = useAuthGuardMe();
 
-  if (!isAuthChecked) return null;
+  if (isChecking) return null;
 
-  if (!accessToken) {
+  // 인증 정보가 유효하지 않으면 로그인으로 이동
+  if (shouldRedirectToLogin || !me) {
     return <Navigate to="/login" replace />;
   }
 
-  if (isLoading) return null;
-
-  if (isError) {
-    return <Navigate to="/login" replace />;
-  }
-
-  if (!me) {
-    return <Navigate to="/login" replace />;
-  }
   if (!hasAgreedToTerms(me)) {
     return <Navigate to="/signup/terms" replace />;
   }

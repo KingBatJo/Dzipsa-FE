@@ -1,33 +1,16 @@
-import { Navigate, Outlet } from 'react-router-dom';
+﻿import { Navigate, Outlet } from 'react-router-dom';
 import { hasAgreedToTerms, hasRoom } from '@/api/auth/auth.utils';
 
-import { useAuthStore } from '@/stores/auth.store';
-import { useMeQuery } from '@/api/auth/auth.query';
+import { useAuthGuardMe } from '@/hooks/useAuthGuardMe';
 
+// 온보딩 가드: 약관 미동의/이미 방 보유 사용자의 접근을 제어
 const OnboardingRoute = () => {
-  const accessToken = useAuthStore((state) => state.accessToken);
-  const isAuthChecked = useAuthStore((state) => state.isAuthChecked);
-  const {
-    data: me,
-    isLoading,
-    isError,
-  } = useMeQuery({
-    enabled: !!accessToken && isAuthChecked,
-  });
+  const { me, isChecking, shouldRedirectToLogin } = useAuthGuardMe();
 
-  if (!isAuthChecked) return null;
+  if (isChecking) return null;
 
-  if (!accessToken) {
-    return <Navigate to="/login" replace />;
-  }
-
-  if (isLoading) return null;
-
-  if (isError) {
-    return <Navigate to="/login" replace />;
-  }
-
-  if (!me) {
+  // 인증 정보가 유효하지 않으면 로그인으로 이동
+  if (shouldRedirectToLogin || !me) {
     return <Navigate to="/login" replace />;
   }
 
