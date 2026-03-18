@@ -1,8 +1,15 @@
 import type { MeResponse } from '@/api/auth/auth.types';
-import { leaveRoom } from '@/api/room/room.api';
+import { createRoom, leaveRoom } from '@/api/room/room.api';
+import type { CreateRoomRequest } from '@/api/room/room.types';
 import { useMutation } from '@tanstack/react-query';
 import { queryClient } from '@/lib/queryClient';
 import { queryKeys } from '@/lib/queryKeys';
+
+export const useCreateRoomMutation = () => {
+  return useMutation({
+    mutationFn: (payload: CreateRoomRequest) => createRoom(payload),
+  });
+};
 
 export const useLeaveRoomMutation = () => {
   return useMutation({
