@@ -1,6 +1,5 @@
 ﻿import { OTP_LENGTH, PROFILE_OPTIONS } from '@/constants/onboarding';
 import type { RoomMemberResponse, RoomResponse } from '@/api/room/room.types';
-import { getRoomMembers, joinRoom } from '@/api/room/room.api';
 import { useMeQuery, useUpdateMeMutation } from '@/api/auth/auth.query';
 
 import { Button } from '@/components/ui/button';
@@ -9,7 +8,9 @@ import InviteCodeInputStep from '@/pages/onboarding/components/InviteCodeInputSt
 import OnboardingFlowLayout from '@/pages/onboarding/components/OnboardingFlowLayout';
 import ProfileStep from '@/pages/onboarding/components/ProfileStep';
 import { getApiErrorMessage } from '@/api/error';
+import { getRoomMembers } from '@/api/room/room.api';
 import { toast } from 'sonner';
+import { useJoinRoomMutation } from '@/api/room/room.query';
 import { useNavigate } from 'react-router-dom';
 import { useOnboardingStore } from '@/stores/onboarding.store';
 import { useState } from 'react';
@@ -33,6 +34,7 @@ const JoinHousePage = () => {
   const { step, inviteCode, nickname, selectedProfileId } = joinFlow;
   const { data: me } = useMeQuery();
   const { mutateAsync: updateMeMutate } = useUpdateMeMutation();
+  const { mutateAsync: joinRoomMutate } = useJoinRoomMutation();
 
   const getSafeNickname = (value: string) => {
     return value.trim() || me?.nickname || '';
@@ -115,7 +117,7 @@ const JoinHousePage = () => {
       try {
         setIsSubmitting(true);
 
-        const room = await joinRoom({ invitationCode: inviteCode });
+        const room = await joinRoomMutate({ invitationCode: inviteCode });
         const roomMembers = await getRoomMembers({ excludeMe: true });
 
         setJoinedRoom(room);

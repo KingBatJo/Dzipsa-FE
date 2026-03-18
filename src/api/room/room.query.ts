@@ -3,10 +3,11 @@ import {
   createRoom,
   getInvitationCode,
   getMyRoom,
+  joinRoom,
   leaveRoom,
   reissueInvitationCode,
 } from '@/api/room/room.api';
-import type { CreateRoomRequest } from '@/api/room/room.types';
+import type { CreateRoomRequest, JoinRoomRequest } from '@/api/room/room.types';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { queryClient } from '@/lib/queryClient';
 import { queryKeys } from '@/lib/queryKeys';
@@ -14,6 +15,12 @@ import { queryKeys } from '@/lib/queryKeys';
 export const useCreateRoomMutation = () => {
   return useMutation({
     mutationFn: (payload: CreateRoomRequest) => createRoom(payload),
+  });
+};
+
+export const useJoinRoomMutation = () => {
+  return useMutation({
+    mutationFn: (payload: JoinRoomRequest) => joinRoom(payload),
   });
 };
 
