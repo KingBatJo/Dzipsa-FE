@@ -2,6 +2,8 @@ import { getMe, refresh } from '@/api/auth/auth.api';
 import { useEffect, useRef, useState } from 'react';
 
 import { Outlet } from 'react-router-dom';
+import { queryClient } from '@/lib/queryClient';
+import { queryKeys } from '@/lib/queryKeys';
 import { useAuthStore } from '@/stores/auth.store';
 
 const AuthInitializer = () => {
@@ -23,7 +25,11 @@ const AuthInitializer = () => {
         const { accessToken } = await refresh();
         setAccessToken(accessToken);
 
-        const me = await getMe();
+        const me = await queryClient.fetchQuery({
+          queryKey: queryKeys.me,
+          queryFn: getMe,
+        });
+
         setUser(me);
       } catch (error) {
         console.error('초기 인증 실패:', error);
