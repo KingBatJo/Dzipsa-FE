@@ -17,6 +17,7 @@ export const useMeQuery = ({ enabled = true }: UseMeQueryParams = {}) => {
     queryKey: queryKeys.auth.me,
     queryFn: getMe,
     enabled,
+    staleTime: 1000 * 60 * 5,
   });
 };
 

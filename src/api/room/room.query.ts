@@ -19,6 +19,7 @@ export const useMyRoomQuery = () => {
   return useQuery({
     queryKey: queryKeys.room.myRoom,
     queryFn: getMyRoom,
+    staleTime: 1000 * 60 * 5,
   });
 };
 
@@ -27,6 +28,7 @@ export const useInvitationCodeQuery = () => {
   return useQuery({
     queryKey: queryKeys.room.invitationCode,
     queryFn: getInvitationCode,
+    staleTime: 1000 * 60,
   });
 };
 
