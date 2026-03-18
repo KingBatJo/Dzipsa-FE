@@ -1,8 +1,8 @@
-import type { MeResponse } from '@/api/auth/auth.types';
 import { agreeToTerms, getMe, logout, updateMe } from '@/api/auth/auth.api';
-import type { UpdateMeRequest } from '@/api/auth/auth.types';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
+import type { MeResponse } from '@/api/auth/auth.types';
+import type { UpdateMeRequest } from '@/api/auth/auth.types';
 import { queryClient } from '@/lib/queryClient';
 import { queryKeys } from '@/lib/queryKeys';
 
@@ -10,6 +10,8 @@ type UseMeQueryParams = {
   enabled?: boolean;
 };
 
+// Queries
+// 내 정보 조회
 export const useMeQuery = ({ enabled = true }: UseMeQueryParams = {}) => {
   return useQuery({
     queryKey: queryKeys.auth.me,
@@ -18,15 +20,9 @@ export const useMeQuery = ({ enabled = true }: UseMeQueryParams = {}) => {
   });
 };
 
-export const useLogoutMutation = () => {
-  return useMutation({
-    mutationFn: logout,
-    onSuccess: () => {
-      queryClient.removeQueries({ queryKey: queryKeys.auth.me });
-    },
-  });
-};
+// Mutations
 
+// 약관 동의
 export const useAgreeToTermsMutation = () => {
   return useMutation({
     mutationFn: agreeToTerms,
@@ -40,11 +36,22 @@ export const useAgreeToTermsMutation = () => {
   });
 };
 
+// 내 정보 수정
 export const useUpdateMeMutation = () => {
   return useMutation({
     mutationFn: (payload: UpdateMeRequest) => updateMe(payload),
     onSuccess: (updatedMe) => {
       queryClient.setQueryData(queryKeys.auth.me, updatedMe);
+    },
+  });
+};
+
+// 로그아웃
+export const useLogoutMutation = () => {
+  return useMutation({
+    mutationFn: logout,
+    onSuccess: () => {
+      queryClient.removeQueries({ queryKey: queryKeys.auth.me });
     },
   });
 };

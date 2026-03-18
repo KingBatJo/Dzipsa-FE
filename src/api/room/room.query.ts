@@ -1,4 +1,4 @@
-import type { MeResponse } from '@/api/auth/auth.types';
+import type { CreateRoomRequest, JoinRoomRequest } from '@/api/room/room.types';
 import {
   createRoom,
   getInvitationCode,
@@ -7,23 +7,14 @@ import {
   leaveRoom,
   reissueInvitationCode,
 } from '@/api/room/room.api';
-import type { CreateRoomRequest, JoinRoomRequest } from '@/api/room/room.types';
 import { useMutation, useQuery } from '@tanstack/react-query';
+
+import type { MeResponse } from '@/api/auth/auth.types';
 import { queryClient } from '@/lib/queryClient';
 import { queryKeys } from '@/lib/queryKeys';
 
-export const useCreateRoomMutation = () => {
-  return useMutation({
-    mutationFn: (payload: CreateRoomRequest) => createRoom(payload),
-  });
-};
-
-export const useJoinRoomMutation = () => {
-  return useMutation({
-    mutationFn: (payload: JoinRoomRequest) => joinRoom(payload),
-  });
-};
-
+// Queries
+// 내 방 정보 조회
 export const useMyRoomQuery = () => {
   return useQuery({
     queryKey: queryKeys.room.myRoom,
@@ -31,6 +22,7 @@ export const useMyRoomQuery = () => {
   });
 };
 
+// 초대 코드 조회
 export const useInvitationCodeQuery = () => {
   return useQuery({
     queryKey: queryKeys.room.invitationCode,
@@ -38,6 +30,22 @@ export const useInvitationCodeQuery = () => {
   });
 };
 
+// Mutations
+// 방 생성
+export const useCreateRoomMutation = () => {
+  return useMutation({
+    mutationFn: (payload: CreateRoomRequest) => createRoom(payload),
+  });
+};
+
+// 방 입장
+export const useJoinRoomMutation = () => {
+  return useMutation({
+    mutationFn: (payload: JoinRoomRequest) => joinRoom(payload),
+  });
+};
+
+// 초대 코드 재발급
 export const useReissueInvitationCodeMutation = () => {
   return useMutation({
     mutationFn: reissueInvitationCode,
@@ -47,6 +55,7 @@ export const useReissueInvitationCodeMutation = () => {
   });
 };
 
+// 방 나가기
 export const useLeaveRoomMutation = () => {
   return useMutation({
     mutationFn: leaveRoom,
