@@ -1,10 +1,9 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import TermsAgreementSheet from '@/pages/login/components/TermsAgreementSheet';
-import { agreeToTerms } from '@/api/auth/auth.api';
 import { getApiErrorMessage } from '@/api/error';
 import { toast } from 'sonner';
-import { useAuthStore } from '@/stores/auth.store';
+import { useAgreeToTermsMutation } from '@/api/auth/auth.query';
 import { useState } from 'react';
 
 export type Agreements = {
@@ -16,9 +15,9 @@ export type Agreements = {
 const TermsPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const updateUser = useAuthStore((state) => state.updateUser);
+  const { mutateAsync: agreeToTermsMutate, isPending } =
+    useAgreeToTermsMutation();
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [agreements, setAgreements] = useState<Agreements>({
     age: false,
     service: false,
@@ -29,19 +28,13 @@ const TermsPage = () => {
 
   const handleAgree = async () => {
     try {
-      setIsSubmitting(true);
-
-      await agreeToTerms();
-
-      updateUser({ termsAgreed: true });
+      await agreeToTermsMutate();
 
       navigate('/signup/complete', { replace: true });
     } catch (error) {
       const message = getApiErrorMessage(error);
-      console.error(message);
+      console.error('이용약관 동의 처리 실패: ', message, error);
       toast(message || '이용약관 동의 처리에 실패했어요. 다시 시도해주세요.');
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -55,7 +48,7 @@ const TermsPage = () => {
               navigate(-1);
             }
           }}
-          isSubmitting={isSubmitting}
+          isSubmitting={isPending}
           agreements={agreements}
           onChangeAgreements={setAgreements}
           onAgree={handleAgree}

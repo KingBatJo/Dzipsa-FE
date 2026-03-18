@@ -1,4 +1,5 @@
-import { getMe, logout } from '@/api/auth/auth.api';
+import type { MeResponse } from '@/api/auth/auth.types';
+import { agreeToTerms, getMe, logout } from '@/api/auth/auth.api';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { queryClient } from '@/lib/queryClient';
@@ -21,6 +22,19 @@ export const useLogoutMutation = () => {
     mutationFn: logout,
     onSuccess: () => {
       queryClient.removeQueries({ queryKey: queryKeys.auth.me });
+    },
+  });
+};
+
+export const useAgreeToTermsMutation = () => {
+  return useMutation({
+    mutationFn: agreeToTerms,
+    onSuccess: () => {
+      queryClient.setQueryData(
+        queryKeys.auth.me,
+        (prev: MeResponse | undefined) =>
+          prev ? { ...prev, termsAgreed: true } : prev
+      );
     },
   });
 };
