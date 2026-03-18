@@ -6,16 +6,17 @@ import Header from '@/components/layout/Header';
 
 const AppLayout = () => {
   const { pathname } = useLocation();
+  const isHomePage = pathname === '/home';
 
   const getHeaderTitle = () => {
     if (pathname.startsWith('/todos')) return '할 일 홈';
-    if (pathname.startsWith('/rules')) return '규칙 홈';
+    if (pathname.startsWith('/rules')) return '우리집 규칙';
     return 'Dzipasa';
   };
 
   return (
     <div>
-      <Header title={getHeaderTitle()} />
+      <Header title={getHeaderTitle()} showActions={isHomePage} />
 
       <main
         className={`relative min-h-dvh`}

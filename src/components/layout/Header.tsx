@@ -7,33 +7,36 @@ import UserAvatar from '@/components/common/UserAvatar';
 
 type HeaderProps = {
   title: string;
+  showActions?: boolean;
 };
 
-const Header = ({ title }: HeaderProps) => {
+const Header = ({ title, showActions = false }: HeaderProps) => {
   return (
     <header
       className={`fixed top-0 z-10 w-full ${MOBILE_MAX_WIDTH} backdrop-blur-xl`}
     >
       <div
-        className={`flex items-center justify-between ${HEADER_HEIGHT_CLASS} px-4`}
+        className={`flex items-center justify-between ${HEADER_HEIGHT_CLASS} px-[15px] pt-[15px]`}
       >
-        <h1 className="text-xl font-semibold">{title}</h1>
+        <h1 className="text-[28px] font-semibold text-zinc-900">{title}</h1>
 
-        <div className="flex items-center gap-2">
-          {/* 알림 */}
-          <Link to="/notifications" aria-label="알림">
-            <img src={Bell} alt="알림" className="h-8 w-8 hover:scale-105" />
-          </Link>
+        {showActions && (
+          <div className="flex items-center gap-2">
+            {/* 알림 */}
+            <Link to="/notifications" aria-label="알림">
+              <img src={Bell} alt="알림" className="h-8 w-8 hover:scale-105" />
+            </Link>
 
-          {/* 프로필 */}
-          <Link to="/mypage" aria-label="마이페이지">
-            <UserAvatar
-              src={PROFILE_IMAGE}
-              size="md"
-              className="transition-transform hover:scale-105"
-            />
-          </Link>
-        </div>
+            {/* 프로필 */}
+            <Link to="/mypage" aria-label="마이페이지">
+              <UserAvatar
+                src={PROFILE_IMAGE}
+                size="md"
+                className="transition-transform hover:scale-105"
+              />
+            </Link>
+          </div>
+        )}
       </div>
     </header>
   );
