@@ -1,10 +1,7 @@
-import { OTP_LENGTH, PROFILE_OPTIONS } from '@/constants/onboarding';
+﻿import { OTP_LENGTH, PROFILE_OPTIONS } from '@/constants/onboarding';
 import type { RoomMemberResponse, RoomResponse } from '@/api/room/room.types';
-import {
-  getRoomMembers,
-  getUsedProfileImages,
-  joinRoom,
-} from '@/api/room/room.api';
+import { getRoomMembers, joinRoom } from '@/api/room/room.api';
+import { useMeQuery, useUpdateMeMutation } from '@/api/auth/auth.query';
 
 import { Button } from '@/components/ui/button';
 import HouseConfirmStep from '@/pages/onboarding/components/HouseConfirmStep';
@@ -13,8 +10,6 @@ import OnboardingFlowLayout from '@/pages/onboarding/components/OnboardingFlowLa
 import ProfileStep from '@/pages/onboarding/components/ProfileStep';
 import { getApiErrorMessage } from '@/api/error';
 import { toast } from 'sonner';
-import { updateMe } from '@/api/auth/auth.api';
-import { useAuthStore } from '@/stores/auth.store';
 import { useNavigate } from 'react-router-dom';
 import { useOnboardingStore } from '@/stores/onboarding.store';
 import { useState } from 'react';
@@ -36,25 +31,20 @@ const JoinHousePage = () => {
   } = useOnboardingStore();
 
   const { step, inviteCode, nickname, selectedProfileId } = joinFlow;
-
-  const userNickname = useAuthStore((state) => state.user?.nickname);
-  const updateUser = useAuthStore((state) => state.updateUser);
+  const { data: me } = useMeQuery();
+  const { mutateAsync: updateMeMutate } = useUpdateMeMutation();
 
   const getSafeNickname = (value: string) => {
-    return value.trim() || userNickname || '';
+    return value.trim() || me?.nickname || '';
   };
 
   const submitProfile = async () => {
     const safeNickname = getSafeNickname(nickname);
 
-    const updatedUser = await updateMe({
+    await updateMeMutate({
       nickname: safeNickname,
       profileImageUrl: selectedProfileId,
     });
-
-    console.log('내 정보 수정 응답:', updatedUser);
-
-    updateUser(updatedUser);
   };
 
   const handleChangeInviteCode = (value: string) => {
@@ -98,7 +88,6 @@ const JoinHousePage = () => {
       setIsSubmitting(true);
 
       await submitProfile();
-      updateUser({ hasRoom: true });
 
       resetOnboarding();
       navigate('/home', { replace: true });
@@ -129,9 +118,6 @@ const JoinHousePage = () => {
         const room = await joinRoom({ invitationCode: inviteCode });
         const roomMembers = await getRoomMembers({ excludeMe: true });
 
-        console.log('방 입장: ', room);
-        console.log('방 구성원: ', roomMembers);
-
         setJoinedRoom(room);
         setMembers(roomMembers);
         setHasError(false);
@@ -154,40 +140,24 @@ const JoinHousePage = () => {
     }
 
     if (step === 'confirm') {
-      try {
-        setIsSubmitting(true);
+      const usedByOthers = members.map((member) => member.profileImageUrl);
 
-        const { usedImages } = await getUsedProfileImages();
-        console.log('사용 중인 프로필 id: ', usedImages);
+      setUsedProfileIds(usedByOthers);
 
-        const usedByOthers = members.map((member) => member.profileImageUrl);
-        setUsedProfileIds(usedByOthers);
+      const isCurrentSelectedUsedByOthers =
+        usedByOthers.includes(selectedProfileId);
 
-        const isCurrentSelectedUsed = usedImages.includes(selectedProfileId);
+      if (isCurrentSelectedUsedByOthers) {
+        const availableProfile = PROFILE_OPTIONS.find(
+          (profile) => !usedByOthers.includes(profile.id)
+        );
 
-        if (isCurrentSelectedUsed) {
-          const availableProfile = PROFILE_OPTIONS.find(
-            (profile) => !usedImages.includes(profile.id)
-          );
-
-          if (availableProfile) {
-            updateJoinFlow({ selectedProfileId: availableProfile.id });
-          }
+        if (availableProfile) {
+          updateJoinFlow({ selectedProfileId: availableProfile.id });
         }
-
-        setJoinStep('profile');
-      } catch (error) {
-        const message = getApiErrorMessage(error);
-
-        console.error('사용 중인 프로필 이미지 조회 실패: ', message, error);
-
-        toast(message, {
-          id: 'used-profile-images-error',
-          duration: 2000,
-        });
-      } finally {
-        setIsSubmitting(false);
       }
+
+      setJoinStep('profile');
 
       return;
     }

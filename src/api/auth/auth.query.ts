@@ -1,5 +1,6 @@
 import type { MeResponse } from '@/api/auth/auth.types';
-import { agreeToTerms, getMe, logout } from '@/api/auth/auth.api';
+import { agreeToTerms, getMe, logout, updateMe } from '@/api/auth/auth.api';
+import type { UpdateMeRequest } from '@/api/auth/auth.types';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { queryClient } from '@/lib/queryClient';
@@ -35,6 +36,15 @@ export const useAgreeToTermsMutation = () => {
         (prev: MeResponse | undefined) =>
           prev ? { ...prev, termsAgreed: true } : prev
       );
+    },
+  });
+};
+
+export const useUpdateMeMutation = () => {
+  return useMutation({
+    mutationFn: (payload: UpdateMeRequest) => updateMe(payload),
+    onSuccess: (updatedMe) => {
+      queryClient.setQueryData(queryKeys.auth.me, updatedMe);
     },
   });
 };
