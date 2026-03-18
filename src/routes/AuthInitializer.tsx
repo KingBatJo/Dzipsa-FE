@@ -26,7 +26,7 @@ const AuthInitializer = () => {
         setAccessToken(accessToken);
 
         const me = await queryClient.fetchQuery({
-          queryKey: queryKeys.me,
+          queryKey: queryKeys.auth.me,
           queryFn: getMe,
         });
 

@@ -2,6 +2,8 @@ import { hasAgreedToTerms, hasRoom } from '@/api/auth/auth.utils';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { getMe } from '@/api/auth/auth.api';
+import { queryClient } from '@/lib/queryClient';
+import { queryKeys } from '@/lib/queryKeys';
 import { useAuthStore } from '@/stores/auth.store';
 import { useEffect } from 'react';
 
@@ -36,7 +38,11 @@ const AuthCallbackPage = () => {
       window.history.replaceState({}, '', window.location.pathname);
 
       try {
-        const me = await getMe();
+        const me = await queryClient.fetchQuery({
+          queryKey: queryKeys.auth.me,
+          queryFn: getMe,
+        });
+
         setUser(me);
 
         // 약관 미동의 사용자는 약관 동의 화면으로 이동

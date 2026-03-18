@@ -1,3 +1,5 @@
 export const queryKeys = {
-  me: ['me'] as const,
+  auth: {
+    me: ['auth', 'me'] as const,
+  },
 };

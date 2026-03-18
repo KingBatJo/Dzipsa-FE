@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 
 export const useMeQuery = () => {
   return useQuery({
-    queryKey: queryKeys.me,
+    queryKey: queryKeys.auth.me,
     queryFn: getMe,
   });
 };
