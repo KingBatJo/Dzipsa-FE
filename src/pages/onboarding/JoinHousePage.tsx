@@ -8,7 +8,6 @@ import InviteCodeInputStep from '@/pages/onboarding/components/InviteCodeInputSt
 import OnboardingFlowLayout from '@/pages/onboarding/components/OnboardingFlowLayout';
 import ProfileStep from '@/pages/onboarding/components/ProfileStep';
 import { getApiErrorMessage } from '@/api/error';
-import { getRoomMembers } from '@/api/room/room.api';
 import { toast } from 'sonner';
 import { useJoinRoomMutation } from '@/api/room/room.query';
 import { useNavigate } from 'react-router-dom';
@@ -118,7 +117,9 @@ const JoinHousePage = () => {
         setIsSubmitting(true);
 
         const room = await joinRoomMutate({ invitationCode: inviteCode });
-        const roomMembers = await getRoomMembers({ excludeMe: true });
+        const roomMembers = room.members.filter(
+          (member) => member.id !== me?.id
+        );
 
         setJoinedRoom(room);
         setMembers(roomMembers);
