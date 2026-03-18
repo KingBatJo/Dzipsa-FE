@@ -2,15 +2,40 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { hasAgreedToTerms, hasRoom } from '@/api/auth/auth.utils';
 
 import { useAuthStore } from '@/stores/auth.store';
+import { useMeQuery } from '@/api/auth/auth.query';
 
 const OnboardingRoute = () => {
-  const user = useAuthStore((state) => state.user);
+  const accessToken = useAuthStore((state) => state.accessToken);
+  const isAuthChecked = useAuthStore((state) => state.isAuthChecked);
+  const {
+    data: me,
+    isLoading,
+    isError,
+  } = useMeQuery({
+    enabled: !!accessToken && isAuthChecked,
+  });
 
-  if (!hasAgreedToTerms(user)) {
+  if (!isAuthChecked) return null;
+
+  if (!accessToken) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (isLoading) return null;
+
+  if (isError) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (!me) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (!hasAgreedToTerms(me)) {
     return <Navigate to="/signup/terms" replace />;
   }
 
-  if (hasRoom(user)) {
+  if (hasRoom(me)) {
     return <Navigate to="/home" replace />;
   }
 
