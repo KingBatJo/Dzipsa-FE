@@ -7,7 +7,8 @@ const RuleCreatePage = () => {
     console.log('규칙 등록:', values);
   };
 
-  return <RuleForm onSubmit={handleCreate} />;
+  return <RuleForm mode="create" onSubmit={handleCreate} />;
 };
 
 export default RuleCreatePage;
+
