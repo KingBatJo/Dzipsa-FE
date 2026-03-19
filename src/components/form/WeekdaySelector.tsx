@@ -1,10 +1,7 @@
+import { WEEK_DAYS_MON_FIRST, type WeekDay } from '@/constants/weekdays';
 import { cn } from '@/lib/utils';
 
-const WEEK_DAYS = ['월', '화', '수', '목', '금', '토', '일'] as const;
-
-export type WeekDay = (typeof WEEK_DAYS)[number];
-
-type WeekdaySelectorProps = {
+export type WeekdaySelectorProps = {
   value: WeekDay[];
   onChange: (value: WeekDay[]) => void;
   disabled?: boolean;
@@ -30,7 +27,7 @@ const WeekdaySelector = ({
 
   return (
     <div className={cn('flex items-center justify-between', className)}>
-      {WEEK_DAYS.map((day) => {
+      {WEEK_DAYS_MON_FIRST.map((day) => {
         const isSelected = value.includes(day);
 
         return (
@@ -41,10 +38,10 @@ const WeekdaySelector = ({
             disabled={disabled}
             onClick={() => handleToggle(day)}
             className={cn(
-              'h-10 w-10 rounded-md text-sm font-semibold transition-colors disabled:opacity-50',
+              'h-[50px] w-10 rounded-[12px] border text-base font-semibold transition-colors disabled:opacity-50',
               isSelected
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-primary-foreground text-foreground'
+                ? 'border-zinc-900 bg-zinc-800 text-zinc-100'
+                : 'border-zinc-100 bg-zinc-50 text-zinc-500'
             )}
           >
             {day}

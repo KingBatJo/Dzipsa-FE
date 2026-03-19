@@ -1,3 +1,5 @@
+﻿import { WEEKDAY_LABELS_SUN_FIRST } from '@/constants/weekdays';
+
 // 두 자리 숫자 문자열로 변환
 const padTwo = (value: number) => value.toString().padStart(2, '0');
 
@@ -9,16 +11,6 @@ export const formatDate = (date: Date) => {
 
   return `${year}.${month}.${day}`;
 };
-
-export const WEEKDAY_LABELS = [
-  '일',
-  '월',
-  '화',
-  '수',
-  '목',
-  '금',
-  '토',
-] as const;
 
 export const formatDueDateLabel = (dateString: string) => {
   const date = new Date(dateString);
@@ -33,7 +25,7 @@ export const formatStatusDateLabel = (dateString: string) => {
   const month = padTwo(date.getMonth() + 1);
   const day = padTwo(date.getDate());
 
-  return `${year}.${month}.${day} (${WEEKDAY_LABELS[date.getDay()]})`;
+  return `${year}.${month}.${day} (${WEEKDAY_LABELS_SUN_FIRST[date.getDay()]})`;
 };
 
 // ISO datetime -> 오늘 오전 9:00

@@ -1,16 +1,14 @@
-import FormPageLayout from '@/components/form/FormPageLayout';
+﻿import RuleForm, {
+  type RuleFormSubmitValues,
+} from '@/pages/rules/components/RuleForm';
 
 const RuleCreatePage = () => {
-  return (
-    <FormPageLayout
-      title="규칙 등록"
-      onSubmit={() => {
-        console.log('완료');
-      }}
-    >
-      규칙 등록 페이지
-    </FormPageLayout>
-  );
+  const handleCreate = (values: RuleFormSubmitValues) => {
+    console.log('규칙 등록:', values);
+  };
+
+  return <RuleForm mode="create" onSubmit={handleCreate} />;
 };
 
 export default RuleCreatePage;
+

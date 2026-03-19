@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import AppDialog from '@/components/common/AppDialog';
 import { Button } from '@/components/ui/button';
@@ -78,23 +78,19 @@ const DateWheelDialog = ({
   const day = Number.parseInt(pickerValue.day, 10);
   const maxDay = getDaysInMonth(year, month);
 
-  const yearOptions = useMemo(
-    () =>
-      Array.from(
-        { length: YEAR_MAX - YEAR_MIN + 1 },
-        (_, index) => `${YEAR_MIN + index}년`
-      ),
-    []
+  const yearOptions = Array.from(
+    { length: YEAR_MAX - YEAR_MIN + 1 },
+    (_, index) => `${YEAR_MIN + index}년`
   );
 
-  const monthOptions = useMemo(
-    () => Array.from({ length: 12 }, (_, index) => `${index + 1}월`),
-    []
+  const monthOptions = Array.from(
+    { length: 12 },
+    (_, index) => `${index + 1}월`
   );
 
-  const dayOptions = useMemo(
-    () => Array.from({ length: maxDay }, (_, index) => `${index + 1}일`),
-    [maxDay]
+  const dayOptions = Array.from(
+    { length: maxDay },
+    (_, index) => `${index + 1}일`
   );
 
   const handlePickerChange = (nextValue: PickerDateValue) => {

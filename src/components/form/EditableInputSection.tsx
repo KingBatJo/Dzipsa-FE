@@ -25,7 +25,7 @@ const EditableInputSection = ({
   className,
 }: EditableInputSectionProps) => {
   return (
-    <section className={cn('flex flex-col gap-1', className)}>
+    <section className={cn('flex flex-col gap-2', className)}>
       <EditableInput
         id={id}
         ref={inputRef}
@@ -36,8 +36,8 @@ const EditableInputSection = ({
         onBlur={onBlur}
       />
 
-      <div className="flex justify-end text-xs font-semibold text-[#BCBCBC]">
-        최대 {maxLength}글자
+      <div className="flex justify-end text-xs font-medium text-zinc-400">
+        최대 {maxLength}자
       </div>
     </section>
   );

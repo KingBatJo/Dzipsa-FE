@@ -19,6 +19,7 @@ import RoomInvitationPage from '@/pages/mypage/RoomInvitationPage';
 import RootLayout from '@/components/layout/RootLayout';
 import RootRedirect from '@/routes/RootRedirect';
 import RuleCreatePage from '@/pages/rules/RuleCreatePage';
+import RuleEditPage from '@/pages/rules/RuleEditPage';
 import RulesPage from '@/pages/rules/RulesPage';
 import SignupCompletePage from '@/pages/login/SignupCompletePage';
 import { TODO_TABS } from '@/constants/todos';
@@ -79,7 +80,11 @@ const Router = () => {
                 element={<RoomInvitationPage />}
               />
 
+              {/* 규칙 */}
               <Route path="/rules/new" element={<RuleCreatePage />} />
+              <Route path="/rules/:ruleId/edit" element={<RuleEditPage />} />
+
+              {/* 할일 */}
               <Route path="/todos/new" element={<TodoCreatePage />} />
               <Route path="/todos/:todoId/edit" element={<TodoEditPage />} />
               <Route
