@@ -90,10 +90,19 @@ const RuleForm = ({ onSubmit }: RuleFormProps) => {
   });
 
   const handleToggleSetting = (key: RuleSettingKey, checked: boolean) => {
-    setSettings((prev) => ({
-      ...prev,
-      [key]: checked,
-    }));
+    setSettings((prev) => {
+      const next = {
+        ...prev,
+        [key]: checked,
+      };
+
+      // 알람 OFF -> ON 전환 시에만 규칙시간 설정을 자동 ON
+      if (key === 'notiEnabled' && checked) {
+        next.timeSettingEnabled = true;
+      }
+
+      return next;
+    });
   };
 
   const handleFormSubmit = (data: RuleCreateValues) => {
