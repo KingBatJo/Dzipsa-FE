@@ -1,10 +1,10 @@
-﻿import ToggleSwitch from '@/components/common/ToggleSwitch';
-import EditableInputSection from '@/components/form/EditableInputSection';
+﻿import EditableInputSection from '@/components/form/EditableInputSection';
 import ErrorToolTip from '@/components/form/ErrorToolTip';
 import FormPageLayout from '@/components/form/FormPageLayout';
 import WeekdaySelector, {
   type WeekDay,
 } from '@/components/form/WeekdaySelector';
+import RuleSettingCard from '@/pages/rules/components/RuleSettingCard';
 import { cn } from '@/lib/utils';
 import {
   RULE_MEMO_MAX_LENGTH,
@@ -18,7 +18,7 @@ import { ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
-type RuleFormSubmitValues = {
+export type RuleFormSubmitValues = {
   title: string;
   memo: string;
   alarmEnabled: boolean;
@@ -29,14 +29,28 @@ type RuleFormSubmitValues = {
   operatingDays: WeekDay[];
 };
 
-type RuleSettingKey =
-  | 'alarmEnabled'
-  | 'timeSettingEnabled'
-  | 'operatingDaysEnabled';
+type RuleSettings = {
+  alarmEnabled: boolean;
+  timeSettingEnabled: boolean;
+  operatingDaysEnabled: boolean;
+};
+
+type RuleSettingKey = keyof RuleSettings;
 
 type RuleFormProps = {
   onSubmit: (values: RuleFormSubmitValues) => void;
 };
+
+const INITIAL_SETTINGS: RuleSettings = {
+  alarmEnabled: false,
+  timeSettingEnabled: false,
+  operatingDaysEnabled: false,
+};
+
+const DEFAULT_TIME_RANGE = {
+  startTime: '09:00',
+  endTime: '09:00',
+} as const;
 
 const formatKoreanTime = (time: string) => {
   const [hourText, minuteText] = time.split(':');
@@ -51,17 +65,7 @@ const RuleForm = ({ onSubmit }: RuleFormProps) => {
   const [titleErrorMessage, setTitleErrorMessage] = useState('');
   const [memoErrorMessage, setMemoErrorMessage] = useState('');
 
-  const [settings, setSettings] = useState<Record<RuleSettingKey, boolean>>({
-    alarmEnabled: false,
-    timeSettingEnabled: false,
-    operatingDaysEnabled: false,
-  });
-
-  const [timeRange] = useState({
-    startTime: '09:00',
-    endTime: '09:00',
-  });
-
+  const [settings, setSettings] = useState<RuleSettings>(INITIAL_SETTINGS);
   const [selectedOperatingDays, setSelectedOperatingDays] = useState<WeekDay[]>(
     []
   );
@@ -93,8 +97,10 @@ const RuleForm = ({ onSubmit }: RuleFormProps) => {
       alarmEnabled: settings.alarmEnabled,
       timeSettingEnabled: settings.timeSettingEnabled,
       operatingDaysEnabled: settings.operatingDaysEnabled,
-      startTime: settings.timeSettingEnabled ? timeRange.startTime : null,
-      endTime: settings.timeSettingEnabled ? timeRange.endTime : null,
+      startTime: settings.timeSettingEnabled
+        ? DEFAULT_TIME_RANGE.startTime
+        : null,
+      endTime: settings.timeSettingEnabled ? DEFAULT_TIME_RANGE.endTime : null,
       operatingDays: settings.operatingDaysEnabled ? selectedOperatingDays : [],
     });
   };
@@ -147,41 +153,21 @@ const RuleForm = ({ onSubmit }: RuleFormProps) => {
         <section className="flex flex-col gap-3 p-[15px]">
           <h2 className="text-sm font-semibold text-zinc-400">추가 설정</h2>
 
-          <section className="flex items-center justify-between rounded-[12px] bg-white p-4">
-            <p className="text-base font-semibold text-black">알람</p>
+          <RuleSettingCard
+            title="알람"
+            checked={settings.alarmEnabled}
+            onToggle={(checked) => handleToggleSetting('alarmEnabled', checked)}
+            ariaLabel="알람 설정"
+          />
 
-            <ToggleSwitch
-              checked={settings.alarmEnabled}
-              onCheckedChange={(checked) =>
-                handleToggleSetting('alarmEnabled', checked)
-              }
-              className={cn(
-                settings.alarmEnabled ? undefined : 'bg-zinc-300',
-                'disabled:opacity-100'
-              )}
-              ariaLabel="알람 설정"
-            />
-          </section>
-
-          <section className="flex flex-col gap-2.5 rounded-[12px] bg-white p-4">
-            <div className="flex items-center justify-between">
-              <p className="text-base font-semibold text-black">
-                규칙시간 설정하기
-              </p>
-
-              <ToggleSwitch
-                checked={settings.timeSettingEnabled}
-                onCheckedChange={(checked) =>
-                  handleToggleSetting('timeSettingEnabled', checked)
-                }
-                className={cn(
-                  settings.timeSettingEnabled ? undefined : 'bg-zinc-300',
-                  'disabled:opacity-100'
-                )}
-                ariaLabel="규칙 시간 설정"
-              />
-            </div>
-
+          <RuleSettingCard
+            title="규칙시간 설정하기"
+            checked={settings.timeSettingEnabled}
+            onToggle={(checked) =>
+              handleToggleSetting('timeSettingEnabled', checked)
+            }
+            ariaLabel="규칙 시간 설정"
+          >
             {settings.timeSettingEnabled && (
               <div className="flex items-end justify-between">
                 <div className="flex flex-col gap-[7px]">
@@ -191,7 +177,7 @@ const RuleForm = ({ onSubmit }: RuleFormProps) => {
 
                   <div className="border-border bg-secondary flex items-center rounded-[10px] border px-4 py-2">
                     <span className="text-muted-foreground text-lg font-semibold">
-                      {formatKoreanTime(timeRange.startTime)}
+                      {formatKoreanTime(DEFAULT_TIME_RANGE.startTime)}
                     </span>
                   </div>
                 </div>
@@ -207,40 +193,31 @@ const RuleForm = ({ onSubmit }: RuleFormProps) => {
 
                   <div className="border-border bg-secondary flex items-center rounded-[10px] border px-4 py-2">
                     <span className="text-muted-foreground text-lg font-semibold">
-                      {formatKoreanTime(timeRange.endTime)}
+                      {formatKoreanTime(DEFAULT_TIME_RANGE.endTime)}
                     </span>
                   </div>
                 </div>
               </div>
             )}
-          </section>
+          </RuleSettingCard>
 
-          <section className="flex flex-col justify-between gap-3 rounded-[12px] bg-white p-4">
-            <div className="flex items-center justify-between">
-              <p className="text-base font-semibold text-black">운영 요일</p>
-
-              <ToggleSwitch
-                checked={settings.operatingDaysEnabled}
-                onCheckedChange={(checked) =>
-                  handleToggleSetting('operatingDaysEnabled', checked)
-                }
-                className={cn(
-                  settings.operatingDaysEnabled ? undefined : 'bg-zinc-300',
-                  'disabled:opacity-100'
-                )}
-                ariaLabel="운영 요일 설정"
-              />
-            </div>
-
+          <RuleSettingCard
+            title="운영 요일"
+            checked={settings.operatingDaysEnabled}
+            onToggle={(checked) =>
+              handleToggleSetting('operatingDaysEnabled', checked)
+            }
+            ariaLabel="운영 요일 설정"
+          >
             {settings.operatingDaysEnabled && (
               <WeekdaySelector
                 value={selectedOperatingDays}
                 onChange={setSelectedOperatingDays}
               />
             )}
-          </section>
+          </RuleSettingCard>
 
-          <section className="flex flex-col gap-4 rounded-[18px] bg-white p-4">
+          <section className="flex flex-col gap-4 rounded-[20px] bg-white p-4">
             <p className="text-base font-semibold">메모</p>
 
             <Controller
@@ -300,5 +277,4 @@ const RuleForm = ({ onSubmit }: RuleFormProps) => {
   );
 };
 
-export type { RuleFormSubmitValues };
 export default RuleForm;
