@@ -6,7 +6,7 @@ import DateWheelDialog from '@/components/form/DateWheelDialog';
 import { REPEAT_TYPE_OPTIONS } from '@/constants/todos';
 import ToggleSwitch from '@/components/common/ToggleSwitch';
 import type { WeekDay } from '@/constants/weekdays';
-import { WeekdaySelector } from '@/components/form/WeekdaySelector';
+import WeekdaySelector from '@/components/form/WeekdaySelector';
 import { cn } from '@/lib/utils';
 import { formatDate } from '@/utils/date';
 

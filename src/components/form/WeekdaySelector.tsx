@@ -1,14 +1,14 @@
 import { WEEK_DAYS_MON_FIRST, type WeekDay } from '@/constants/weekdays';
 import { cn } from '@/lib/utils';
 
-type WeekdaySelectorProps = {
+export type WeekdaySelectorProps = {
   value: WeekDay[];
   onChange: (value: WeekDay[]) => void;
   disabled?: boolean;
   className?: string;
 };
 
-export const WeekdaySelector = ({
+const WeekdaySelector = ({
   value,
   onChange,
   disabled = false,
@@ -52,4 +52,4 @@ export const WeekdaySelector = ({
   );
 };
 
-export type { WeekDay };
+export default WeekdaySelector;

@@ -1,4 +1,7 @@
-import EditableInputSection from '@/components/form/EditableInputSection';
+﻿import {
+  ControlledEditableInputSection,
+  ControlledTextareaSection,
+} from '@/components/form/ControlledTextSections';
 import FormPageLayout from '@/components/form/FormPageLayout';
 import { mockMembers } from '@/mocks/mockData';
 import {
@@ -7,16 +10,14 @@ import {
   todoCreateSchema,
   type TodoCreateValues,
 } from '@/schemas/todoCreateSchema';
-import { validateTextMaxLength } from '@/utils/validators';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useRef, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import AppButton from '@/components/common/AppButton';
 import RepeatSection from '@/pages/todos/components/RepeatSection';
 import { formatDate } from '@/utils/date';
 import { cn } from '@/lib/utils';
 import DateWheelDialog from '@/components/form/DateWheelDialog';
-import ErrorToolTip from '@/components/form/ErrorToolTip';
 import RandomAssignOverlay from '@/pages/todos/components/RandomAssignOverlay';
 import type { RepeatValue, TodoFormValues } from '@/types/todo';
 import { createDefaultRepeatValue } from '@/utils/todoForm';
@@ -31,8 +32,6 @@ type TodoFormProps = {
 };
 
 const TodoForm = ({ mode, initialValues, onSubmit }: TodoFormProps) => {
-  const [inputErrorMessage, setInputErrorMessage] = useState('');
-  const [memoErrorMessage, setMemoErrorMessage] = useState('');
   const [isDueDateDialogOpen, setIsDueDateDialogOpen] = useState(false);
 
   const [dueDate, setDueDate] = useState<Date | null>(
@@ -66,7 +65,7 @@ const TodoForm = ({ mode, initialValues, onSubmit }: TodoFormProps) => {
   const {
     control,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { isValid },
   } = useForm<TodoCreateValues>({
     resolver: zodResolver(todoCreateSchema),
     mode: 'onChange',
@@ -149,41 +148,13 @@ const TodoForm = ({ mode, initialValues, onSubmit }: TodoFormProps) => {
       onSubmit={handleSubmit(handleFormSubmit)}
       submitDisabled={!isValid}
     >
-      <Controller
-        name="title"
+      <ControlledEditableInputSection
         control={control}
-        render={({ field }) => (
-          <EditableInputSection
-            id="todo-title"
-            value={field.value}
-            placeholder="할 일을 입력하세요"
-            maxLength={TODO_TITLE_MAX_LENGTH}
-            onChange={(value) => {
-              const maxLengthError = validateTextMaxLength(
-                value,
-                TODO_TITLE_MAX_LENGTH
-              );
-
-              if (maxLengthError) {
-                setInputErrorMessage(maxLengthError);
-                return;
-              }
-
-              field.onChange(value);
-
-              if (inputErrorMessage) {
-                setInputErrorMessage('');
-              }
-            }}
-            onBlur={() => {
-              field.onBlur();
-              setInputErrorMessage('');
-            }}
-            errorMessage={inputErrorMessage || errors.title?.message}
-            inputRef={field.ref}
-            className="px-4"
-          />
-        )}
+        name="title"
+        id="todo-title"
+        placeholder="할 일을 입력하세요"
+        maxLength={TODO_TITLE_MAX_LENGTH}
+        className="px-4"
       />
 
       <div className="mt-[26px] mb-[30px] h-3 bg-neutral-100" />
@@ -251,7 +222,7 @@ const TodoForm = ({ mode, initialValues, onSubmit }: TodoFormProps) => {
                   disabled={isRandomAssigneeLocked}
                   className="text-primary-foreground from-primary bg-gradient-to-r to-zinc-500 text-sm font-medium"
                 >
-                  운명에 맡기기
+                  랜덤으로 맡기기
                 </AppButton>
               )}
 
@@ -272,55 +243,15 @@ const TodoForm = ({ mode, initialValues, onSubmit }: TodoFormProps) => {
           <section className="space-y-4">
             <p className="text-base font-semibold">메모</p>
 
-            <Controller
-              name="memo"
+            <ControlledTextareaSection
               control={control}
-              render={({ field }) => (
-                <ErrorToolTip
-                  message={memoErrorMessage || errors.memo?.message}
-                >
-                  <div className="flex flex-col gap-1">
-                    <textarea
-                      id="todo-memo"
-                      placeholder="메모를 입력하세요"
-                      className={cn(
-                        'border-border bg-secondary h-[125px] resize-none rounded-[10px] border px-4 py-2',
-                        memoErrorMessage || errors.memo?.message
-                          ? 'border-red-500'
-                          : 'border-neutral-200 focus:border-neutral-900'
-                      )}
-                      value={field.value}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        const maxLengthError = validateTextMaxLength(
-                          value,
-                          TODO_MEMO_MAX_LENGTH
-                        );
-
-                        if (maxLengthError) {
-                          setMemoErrorMessage(maxLengthError);
-                          return;
-                        }
-
-                        field.onChange(value);
-
-                        if (memoErrorMessage) {
-                          setMemoErrorMessage('');
-                        }
-                      }}
-                      onBlur={() => {
-                        field.onBlur();
-                        setMemoErrorMessage('');
-                      }}
-                      ref={field.ref}
-                    />
-
-                    <p className="flex justify-end text-xs font-semibold text-[#BCBCBC]">
-                      최대 300글자
-                    </p>
-                  </div>
-                </ErrorToolTip>
-              )}
+              name="memo"
+              id="todo-memo"
+              placeholder="메모를 입력하세요"
+              maxLength={TODO_MEMO_MAX_LENGTH}
+              containerClassName="flex flex-col gap-1"
+              textareaClassName="border-border bg-secondary rounded-[10px] px-4 py-2 text-sm font-medium placeholder:font-medium placeholder:text-neutral-400 focus:border-neutral-900"
+              counterClassName="text-xs font-semibold text-[#BCBCBC]"
             />
           </section>
         </div>

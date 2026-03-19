@@ -1,21 +1,21 @@
-﻿import EditableInputSection from '@/components/form/EditableInputSection';
-import ErrorToolTip from '@/components/form/ErrorToolTip';
+﻿import {
+  ControlledEditableInputSection,
+  ControlledTextareaSection,
+} from '@/components/form/ControlledTextSections';
 import FormPageLayout from '@/components/form/FormPageLayout';
+import WeekdaySelector from '@/components/form/WeekdaySelector';
 import { WEEK_DAYS_MON_FIRST, type WeekDay } from '@/constants/weekdays';
 import RuleSettingCard from '@/pages/rules/components/RuleSettingCard';
-import { cn } from '@/lib/utils';
 import {
   RULE_MEMO_MAX_LENGTH,
   RULE_TITLE_MAX_LENGTH,
   ruleCreateSchema,
   type RuleCreateValues,
 } from '@/schemas/ruleCreateSchema';
-import { validateTextMaxLength } from '@/utils/validators';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ChevronRight } from 'lucide-react';
 import { useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import { WeekdaySelector } from '@/components/form/WeekdaySelector';
+import { useForm } from 'react-hook-form';
 
 export type RuleFormSubmitValues = {
   title: string;
@@ -71,9 +71,6 @@ const toRepeatDays = (selectedDays: WeekDay[]) => {
 };
 
 const RuleForm = ({ onSubmit }: RuleFormProps) => {
-  const [titleErrorMessage, setTitleErrorMessage] = useState('');
-  const [memoErrorMessage, setMemoErrorMessage] = useState('');
-
   const [settings, setSettings] = useState<RuleSettings>(INITIAL_SETTINGS);
   const [selectedOperatingDays, setSelectedOperatingDays] = useState<WeekDay[]>(
     []
@@ -82,7 +79,7 @@ const RuleForm = ({ onSubmit }: RuleFormProps) => {
   const {
     control,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { isValid },
   } = useForm<RuleCreateValues>({
     resolver: zodResolver(ruleCreateSchema),
     mode: 'onChange',
@@ -106,13 +103,9 @@ const RuleForm = ({ onSubmit }: RuleFormProps) => {
       notiEnabled: settings.notiEnabled,
       timeSettingEnabled: settings.timeSettingEnabled,
       repeatEnabled: settings.repeatEnabled,
-      startTime: settings.timeSettingEnabled
-        ? DEFAULT_TIME_RANGE.startTime
-        : null,
+      startTime: settings.timeSettingEnabled ? DEFAULT_TIME_RANGE.startTime : null,
       endTime: settings.timeSettingEnabled ? DEFAULT_TIME_RANGE.endTime : null,
-      repeatDays: settings.repeatEnabled
-        ? toRepeatDays(selectedOperatingDays)
-        : '',
+      repeatDays: settings.repeatEnabled ? toRepeatDays(selectedOperatingDays) : '',
     });
   };
 
@@ -124,40 +117,12 @@ const RuleForm = ({ onSubmit }: RuleFormProps) => {
     >
       <div className="bg-zinc-100 pb-6">
         <div className="bg-white px-[15px] pt-[15px] pb-[30px]">
-          <Controller
-            name="title"
+          <ControlledEditableInputSection
             control={control}
-            render={({ field }) => (
-              <EditableInputSection
-                id="rule-title"
-                value={field.value}
-                placeholder="규칙을 입력하세요"
-                maxLength={RULE_TITLE_MAX_LENGTH}
-                onChange={(value) => {
-                  const maxLengthError = validateTextMaxLength(
-                    value,
-                    RULE_TITLE_MAX_LENGTH
-                  );
-
-                  if (maxLengthError) {
-                    setTitleErrorMessage(maxLengthError);
-                    return;
-                  }
-
-                  field.onChange(value);
-
-                  if (titleErrorMessage) {
-                    setTitleErrorMessage('');
-                  }
-                }}
-                onBlur={() => {
-                  field.onBlur();
-                  setTitleErrorMessage('');
-                }}
-                errorMessage={titleErrorMessage || errors.title?.message}
-                inputRef={field.ref}
-              />
-            )}
+            name="title"
+            id="rule-title"
+            placeholder="규칙을 입력하세요"
+            maxLength={RULE_TITLE_MAX_LENGTH}
           />
         </div>
 
@@ -215,9 +180,7 @@ const RuleForm = ({ onSubmit }: RuleFormProps) => {
           <RuleSettingCard
             title="운영 요일"
             checked={settings.repeatEnabled}
-            onToggle={(checked) =>
-              handleToggleSetting('repeatEnabled', checked)
-            }
+            onToggle={(checked) => handleToggleSetting('repeatEnabled', checked)}
             ariaLabel="운영 요일 설정"
           >
             {settings.repeatEnabled && (
@@ -231,55 +194,13 @@ const RuleForm = ({ onSubmit }: RuleFormProps) => {
           <section className="flex flex-col gap-4 rounded-[20px] bg-white p-4">
             <p className="text-base font-semibold">메모</p>
 
-            <Controller
-              name="memo"
+            <ControlledTextareaSection
               control={control}
-              render={({ field }) => (
-                <ErrorToolTip
-                  message={memoErrorMessage || errors.memo?.message}
-                >
-                  <div className="flex flex-col gap-2">
-                    <textarea
-                      id="rule-memo"
-                      placeholder="메모를 입력하세요"
-                      className={cn(
-                        'h-[125px] w-full resize-none rounded-[12px] border bg-zinc-100 p-4 text-sm font-semibold outline-none placeholder:text-zinc-300',
-                        memoErrorMessage || errors.memo?.message
-                          ? 'border-red-500'
-                          : 'border-zinc-200 focus:border-zinc-600'
-                      )}
-                      value={field.value}
-                      onChange={(event) => {
-                        const value = event.target.value;
-                        const maxLengthError = validateTextMaxLength(
-                          value,
-                          RULE_MEMO_MAX_LENGTH
-                        );
-
-                        if (maxLengthError) {
-                          setMemoErrorMessage(maxLengthError);
-                          return;
-                        }
-
-                        field.onChange(value);
-
-                        if (memoErrorMessage) {
-                          setMemoErrorMessage('');
-                        }
-                      }}
-                      onBlur={() => {
-                        field.onBlur();
-                        setMemoErrorMessage('');
-                      }}
-                      ref={field.ref}
-                    />
-
-                    <p className="flex justify-end text-xs font-medium text-zinc-400">
-                      최대 {RULE_MEMO_MAX_LENGTH}자
-                    </p>
-                  </div>
-                </ErrorToolTip>
-              )}
+              name="memo"
+              id="rule-memo"
+              placeholder="메모를 입력하세요"
+              maxLength={RULE_MEMO_MAX_LENGTH}
+              containerClassName="flex flex-col gap-2"
             />
           </section>
         </section>
