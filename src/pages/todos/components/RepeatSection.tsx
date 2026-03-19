@@ -2,7 +2,7 @@ import { Check, ChevronDown } from 'lucide-react';
 import type { RepeatType, RepeatValue } from '@/types/todo';
 import { useEffect, useRef, useState } from 'react';
 
-import DateWheelDialog from '@/components/form/DateWheelDialog';
+import DateWheelDialog from '@/pages/todos/components/DateWheelDialog';
 import { REPEAT_TYPE_OPTIONS } from '@/constants/todos';
 import ToggleSwitch from '@/components/common/ToggleSwitch';
 import type { WeekDay } from '@/constants/weekdays';
