@@ -1,15 +1,14 @@
 import { Check, ChevronDown } from 'lucide-react';
+import type { RepeatType, RepeatValue } from '@/types/todo';
 import { useEffect, useRef, useState } from 'react';
 
-import ToggleSwitch from '@/components/common/ToggleSwitch';
-import WeekdaySelector, {
-  type WeekDay,
-} from '@/components/form/WeekdaySelector';
 import DateWheelDialog from '@/components/form/DateWheelDialog';
+import { REPEAT_TYPE_OPTIONS } from '@/constants/todos';
+import ToggleSwitch from '@/components/common/ToggleSwitch';
+import type { WeekDay } from '@/constants/weekdays';
+import { WeekdaySelector } from '@/components/form/WeekdaySelector';
 import { cn } from '@/lib/utils';
 import { formatDate } from '@/utils/date';
-import type { RepeatType, RepeatValue } from '@/types/todo';
-import { REPEAT_TYPE_OPTIONS } from '@/constants/todos';
 
 type DateFieldType = 'start' | 'end';
 

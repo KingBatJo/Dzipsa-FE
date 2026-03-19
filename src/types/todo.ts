@@ -1,5 +1,5 @@
 import type { REPEAT_TYPE_OPTIONS } from '@/constants/todos';
-import type { WeekDay } from '@/components/form/WeekdaySelector';
+import type { WeekDay } from '@/constants/weekdays';
 
 // 임시
 export type Todo = {

@@ -1,8 +1,5 @@
+import { WEEK_DAYS_MON_FIRST, type WeekDay } from '@/constants/weekdays';
 import { cn } from '@/lib/utils';
-
-const WEEK_DAYS = ['월', '화', '수', '목', '금', '토', '일'] as const;
-
-export type WeekDay = (typeof WEEK_DAYS)[number];
 
 type WeekdaySelectorProps = {
   value: WeekDay[];
@@ -11,7 +8,7 @@ type WeekdaySelectorProps = {
   className?: string;
 };
 
-const WeekdaySelector = ({
+export const WeekdaySelector = ({
   value,
   onChange,
   disabled = false,
@@ -30,7 +27,7 @@ const WeekdaySelector = ({
 
   return (
     <div className={cn('flex items-center justify-between', className)}>
-      {WEEK_DAYS.map((day) => {
+      {WEEK_DAYS_MON_FIRST.map((day) => {
         const isSelected = value.includes(day);
 
         return (
@@ -55,4 +52,4 @@ const WeekdaySelector = ({
   );
 };
 
-export default WeekdaySelector;
+export type { WeekDay };

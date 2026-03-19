@@ -1,15 +1,16 @@
-import type {
+﻿import type {
   RepeatValue,
   TodoCreateRequest,
   TodoFormValues,
 } from '@/types/todo';
 
+import { DEFAULT_WEEK_DAY } from '@/constants/weekdays';
 import { formatDate } from '@/utils/date';
 
 export const createDefaultRepeatValue = (): RepeatValue => ({
   enabled: false,
   type: '매주',
-  days: ['월'],
+  days: [DEFAULT_WEEK_DAY],
   startDate: new Date(),
   endDate: null,
 });

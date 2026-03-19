@@ -1,9 +1,7 @@
 ﻿import EditableInputSection from '@/components/form/EditableInputSection';
 import ErrorToolTip from '@/components/form/ErrorToolTip';
 import FormPageLayout from '@/components/form/FormPageLayout';
-import WeekdaySelector, {
-  type WeekDay,
-} from '@/components/form/WeekdaySelector';
+import { WEEK_DAYS_MON_FIRST, type WeekDay } from '@/constants/weekdays';
 import RuleSettingCard from '@/pages/rules/components/RuleSettingCard';
 import { cn } from '@/lib/utils';
 import {
@@ -17,48 +15,59 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { WeekdaySelector } from '@/components/form/WeekdaySelector';
 
 export type RuleFormSubmitValues = {
   title: string;
   memo: string;
-  alarmEnabled: boolean;
+  notiEnabled: boolean;
   timeSettingEnabled: boolean;
-  operatingDaysEnabled: boolean;
+  repeatEnabled: boolean;
   startTime: string | null;
   endTime: string | null;
-  operatingDays: WeekDay[];
+  repeatDays: string;
 };
-
-type RuleSettings = {
-  alarmEnabled: boolean;
-  timeSettingEnabled: boolean;
-  operatingDaysEnabled: boolean;
-};
-
-type RuleSettingKey = keyof RuleSettings;
 
 type RuleFormProps = {
   onSubmit: (values: RuleFormSubmitValues) => void;
 };
 
+type RuleSettings = {
+  notiEnabled: boolean;
+  timeSettingEnabled: boolean;
+  repeatEnabled: boolean;
+};
+
+type RuleSettingKey = keyof RuleSettings;
+
 const INITIAL_SETTINGS: RuleSettings = {
-  alarmEnabled: false,
+  notiEnabled: false,
   timeSettingEnabled: false,
-  operatingDaysEnabled: false,
+  repeatEnabled: false,
 };
 
 const DEFAULT_TIME_RANGE = {
-  startTime: '09:00',
-  endTime: '09:00',
+  startTime: '09:00:00',
+  endTime: '12:00:00',
 } as const;
 
 const formatKoreanTime = (time: string) => {
-  const [hourText, minuteText] = time.split(':');
+  const [hourText, minuteText = '00'] = time.split(':');
   const hour = Number.parseInt(hourText, 10);
   const period = hour < 12 ? '오전' : '오후';
   const displayHour = hour % 12 === 0 ? 12 : hour % 12;
 
   return `${period} ${displayHour}:${minuteText}`;
+};
+
+const toRepeatDays = (selectedDays: WeekDay[]) => {
+  return WEEK_DAYS_MON_FIRST.reduce<string[]>((acc, day, index) => {
+    if (selectedDays.includes(day)) {
+      acc.push(String(index + 1));
+    }
+
+    return acc;
+  }, []).join(',');
 };
 
 const RuleForm = ({ onSubmit }: RuleFormProps) => {
@@ -94,14 +103,16 @@ const RuleForm = ({ onSubmit }: RuleFormProps) => {
     onSubmit({
       title: data.title,
       memo: data.memo ?? '',
-      alarmEnabled: settings.alarmEnabled,
+      notiEnabled: settings.notiEnabled,
       timeSettingEnabled: settings.timeSettingEnabled,
-      operatingDaysEnabled: settings.operatingDaysEnabled,
+      repeatEnabled: settings.repeatEnabled,
       startTime: settings.timeSettingEnabled
         ? DEFAULT_TIME_RANGE.startTime
         : null,
       endTime: settings.timeSettingEnabled ? DEFAULT_TIME_RANGE.endTime : null,
-      operatingDays: settings.operatingDaysEnabled ? selectedOperatingDays : [],
+      repeatDays: settings.repeatEnabled
+        ? toRepeatDays(selectedOperatingDays)
+        : '',
     });
   };
 
@@ -155,8 +166,8 @@ const RuleForm = ({ onSubmit }: RuleFormProps) => {
 
           <RuleSettingCard
             title="알람"
-            checked={settings.alarmEnabled}
-            onToggle={(checked) => handleToggleSetting('alarmEnabled', checked)}
+            checked={settings.notiEnabled}
+            onToggle={(checked) => handleToggleSetting('notiEnabled', checked)}
             ariaLabel="알람 설정"
           />
 
@@ -203,13 +214,13 @@ const RuleForm = ({ onSubmit }: RuleFormProps) => {
 
           <RuleSettingCard
             title="운영 요일"
-            checked={settings.operatingDaysEnabled}
+            checked={settings.repeatEnabled}
             onToggle={(checked) =>
-              handleToggleSetting('operatingDaysEnabled', checked)
+              handleToggleSetting('repeatEnabled', checked)
             }
             ariaLabel="운영 요일 설정"
           >
-            {settings.operatingDaysEnabled && (
+            {settings.repeatEnabled && (
               <WeekdaySelector
                 value={selectedOperatingDays}
                 onChange={setSelectedOperatingDays}
