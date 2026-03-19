@@ -56,7 +56,7 @@ const EditableInput = forwardRef<HTMLInputElement, EditableInputProps>(
     };
 
     return (
-      <ErrorToolTip message={errorMessage}>
+      <ErrorToolTip message={isFocused ? errorMessage : undefined}>
         <div
           className={cn(
             'flex h-12 items-center gap-1 rounded-[12px] border bg-zinc-100 px-4 shadow-xs transition-all duration-200',
@@ -83,7 +83,7 @@ const EditableInput = forwardRef<HTMLInputElement, EditableInputProps>(
             }}
             onChange={(e) => onChange(e.target.value)}
             className={cn(
-              'flex-1 border-none p-0 text-sm font-medium text-zinc-400 shadow-none placeholder:text-zinc-400 focus-visible:ring-0',
+              'flex-1 border-none p-0 text-sm font-medium shadow-none placeholder:text-zinc-400 focus-visible:ring-0',
               inputClassName
             )}
           />
