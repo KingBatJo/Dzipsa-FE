@@ -3,6 +3,7 @@ import BottomSheet from '@/components/common/BottomSheet';
 import { DetailRow } from '@/pages/todos/components/TodoDetailSheet';
 import { PencilLine } from 'lucide-react';
 import type { Rule } from '@/types/rules';
+import { parseRepeatDays } from '@/utils/ruleForm';
 import { useNavigate } from 'react-router-dom';
 
 type RuleDetailSheetProps = {
@@ -17,6 +18,16 @@ const RuleDetailSheet = ({
   rule,
 }: RuleDetailSheetProps) => {
   const navigate = useNavigate();
+
+  const parsedRepeatDays = rule?.repeatDays
+    ? parseRepeatDays(rule.repeatDays)
+    : [];
+  const repeatDaysLabel =
+    parsedRepeatDays.length === 7
+      ? '매일'
+      : parsedRepeatDays.length > 0
+        ? `매주 ${parsedRepeatDays.join(', ')}`
+        : '매일';
 
   return (
     <BottomSheet
@@ -48,7 +59,7 @@ const RuleDetailSheet = ({
             value={`${rule?.startTime ?? '-'} > ${rule?.endTime ?? '-'}`}
           />
 
-          <DetailRow label="반복 요일" value={rule?.repeatDays ?? '매일'} />
+          <DetailRow label="반복 요일" value={repeatDaysLabel} />
 
           <DetailRow label="메모" value={rule?.memo ?? '-'} alignTop />
 
