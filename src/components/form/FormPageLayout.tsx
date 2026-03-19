@@ -1,7 +1,12 @@
 import { Check, X } from 'lucide-react';
+import {
+  FORM_HEADER_HEIGHT,
+  FORM_HEADER_HEIGHT_CLASS,
+  MOBILE_MAX_WIDTH,
+} from '@/constants/layout';
 
 import { Button } from '@/components/ui/button';
-import { HEADER_HEIGHT_CLASS } from '@/constants/layout';
+import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
 
 type FormPageLayoutProps = {
@@ -22,16 +27,20 @@ const FormPageLayout = ({
   return (
     <div className="min-h-dvh">
       <header
-        className={`flex items-center justify-between px-4 ${HEADER_HEIGHT_CLASS}`}
+        className={cn(
+          'fixed top-0 flex w-full items-center justify-between bg-white/60 p-[15px] backdrop-blur-xl',
+          MOBILE_MAX_WIDTH,
+          FORM_HEADER_HEIGHT_CLASS
+        )}
       >
         <Button
           type="button"
           variant="ghost"
           onClick={() => navigate(-1)}
           aria-label="닫기"
-          className="flex h-8 w-8"
+          className="flex h-[24px] w-[24px] p-0"
         >
-          <X className="h-5 w-5" />
+          <X className="h-full w-full" />
         </Button>
 
         <h1 className="text-lg font-semibold">{title}</h1>
@@ -42,13 +51,13 @@ const FormPageLayout = ({
           onClick={onSubmit}
           disabled={submitDisabled}
           aria-label="완료"
-          className="flex h-8 w-8"
+          className="flex h-[24px] w-[24px] p-0"
         >
-          <Check className="h-5 w-5" />
+          <Check className="h-full w-full" />
         </Button>
       </header>
 
-      <section>{children}</section>
+      <section style={{ paddingTop: FORM_HEADER_HEIGHT }}>{children}</section>
     </div>
   );
 };
