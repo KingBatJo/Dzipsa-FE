@@ -3,6 +3,7 @@
   ControlledTextareaSection,
 } from '@/components/form/ControlledTextSections';
 import FormPageLayout from '@/components/form/FormPageLayout';
+import TimeWheelDialog from '@/components/form/TimeWheelDialog';
 import WeekdaySelector from '@/components/form/WeekdaySelector';
 import { WEEK_DAYS_MON_FIRST, type WeekDay } from '@/constants/weekdays';
 import RuleSettingCard from '@/pages/rules/components/RuleSettingCard';
@@ -39,6 +40,7 @@ type RuleSettings = {
 };
 
 type RuleSettingKey = keyof RuleSettings;
+type TimeField = 'startTime' | 'endTime';
 
 const INITIAL_SETTINGS: RuleSettings = {
   notiEnabled: false,
@@ -72,6 +74,10 @@ const toRepeatDays = (selectedDays: WeekDay[]) => {
 
 const RuleForm = ({ onSubmit }: RuleFormProps) => {
   const [settings, setSettings] = useState<RuleSettings>(INITIAL_SETTINGS);
+  const [timeRange, setTimeRange] = useState(DEFAULT_TIME_RANGE);
+  const [activeTimeField, setActiveTimeField] = useState<TimeField | null>(
+    null
+  );
   const [selectedOperatingDays, setSelectedOperatingDays] = useState<WeekDay[]>(
     []
   );
@@ -105,6 +111,16 @@ const RuleForm = ({ onSubmit }: RuleFormProps) => {
     });
   };
 
+  const handleConfirmTime = (time: string) => {
+    if (!activeTimeField) return;
+
+    setTimeRange((prev) => ({
+      ...prev,
+      [activeTimeField]: time,
+    }));
+    setActiveTimeField(null);
+  };
+
   const handleFormSubmit = (data: RuleCreateValues) => {
     onSubmit({
       title: data.title,
@@ -112,9 +128,11 @@ const RuleForm = ({ onSubmit }: RuleFormProps) => {
       notiEnabled: settings.notiEnabled,
       timeSettingEnabled: settings.timeSettingEnabled,
       repeatEnabled: settings.repeatEnabled,
-      startTime: settings.timeSettingEnabled ? DEFAULT_TIME_RANGE.startTime : null,
-      endTime: settings.timeSettingEnabled ? DEFAULT_TIME_RANGE.endTime : null,
-      repeatDays: settings.repeatEnabled ? toRepeatDays(selectedOperatingDays) : '',
+      startTime: settings.timeSettingEnabled ? timeRange.startTime : null,
+      endTime: settings.timeSettingEnabled ? timeRange.endTime : null,
+      repeatDays: settings.repeatEnabled
+        ? toRepeatDays(selectedOperatingDays)
+        : '',
     });
   };
 
@@ -160,11 +178,15 @@ const RuleForm = ({ onSubmit }: RuleFormProps) => {
                     시작 시간
                   </p>
 
-                  <div className="border-border bg-secondary flex items-center rounded-[10px] border px-4 py-2">
+                  <button
+                    type="button"
+                    onClick={() => setActiveTimeField('startTime')}
+                    className="border-border bg-secondary flex items-center rounded-[10px] border px-4 py-2"
+                  >
                     <span className="text-muted-foreground text-lg font-semibold">
-                      {formatKoreanTime(DEFAULT_TIME_RANGE.startTime)}
+                      {formatKoreanTime(timeRange.startTime)}
                     </span>
-                  </div>
+                  </button>
                 </div>
 
                 <div className="flex items-center justify-center p-2.5">
@@ -176,11 +198,15 @@ const RuleForm = ({ onSubmit }: RuleFormProps) => {
                     종료 시간
                   </p>
 
-                  <div className="border-border bg-secondary flex items-center rounded-[10px] border px-4 py-2">
+                  <button
+                    type="button"
+                    onClick={() => setActiveTimeField('endTime')}
+                    className="border-border bg-secondary flex items-center rounded-[10px] border px-4 py-2"
+                  >
                     <span className="text-muted-foreground text-lg font-semibold">
-                      {formatKoreanTime(DEFAULT_TIME_RANGE.endTime)}
+                      {formatKoreanTime(timeRange.endTime)}
                     </span>
-                  </div>
+                  </button>
                 </div>
               </div>
             )}
@@ -189,7 +215,9 @@ const RuleForm = ({ onSubmit }: RuleFormProps) => {
           <RuleSettingCard
             title="운영 요일"
             checked={settings.repeatEnabled}
-            onToggle={(checked) => handleToggleSetting('repeatEnabled', checked)}
+            onToggle={(checked) =>
+              handleToggleSetting('repeatEnabled', checked)
+            }
             ariaLabel="운영 요일 설정"
           >
             {settings.repeatEnabled && (
@@ -214,6 +242,19 @@ const RuleForm = ({ onSubmit }: RuleFormProps) => {
           </section>
         </section>
       </div>
+
+      <TimeWheelDialog
+        open={activeTimeField !== null}
+        value={
+          activeTimeField ? timeRange[activeTimeField] : timeRange.startTime
+        }
+        onOpenChange={(open) => {
+          if (!open) {
+            setActiveTimeField(null);
+          }
+        }}
+        onConfirm={handleConfirmTime}
+      />
     </FormPageLayout>
   );
 };
