@@ -27,8 +27,9 @@ const ListItemCard = ({
       onClick();
     }}
     className={cn(
-      'flex items-center rounded-md border-[#D4D4D4] p-4 shadow-none',
-      onClick && 'hover:cursor-pointer',
+      'flex items-center rounded-2xl border-zinc-200 bg-white p-4 shadow-none',
+      onClick &&
+        'hover:cursor-pointer hover:border-zinc-300 hover:bg-zinc-200 active:border-zinc-400 active:bg-zinc-300',
       className
     )}
   >

@@ -1,12 +1,10 @@
-import { MOTTO, mockRulesList } from '@/mocks/mockData';
-
-import { AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import EmptyState from '@/components/common/EmptyState';
 import ListItemCard from '@/components/common/ListItemCard';
 import ListSection from '@/components/common/ListSection';
-import MottoSection from '@/pages/home/components/MottoSection';
+import { Plus } from 'lucide-react';
 import RuleNotifyButton from '@/pages/rules/components/RuleNotifyButton';
+import { mockRulesList } from '@/mocks/mockData';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
@@ -30,20 +28,12 @@ const RulesPage = () => {
   };
 
   return (
-    <div className="space-y-4 p-4">
-      <MottoSection motto={MOTTO} />
-
-      {warningRules.length > 0 && (
-        <ListSection title="최근 경고 요인">
-          {warningRules.map((rule) => (
-            <ListItemCard
-              key={rule.id}
-              title={rule.title}
-              left={<AlertTriangle className="h-8 w-8 text-yellow-400" />}
-            />
-          ))}
-        </ListSection>
-      )}
+    <div className="flex flex-col gap-7 px-[15px] pt-7.5">
+      <ListSection title="집사 리포트">
+        {warningRules.map((rule) => (
+          <ListItemCard key={rule.id} title={rule.title} />
+        ))}
+      </ListSection>
 
       <ListSection
         title="우리집 규칙 리스트"
@@ -51,27 +41,33 @@ const RulesPage = () => {
           <Button
             variant="link"
             onClick={() => navigate('/rules/new')}
-            className="hover:bg-accent-foreground/5 active:bg-accent-foreground/10 h-fit px-2 py-1 hover:no-underline"
+            className="flex h-fit gap-[2px] p-0 text-zinc-400 hover:no-underline"
           >
-            규칙 추가하기
+            <span className="text-sm">규칙 추가하기</span>
+            <Plus className="h-4 w-4" />
           </Button>
         }
       >
         {rules.length === 0 ? (
           <EmptyState message="등록된 규칙이 없어요. 규칙을 추가해주세요!" />
         ) : (
-          rules.map((rule) => (
-            <ListItemCard
-              key={rule.id}
-              title={rule.title}
-              right={
-                <RuleNotifyButton
-                  disabled={rule.disabled}
-                  onClick={() => handleNotify(rule.id)}
-                />
-              }
-            />
-          ))
+          <div className="flex flex-col gap-2">
+            {rules.map((rule) => (
+              <ListItemCard
+                key={rule.id}
+                title={rule.title}
+                onClick={() => {
+                  console.log('클릭');
+                }}
+                right={
+                  <RuleNotifyButton
+                    disabled={rule.disabled}
+                    onClick={() => handleNotify(rule.id)}
+                  />
+                }
+              />
+            ))}
+          </div>
         )}
       </ListSection>
     </div>
