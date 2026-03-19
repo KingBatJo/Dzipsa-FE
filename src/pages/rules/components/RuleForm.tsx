@@ -12,12 +12,12 @@ import {
 } from '@/schemas/ruleCreateSchema';
 import { ChevronRight } from 'lucide-react';
 import {
-  formatKoreanTime,
   type RuleFormInitialValues,
   type RuleFormMode,
   type RuleFormSubmitValues,
   useRuleFormModel,
 } from '@/pages/rules/hooks/useRuleFormModel';
+import { formatKoreanTime } from '@/utils/ruleForm';
 
 type RuleFormProps = {
   mode: RuleFormMode;
