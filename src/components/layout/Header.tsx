@@ -4,19 +4,29 @@ import Bell from '@/assets/icon/bell.svg';
 import { Link } from 'react-router-dom';
 import { PROFILE_IMAGE } from '@/mocks/mockData';
 import UserAvatar from '@/components/common/UserAvatar';
+import { cn } from '@/lib/utils';
 
 type HeaderProps = {
   title: string;
   showActions?: boolean;
+  variant?: 'default' | 'white';
 };
 
-const Header = ({ title, showActions = false }: HeaderProps) => {
+const Header = ({
+  title,
+  showActions = false,
+  variant = 'default',
+}: HeaderProps) => {
   return (
     <header
-      className={`fixed top-0 z-10 w-full ${MOBILE_MAX_WIDTH} backdrop-blur-xl`}
+      className={cn(
+        'fixed top-0 z-10 w-full backdrop-blur-xl',
+        variant === 'white' ? 'bg-white/60' : 'bg-transparent',
+        MOBILE_MAX_WIDTH
+      )}
     >
       <div
-        className={`flex items-center justify-between ${HEADER_HEIGHT_CLASS} px-[15px] pt-[15px]`}
+        className={`flex items-center justify-between ${HEADER_HEIGHT_CLASS} p-[15px]`}
       >
         <h1 className="text-[28px] font-semibold text-zinc-900">{title}</h1>
 
