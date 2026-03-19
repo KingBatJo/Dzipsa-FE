@@ -62,7 +62,8 @@ const RuleDetailSheet = ({
         <button
           type="button"
           onClick={() => {
-            navigate(`/todos/${rule?.id}/edit`, { state: { rule } });
+            if (!rule) return;
+            navigate(`/rules/${rule.id}/edit`, { state: { rule } });
           }}
           className="text-[#A3A3A3]"
         >
