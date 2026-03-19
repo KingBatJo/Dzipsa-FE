@@ -4,34 +4,20 @@
 } from '@/components/form/ControlledTextSections';
 import FormPageLayout from '@/components/form/FormPageLayout';
 import WeekdaySelector from '@/components/form/WeekdaySelector';
-import { WEEK_DAYS_MON_FIRST, type WeekDay } from '@/constants/weekdays';
 import RuleSettingCard from '@/pages/rules/components/RuleSettingCard';
 import TimeWheelDialog from '@/pages/rules/components/TimeWheelDialog';
 import {
   RULE_MEMO_MAX_LENGTH,
   RULE_TITLE_MAX_LENGTH,
-  ruleCreateSchema,
-  type RuleCreateValues,
 } from '@/schemas/ruleCreateSchema';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { ChevronRight } from 'lucide-react';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-
-export type RuleFormSubmitValues = {
-  title: string;
-  memo: string;
-  notiEnabled: boolean;
-  timeSettingEnabled: boolean;
-  repeatEnabled: boolean;
-  startTime: string | null;
-  endTime: string | null;
-  repeatDays: string;
-};
-
-export type RuleFormInitialValues = Partial<RuleFormSubmitValues>;
-
-type RuleFormMode = 'create' | 'edit';
+import {
+  formatKoreanTime,
+  type RuleFormInitialValues,
+  type RuleFormMode,
+  type RuleFormSubmitValues,
+  useRuleFormModel,
+} from '@/pages/rules/hooks/useRuleFormModel';
 
 type RuleFormProps = {
   mode: RuleFormMode;
@@ -40,133 +26,27 @@ type RuleFormProps = {
   onDelete?: () => void;
 };
 
-type RuleSettings = {
-  notiEnabled: boolean;
-  timeSettingEnabled: boolean;
-  repeatEnabled: boolean;
-};
-
-type RuleSettingKey = keyof RuleSettings;
-type TimeField = 'startTime' | 'endTime';
-
-const DEFAULT_TIME_RANGE = {
-  startTime: '09:00:00',
-  endTime: '12:00:00',
-} as const;
-
-const formatKoreanTime = (time: string) => {
-  const [hourText, minuteText = '00'] = time.split(':');
-  const hour = Number.parseInt(hourText, 10);
-  const period = hour < 12 ? '오전' : '오후';
-  const displayHour = hour % 12 === 0 ? 12 : hour % 12;
-
-  return `${period} ${displayHour}:${minuteText}`;
-};
-
-const toRepeatDays = (selectedDays: WeekDay[]) => {
-  return WEEK_DAYS_MON_FIRST.reduce<string[]>((acc, day, index) => {
-    if (selectedDays.includes(day)) {
-      acc.push(String(index + 1));
-    }
-
-    return acc;
-  }, []).join(',');
-};
-
-const parseRepeatDays = (repeatDays: string) => {
-  if (!repeatDays.trim()) return [];
-
-  return repeatDays
-    .split(',')
-    .map((day) => Number.parseInt(day, 10))
-    .filter((dayNumber) => Number.isFinite(dayNumber) && dayNumber >= 1 && dayNumber <= 7)
-    .map((dayNumber) => WEEK_DAYS_MON_FIRST[dayNumber - 1]);
-};
-
-const getInitialSettings = (initialValues?: RuleFormInitialValues): RuleSettings => ({
-  notiEnabled: initialValues?.notiEnabled ?? false,
-  timeSettingEnabled: initialValues?.timeSettingEnabled ?? false,
-  repeatEnabled: initialValues?.repeatEnabled ?? false,
-});
-
-const getInitialTimeRange = (initialValues?: RuleFormInitialValues) => ({
-  startTime: initialValues?.startTime ?? DEFAULT_TIME_RANGE.startTime,
-  endTime: initialValues?.endTime ?? DEFAULT_TIME_RANGE.endTime,
-});
-
-const RuleForm = ({ mode, initialValues, onSubmit, onDelete }: RuleFormProps) => {
-  const [settings, setSettings] = useState<RuleSettings>(
-    getInitialSettings(initialValues)
-  );
-  const [timeRange, setTimeRange] = useState(() =>
-    getInitialTimeRange(initialValues)
-  );
-  const [activeTimeField, setActiveTimeField] = useState<TimeField | null>(null);
-  const [selectedOperatingDays, setSelectedOperatingDays] = useState<WeekDay[]>(
-    parseRepeatDays(initialValues?.repeatDays ?? '')
-  );
-
-  const {
-    control,
-    handleSubmit,
-    formState: { isValid },
-  } = useForm<RuleCreateValues>({
-    resolver: zodResolver(ruleCreateSchema),
-    mode: 'onChange',
-    defaultValues: {
-      title: initialValues?.title ?? '',
-      memo: initialValues?.memo ?? '',
-    },
+const RuleForm = ({
+  mode,
+  initialValues,
+  onSubmit,
+  onDelete,
+}: RuleFormProps) => {
+  const model = useRuleFormModel({
+    initialValues,
+    onSubmit,
   });
-
-  const handleToggleSetting = (key: RuleSettingKey, checked: boolean) => {
-    setSettings((prev) => {
-      const next = {
-        ...prev,
-        [key]: checked,
-      };
-
-      if (key === 'notiEnabled' && checked) {
-        next.timeSettingEnabled = true;
-      }
-
-      return next;
-    });
-  };
-
-  const handleConfirmTime = (time: string) => {
-    if (!activeTimeField) return;
-
-    setTimeRange((prev) => ({
-      ...prev,
-      [activeTimeField]: time,
-    }));
-    setActiveTimeField(null);
-  };
-
-  const handleFormSubmit = (data: RuleCreateValues) => {
-    onSubmit({
-      title: data.title,
-      memo: data.memo ?? '',
-      notiEnabled: settings.notiEnabled,
-      timeSettingEnabled: settings.timeSettingEnabled,
-      repeatEnabled: settings.repeatEnabled,
-      startTime: settings.timeSettingEnabled ? timeRange.startTime : null,
-      endTime: settings.timeSettingEnabled ? timeRange.endTime : null,
-      repeatDays: settings.repeatEnabled ? toRepeatDays(selectedOperatingDays) : '',
-    });
-  };
 
   return (
     <FormPageLayout
       title={mode === 'create' ? '규칙 등록' : '규칙 편집'}
-      onSubmit={handleSubmit(handleFormSubmit)}
-      submitDisabled={!isValid}
+      onSubmit={model.form.submitForm}
+      submitDisabled={!model.form.isValid}
     >
       <div className="bg-zinc-100 pb-6">
         <div className="bg-white px-[15px] pt-[15px] pb-[30px]">
           <ControlledEditableInputSection
-            control={control}
+            control={model.form.control}
             name="title"
             id="rule-title"
             placeholder="규칙을 입력하세요"
@@ -179,20 +59,22 @@ const RuleForm = ({ mode, initialValues, onSubmit, onDelete }: RuleFormProps) =>
 
           <RuleSettingCard
             title="알람"
-            checked={settings.notiEnabled}
-            onToggle={(checked) => handleToggleSetting('notiEnabled', checked)}
+            checked={model.state.settings.notiEnabled}
+            onToggle={(checked) =>
+              model.actions.handleToggleSetting('notiEnabled', checked)
+            }
             ariaLabel="알람 설정"
           />
 
           <RuleSettingCard
             title="규칙시간 설정하기"
-            checked={settings.timeSettingEnabled}
+            checked={model.state.settings.timeSettingEnabled}
             onToggle={(checked) =>
-              handleToggleSetting('timeSettingEnabled', checked)
+              model.actions.handleToggleSetting('timeSettingEnabled', checked)
             }
             ariaLabel="규칙 시간 설정"
           >
-            {settings.timeSettingEnabled && (
+            {model.state.settings.timeSettingEnabled && (
               <div className="flex items-end justify-between">
                 <div className="flex flex-col gap-[7px]">
                   <p className="text-[11px] font-medium text-[#B7B7B7]">
@@ -201,11 +83,13 @@ const RuleForm = ({ mode, initialValues, onSubmit, onDelete }: RuleFormProps) =>
 
                   <button
                     type="button"
-                    onClick={() => setActiveTimeField('startTime')}
+                    onClick={() =>
+                      model.actions.setActiveTimeField('startTime')
+                    }
                     className="border-border bg-secondary flex items-center rounded-[10px] border px-4 py-2"
                   >
                     <span className="text-muted-foreground text-lg font-semibold">
-                      {formatKoreanTime(timeRange.startTime)}
+                      {formatKoreanTime(model.state.timeRange.startTime)}
                     </span>
                   </button>
                 </div>
@@ -221,11 +105,11 @@ const RuleForm = ({ mode, initialValues, onSubmit, onDelete }: RuleFormProps) =>
 
                   <button
                     type="button"
-                    onClick={() => setActiveTimeField('endTime')}
+                    onClick={() => model.actions.setActiveTimeField('endTime')}
                     className="border-border bg-secondary flex items-center rounded-[10px] border px-4 py-2"
                   >
                     <span className="text-muted-foreground text-lg font-semibold">
-                      {formatKoreanTime(timeRange.endTime)}
+                      {formatKoreanTime(model.state.timeRange.endTime)}
                     </span>
                   </button>
                 </div>
@@ -235,14 +119,16 @@ const RuleForm = ({ mode, initialValues, onSubmit, onDelete }: RuleFormProps) =>
 
           <RuleSettingCard
             title="운영 요일"
-            checked={settings.repeatEnabled}
-            onToggle={(checked) => handleToggleSetting('repeatEnabled', checked)}
+            checked={model.state.settings.repeatEnabled}
+            onToggle={(checked) =>
+              model.actions.handleToggleSetting('repeatEnabled', checked)
+            }
             ariaLabel="운영 요일 설정"
           >
-            {settings.repeatEnabled && (
+            {model.state.settings.repeatEnabled && (
               <WeekdaySelector
-                value={selectedOperatingDays}
-                onChange={setSelectedOperatingDays}
+                value={model.state.selectedOperatingDays}
+                onChange={model.actions.setSelectedOperatingDays}
               />
             )}
           </RuleSettingCard>
@@ -251,7 +137,7 @@ const RuleForm = ({ mode, initialValues, onSubmit, onDelete }: RuleFormProps) =>
             <p className="text-base font-semibold">메모</p>
 
             <ControlledTextareaSection
-              control={control}
+              control={model.form.control}
               name="memo"
               id="rule-memo"
               placeholder="메모를 입력하세요"
@@ -266,24 +152,34 @@ const RuleForm = ({ mode, initialValues, onSubmit, onDelete }: RuleFormProps) =>
               onClick={onDelete}
               className="h-12 w-full rounded-[12px] bg-red-500 text-base font-semibold text-white"
             >
-              할 일 삭제
+              규칙 삭제
             </button>
           )}
         </section>
       </div>
 
       <TimeWheelDialog
-        open={activeTimeField !== null}
-        value={activeTimeField ? timeRange[activeTimeField] : timeRange.startTime}
+        open={model.state.activeTimeField !== null}
+        value={
+          model.state.activeTimeField
+            ? model.state.timeRange[model.state.activeTimeField]
+            : model.state.timeRange.startTime
+        }
         onOpenChange={(open) => {
           if (!open) {
-            setActiveTimeField(null);
+            model.actions.setActiveTimeField(null);
           }
         }}
-        onConfirm={handleConfirmTime}
+        onConfirm={model.actions.handleConfirmTime}
       />
     </FormPageLayout>
   );
 };
 
+export type {
+  RuleFormInitialValues,
+  RuleFormMode,
+  RuleFormSubmitValues,
+} from '@/pages/rules/hooks/useRuleFormModel';
 export default RuleForm;
+
