@@ -15,7 +15,9 @@ import type { Rule } from '@/types/rules';
 const RulesPage = () => {
   const navigate = useNavigate();
   const [rules, setRules] = useState(mockRulesList);
-  const [selectedRule, setSelectedRule] = useState<Rule | null>(null);
+  const [selectedRuleId, setSelectedRuleId] = useState<number | null>(null);
+  const selectedRule: Rule | null =
+    rules.find((rule) => rule.id === selectedRuleId) ?? null;
   const hasRules = rules.length > 0;
 
   const warningRules = rules
@@ -87,7 +89,7 @@ const RulesPage = () => {
                 <ListItemCard
                   key={rule.id}
                   title={rule.title}
-                  onClick={() => setSelectedRule(rule)}
+                  onClick={() => setSelectedRuleId(rule.id)}
                   right={
                     <RuleNotifyButton
                       disabled={rule.warningDisabled}
@@ -104,9 +106,14 @@ const RulesPage = () => {
       <RuleDetailSheet
         open={selectedRule !== null}
         onOpenChange={(open) => {
-          if (!open) setSelectedRule(null);
+          if (!open) setSelectedRuleId(null);
         }}
         rule={selectedRule}
+        onNotify={() => {
+          if (!selectedRule) return;
+          handleNotify(selectedRule.id);
+          setSelectedRuleId(null);
+        }}
       />
     </div>
   );

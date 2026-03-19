@@ -11,12 +11,14 @@ type RuleDetailSheetProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   rule: Rule | null;
+  onNotify?: () => void;
 };
 
 const RuleDetailSheet = ({
   open,
   onOpenChange,
   rule,
+  onNotify,
 }: RuleDetailSheetProps) => {
   const navigate = useNavigate();
 
@@ -82,8 +84,12 @@ const RuleDetailSheet = ({
       </div>
 
       <div className="shrink-0 p-5">
-        <AppButton className="bg-black px-4 py-2 text-white">
-          집사에게 알리기
+        <AppButton
+          onClick={onNotify}
+          disabled={rule?.warningDisabled ?? false}
+          className="bg-black px-4 py-2 text-white disabled:bg-zinc-200 disabled:text-zinc-400"
+        >
+          {rule?.warningDisabled ? '접수 완료!' : '집사에게 알리기'}
         </AppButton>
       </div>
     </BottomSheet>
