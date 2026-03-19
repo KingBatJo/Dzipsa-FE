@@ -1,12 +1,14 @@
-import { Button } from '@/components/ui/button';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Plus } from 'lucide-react';
+
 import EmptyState from '@/components/common/EmptyState';
 import ListItemCard from '@/components/common/ListItemCard';
 import ListSection from '@/components/common/ListSection';
-import { Plus } from 'lucide-react';
-import RuleNotifyButton from '@/pages/rules/components/RuleNotifyButton';
+import { Button } from '@/components/ui/button';
 import { mockRulesList } from '@/mocks/mockData';
-import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import RuleNotifyButton from '@/pages/rules/components/RuleNotifyButton';
+import RulesReportSection from '@/pages/rules/components/RulesReportSection';
 
 const RulesPage = () => {
   const navigate = useNavigate();
@@ -29,11 +31,7 @@ const RulesPage = () => {
 
   return (
     <div className="flex flex-col gap-7 px-[15px] pt-7.5">
-      <ListSection title="집사 리포트">
-        {warningRules.map((rule) => (
-          <ListItemCard key={rule.id} title={rule.title} />
-        ))}
-      </ListSection>
+      <RulesReportSection rules={rules} warningRules={warningRules} />
 
       <ListSection
         title="우리집 규칙 리스트"

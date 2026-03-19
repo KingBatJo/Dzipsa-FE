@@ -59,6 +59,14 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /* 말풍선 shadow */
+  --shadow-surface-neutral: 0 4px 4px 0 rgba(223, 223, 223, 0.3);
+  --shadow-surface-sky: 0 4px 4px 0 rgba(209, 232, 255, 0.3);
+  --shadow-surface-red: 0 4px 4px 0 rgba(255, 232, 232, 0.3);
+  --shadow-surface-neutral-drop: 0 4px 4px rgba(223, 223, 223, 0.3);
+  --shadow-surface-sky-drop: 0 4px 4px rgba(209, 232, 255, 0.3);
+  --shadow-surface-red-drop: 0 4px 4px rgba(255, 232, 232, 0.3);
 }
 
 :root {
