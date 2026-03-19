@@ -4,9 +4,9 @@ import { Toaster } from '@/components/ui/sonner';
 
 const RootLayout = () => {
   return (
-    <div className="bg-neutral-50">
+    <div>
       <div
-        className={`bg-background mx-auto min-h-dvh w-full ${MOBILE_MAX_WIDTH}`}
+        className={`mx-auto min-h-dvh w-full bg-zinc-100 ${MOBILE_MAX_WIDTH}`}
       >
         <Outlet />
 

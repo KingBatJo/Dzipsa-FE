@@ -1,7 +1,6 @@
-import RoundedBadge from '@/components/common/RoundedBadge';
 import { cn } from '@/lib/utils';
 
-type RoundedButtonProps = {
+type RuleNotifyButtonProps = {
   disabled?: boolean;
   onClick?: () => void;
 };
@@ -9,24 +8,27 @@ type RoundedButtonProps = {
 const RuleNotifyButton = ({
   disabled = false,
   onClick,
-}: RoundedButtonProps) => {
+}: RuleNotifyButtonProps) => {
   return (
     <button
       type="button"
       disabled={disabled}
       onClick={onClick}
-      className="rounded-full disabled:cursor-default"
+      className={cn(
+        'flex rounded-[10px] px-2.5 py-1.5 text-white',
+        disabled
+          ? 'cursor-default bg-zinc-200'
+          : 'bg-zinc-500 hover:bg-zinc-600'
+      )}
     >
-      <RoundedBadge
+      <span
         className={cn(
-          'text-white',
-          disabled
-            ? 'bg-[#D4D4D4]'
-            : 'bg-[#636363] hover:bg-slate-700 active:bg-slate-800'
+          'text-xs font-semibold',
+          disabled ? 'text-zinc-400' : 'text-zinc-50'
         )}
       >
-        집사에게 알리기
-      </RoundedBadge>
+        {disabled ? '접수 완료!' : '집사에게 알리기'}
+      </span>
     </button>
   );
 };
