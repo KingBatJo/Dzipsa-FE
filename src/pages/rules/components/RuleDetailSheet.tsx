@@ -1,9 +1,10 @@
-﻿import AppButton from '@/components/common/AppButton';
+﻿import { formatKoreanTime, parseRepeatDays } from '@/utils/ruleForm';
+
+import AppButton from '@/components/common/AppButton';
 import BottomSheet from '@/components/common/BottomSheet';
 import { DetailRow } from '@/pages/todos/components/TodoDetailSheet';
 import { PencilLine } from 'lucide-react';
 import type { Rule } from '@/types/rules';
-import { parseRepeatDays } from '@/utils/ruleForm';
 import { useNavigate } from 'react-router-dom';
 
 type RuleDetailSheetProps = {
@@ -19,6 +20,22 @@ const RuleDetailSheet = ({
 }: RuleDetailSheetProps) => {
   const navigate = useNavigate();
 
+  // 규칙 시간
+  const formattedStartTime = rule?.startTime
+    ? formatKoreanTime(rule.startTime)
+    : null;
+  const formattedEndTime = rule?.endTime
+    ? formatKoreanTime(rule.endTime)
+    : null;
+  let ruleTimeLabel = '-';
+  if (formattedStartTime && formattedEndTime) {
+    ruleTimeLabel =
+      formattedStartTime === formattedEndTime
+        ? formattedStartTime
+        : `${formattedStartTime} > ${formattedEndTime}`;
+  }
+
+  // 반복 요일
   const parsedRepeatDays = rule?.repeatDays
     ? parseRepeatDays(rule.repeatDays)
     : [];
@@ -54,10 +71,7 @@ const RuleDetailSheet = ({
       {/* 스크롤 영역 */}
       <div className="max-h-[250px] min-h-0 flex-1 overflow-y-auto px-5 pt-5 pb-7.5">
         <div className="flex flex-col gap-6">
-          <DetailRow
-            label="규칙 시간"
-            value={`${rule?.startTime ?? '-'} > ${rule?.endTime ?? '-'}`}
-          />
+          <DetailRow label="규칙 시간" value={ruleTimeLabel} />
 
           <DetailRow label="반복 요일" value={repeatDaysLabel} />
 
