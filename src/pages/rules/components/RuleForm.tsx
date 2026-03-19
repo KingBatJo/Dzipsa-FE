@@ -3,7 +3,7 @@
   ControlledTextareaSection,
 } from '@/components/form/ControlledTextSections';
 import FormPageLayout from '@/components/form/FormPageLayout';
-import TimeWheelDialog from '@/components/form/TimeWheelDialog';
+import TimeWheelDialog from '@/pages/rules/components/TimeWheelDialog';
 import WeekdaySelector from '@/components/form/WeekdaySelector';
 import { WEEK_DAYS_MON_FIRST, type WeekDay } from '@/constants/weekdays';
 import RuleSettingCard from '@/pages/rules/components/RuleSettingCard';
