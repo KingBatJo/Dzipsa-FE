@@ -41,10 +41,10 @@ const WeekdaySelector = ({
             disabled={disabled}
             onClick={() => handleToggle(day)}
             className={cn(
-              'h-10 w-10 rounded-md text-sm font-semibold transition-colors disabled:opacity-50',
+              'h-[50px] w-10 rounded-[12px] border text-base font-semibold transition-colors disabled:opacity-50',
               isSelected
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-primary-foreground text-foreground'
+                ? 'border-zinc-900 bg-zinc-800 text-zinc-100'
+                : 'border-zinc-100 bg-zinc-50 text-zinc-500'
             )}
           >
             {day}

@@ -59,10 +59,10 @@ const EditableInput = forwardRef<HTMLInputElement, EditableInputProps>(
       <ErrorToolTip message={errorMessage}>
         <div
           className={cn(
-            'bg-secondary flex h-12 items-center gap-1 rounded-[10px] border px-4 shadow-xs transition-all duration-200',
+            'flex h-12 items-center gap-1 rounded-[12px] border bg-zinc-100 px-4 shadow-xs transition-all duration-200',
             errorMessage
               ? 'border-red-500'
-              : 'border-neutral-200 focus-within:border-neutral-900',
+              : 'border-zinc-200 focus-within:border-zinc-600',
             className
           )}
         >
@@ -83,7 +83,7 @@ const EditableInput = forwardRef<HTMLInputElement, EditableInputProps>(
             }}
             onChange={(e) => onChange(e.target.value)}
             className={cn(
-              'flex-1 border-none p-0 text-sm font-medium shadow-none focus-visible:ring-0',
+              'flex-1 border-none p-0 text-sm font-medium text-zinc-400 shadow-none placeholder:text-zinc-400 focus-visible:ring-0',
               inputClassName
             )}
           />
@@ -97,7 +97,7 @@ const EditableInput = forwardRef<HTMLInputElement, EditableInputProps>(
             {isFocused ? (
               <img src={ClearX} alt="" className="h-4 w-4" />
             ) : (
-              <Edit3 className="h-4 w-4 text-[#AFAFAF]" />
+              <Edit3 className="h-4 w-4 text-zinc-400" />
             )}
           </button>
         </div>
