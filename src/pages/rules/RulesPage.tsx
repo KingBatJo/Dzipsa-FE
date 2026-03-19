@@ -6,18 +6,20 @@ import ListSection from '@/components/common/ListSection';
 import { Plus } from 'lucide-react';
 import RuleNotifyButton from '@/pages/rules/components/RuleNotifyButton';
 import RulesReportSection from '@/pages/rules/components/RulesReportSection';
+import RuleDetailSheet from '@/pages/rules/components/RuleDetailSheet';
 import { mockRulesList } from '@/mocks/mockData';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import type { Rule } from '@/types/rules';
 
 const RulesPage = () => {
   const navigate = useNavigate();
   const [rules, setRules] = useState(mockRulesList);
+  const [selectedRule, setSelectedRule] = useState<Rule | null>(null);
   const hasRules = rules.length > 0;
 
   const warningRules = rules
-    .filter((rule) => rule.disabled && rule.warnedAt)
-    .sort((a, b) => (b.warnedAt ?? 0) - (a.warnedAt ?? 0))
+    .filter((rule) => rule.warningDisabled)
     .slice(0, 3);
 
   const hasWarningRules = warningRules.length > 0;
@@ -30,9 +32,7 @@ const RulesPage = () => {
   const handleNotify = (ruleId: number) => {
     setRules((prev) =>
       prev.map((rule) =>
-        rule.id === ruleId
-          ? { ...rule, disabled: true, warnedAt: Date.now() }
-          : rule
+        rule.id === ruleId ? { ...rule, warningDisabled: true } : rule
       )
     );
   };
@@ -87,12 +87,10 @@ const RulesPage = () => {
                 <ListItemCard
                   key={rule.id}
                   title={rule.title}
-                  onClick={() => {
-                    console.log('클릭');
-                  }}
+                  onClick={() => setSelectedRule(rule)}
                   right={
                     <RuleNotifyButton
-                      disabled={rule.disabled}
+                      disabled={rule.warningDisabled}
                       onClick={() => handleNotify(rule.id)}
                     />
                   }
@@ -102,6 +100,14 @@ const RulesPage = () => {
           )}
         </ListSection>
       </div>
+
+      <RuleDetailSheet
+        open={selectedRule !== null}
+        onOpenChange={(open) => {
+          if (!open) setSelectedRule(null);
+        }}
+        rule={selectedRule}
+      />
     </div>
   );
 };

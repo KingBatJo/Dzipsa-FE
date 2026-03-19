@@ -13,7 +13,10 @@ const RuleNotifyButton = ({
     <button
       type="button"
       disabled={disabled}
-      onClick={onClick}
+      onClick={(event) => {
+        event.stopPropagation();
+        onClick?.();
+      }}
       className={cn(
         'flex rounded-[10px] px-2.5 py-1.5 text-white',
         disabled

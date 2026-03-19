@@ -23,7 +23,7 @@ type TodoDetailSheetProps = {
   assigneeImage?: string;
 };
 
-const DetailRow = ({
+export const DetailRow = ({
   label,
   value,
   alignTop = false,
@@ -35,8 +35,8 @@ const DetailRow = ({
   <div
     className={`flex justify-between ${alignTop ? 'items-start' : 'items-center'} gap-3`}
   >
-    <p className="text-muted-foreground text-base font-semibold">{label}</p>
-    <div className="text-primary text-right text-base font-semibold">
+    <p className="text-base font-medium text-zinc-500">{label}</p>
+    <div className="max-w-62.5 text-right text-base font-medium text-black">
       {value}
     </div>
   </div>
