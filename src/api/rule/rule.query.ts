@@ -1,6 +1,7 @@
 import type { GetRulesParams, RuleId } from '@/api/rule/rule.types';
 import {
   createRule,
+  deleteRule,
   getRuleDetail,
   getRules,
   updateRule,
@@ -50,6 +51,17 @@ export const useUpdateRuleMutation = () => {
         queryKeys.rule.detail(variables.ruleId),
         updatedRule
       );
+    },
+  });
+};
+
+// 규칙 삭제
+export const useDeleteRuleMutation = () => {
+  return useMutation({
+    mutationFn: deleteRule,
+    onSuccess: (_, ruleId) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.rule.all });
+      queryClient.removeQueries({ queryKey: queryKeys.rule.detail(ruleId) });
     },
   });
 };

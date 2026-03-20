@@ -61,3 +61,8 @@ export const updateRule = async (
 
   return data;
 };
+
+// 규칙 삭제
+export const deleteRule = async (ruleId: RuleId): Promise<void> => {
+  await apiClient.delete(`/api/rules/${ruleId}`);
+};
