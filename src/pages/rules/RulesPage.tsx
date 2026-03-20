@@ -91,8 +91,8 @@ const RulesPage = () => {
             <div className="flex flex-col gap-2">
               {rules.map((rule) => {
                 const hasTimeRange = Boolean(rule.startTime && rule.endTime);
-                const hasRepeatDays = parseRepeatDays(rule.repeatDays ?? '')
-                  .length > 0;
+                const hasRepeatDays =
+                  parseRepeatDays(rule.repeatDays ?? '').length > 0;
                 const timeLabel = formatRuleTimeRange(
                   rule.startTime,
                   rule.endTime,
@@ -112,18 +112,18 @@ const RulesPage = () => {
                     title={rule.title}
                     subtitle={
                       shouldShowSubtitle ? (
-                      <div className="flex items-center gap-1 text-xs font-medium text-zinc-400">
-                        <div className="h-3.5 w-0.5 bg-zinc-400" />
+                        <div className="flex items-center gap-1 border-l-2 border-zinc-400 text-xs font-medium text-zinc-400">
+                          <div className="flex flex-wrap items-center gap-1 pl-1">
+                            {hasTimeRange && <span>{timeLabel}</span>}
 
-                        {hasTimeRange && <span>{timeLabel}</span>}
-
-                        {hasRepeatDays && (
-                          <>
-                            <Repeat2 className="h-[15px] w-[15px]" />
-                            <span>{repeatDaysLabel}</span>
-                          </>
-                        )}
-                      </div>
+                            {hasRepeatDays && (
+                              <div className="flex gap-1">
+                                <Repeat2 className="h-[15px] w-[15px]" />
+                                <span>{repeatDaysLabel}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       ) : undefined
                     }
                     onClick={() => setSelectedRuleId(rule.id)}
