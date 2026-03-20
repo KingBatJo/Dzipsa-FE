@@ -39,9 +39,9 @@ const ListItemCard = ({
       <div className="min-w-0 flex-1 space-y-2">
         <p className="truncate text-base font-semibold">{title}</p>
         {subtitle && (
-          <p className="text-muted-foreground text-xs font-semibold">
+          <div className="text-muted-foreground text-xs font-semibold">
             {subtitle}
-          </p>
+          </div>
         )}
       </div>
     </div>
