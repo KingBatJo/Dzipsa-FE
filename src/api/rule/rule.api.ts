@@ -1,5 +1,7 @@
 import type {
   GetRulesParams,
+  RuleDetailResponse,
+  RuleId,
   RuleListItemResponse,
 } from '@/api/rule/rule.types';
 
@@ -16,6 +18,15 @@ export const getRules = async (
       size: params?.size ?? DEFAULT_RULE_LIST_SIZE,
     },
   });
+
+  return data;
+};
+
+// 규칙 상세 조회
+export const getRuleDetail = async (
+  ruleId: RuleId
+): Promise<RuleDetailResponse> => {
+  const { data } = await apiClient.get<RuleDetailResponse>(`/api/rules/${ruleId}`);
 
   return data;
 };

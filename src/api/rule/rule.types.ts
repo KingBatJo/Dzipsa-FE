@@ -3,6 +3,8 @@ export type GetRulesParams = {
   size?: number;
 };
 
+export type RuleId = number;
+
 export type RuleListItemResponse = {
   id: number;
   roomId: number;
@@ -15,4 +17,8 @@ export type RuleListItemResponse = {
   repeatEnabled: boolean;
   repeatDays: string | null;
   warningDisabled: boolean;
+};
+
+export type RuleDetailResponse = RuleListItemResponse & {
+  notiEnabled: boolean;
 };
