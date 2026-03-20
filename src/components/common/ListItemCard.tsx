@@ -37,7 +37,7 @@ const ListItemCard = ({
       {left && <div className="shrink-0">{left}</div>}
 
       <div className="min-w-0 flex-1 space-y-2">
-        <p className="truncate text-base font-semibold">{title}</p>
+        <p className="text-base font-semibold">{title}</p>
         {subtitle && (
           <div className="text-muted-foreground text-xs font-semibold">
             {subtitle}
@@ -46,7 +46,7 @@ const ListItemCard = ({
       </div>
     </div>
 
-    {right && <div className="shrink-0 pl-2">{right}</div>}
+    {right && <div className="shrink-0">{right}</div>}
   </Card>
 );
 
