@@ -12,7 +12,7 @@ const AppLayout = () => {
   const getHeaderTitle = () => {
     if (pathname.startsWith('/todos')) return '할 일 홈';
     if (pathname.startsWith('/rules')) return '우리집 규칙';
-    return 'Dzipasa';
+    return 'Dzipsa';
   };
 
   return (
