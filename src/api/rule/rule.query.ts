@@ -1,4 +1,9 @@
-import type { GetRulesParams, RuleId } from '@/api/rule/rule.types';
+import type {
+  GetRulesParams,
+  RuleDetailResponse,
+  RuleId,
+  RuleListItemResponse,
+} from '@/api/rule/rule.types';
 import {
   createRule,
   createRuleWarning,
@@ -33,7 +38,7 @@ export const useRuleDetailQuery = (ruleId: RuleId) => {
 };
 
 // 최근 알리기(경고) 목록 조회
-export const useRecentWarningsQuery = () => {
+export const useRecentRuleWarningsQuery = () => {
   return useQuery({
     queryKey: queryKeys.rule.recentWarnings(),
     queryFn: getRecentWarnings,
@@ -81,7 +86,21 @@ export const useDeleteRuleMutation = () => {
 export const useCreateRuleWarningMutation = () => {
   return useMutation({
     mutationFn: createRuleWarning,
-    onSuccess: (_, ruleId) => {
+    onSuccess: (createdWarning, ruleId) => {
+      queryClient.setQueryData(
+        queryKeys.rule.detail(ruleId),
+        (prev: RuleDetailResponse | undefined) =>
+          prev ? { ...prev, warningDisabled: true } : prev
+      );
+
+      queryClient.setQueriesData(
+        { queryKey: queryKeys.rule.all },
+        (prev: RuleListItemResponse[] | undefined) =>
+          prev?.map((rule) =>
+            rule.id === ruleId ? { ...rule, warningDisabled: true } : rule
+          ) ?? prev
+      );
+
       queryClient.invalidateQueries({ queryKey: queryKeys.rule.all });
       queryClient.invalidateQueries({
         queryKey: queryKeys.rule.recentWarnings(),

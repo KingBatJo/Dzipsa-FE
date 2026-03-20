@@ -45,7 +45,7 @@ export type UpdateRuleParams = {
   payload: UpdateRuleRequest;
 };
 
-export type RecentWarningItemResponse = {
+export type RecentRuleWarningResponse = {
   id: number;
   roomId: number;
   ruleId: RuleId;
@@ -53,4 +53,4 @@ export type RecentWarningItemResponse = {
   createdAt: string;
 };
 
-export type CreateRuleWarningResponse = RecentWarningItemResponse;
+export type CreateRuleWarningResponse = RecentRuleWarningResponse;

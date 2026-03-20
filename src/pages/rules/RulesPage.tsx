@@ -4,6 +4,11 @@ import {
   formatRuleTimeRange,
   parseRepeatDays,
 } from '@/utils/ruleForm';
+import {
+  useCreateRuleWarningMutation,
+  useRecentRuleWarningsQuery,
+  useRulesQuery,
+} from '@/api/rule/rule.query';
 
 import { Button } from '@/components/ui/button';
 import EmptyState from '@/components/common/EmptyState';
@@ -14,30 +19,55 @@ import RuleDetailSheet from '@/pages/rules/components/RuleDetailSheet';
 import type { RuleId } from '@/api/rule/rule.types';
 import RuleNotifyButton from '@/pages/rules/components/RuleNotifyButton';
 import RulesReportSection from '@/pages/rules/components/RulesReportSection';
+import { getApiErrorInfo } from '@/api/error';
+import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
-import { useRulesQuery } from '@/api/rule/rule.query';
 import { useState } from 'react';
 
 const RulesPage = () => {
   const navigate = useNavigate();
 
   const { data: rules = [], isLoading, isError } = useRulesQuery();
+  const { data: recentWarnings = [] } = useRecentRuleWarningsQuery();
+  const { mutate: createRuleWarning } = useCreateRuleWarningMutation();
 
   const [selectedRuleId, setSelectedRuleId] = useState<RuleId | null>(null);
+  const [notifyingRuleId, setNotifyingRuleId] = useState<RuleId | null>(null);
 
   const hasRules = rules.length > 0;
 
-  const warningRules = rules.filter((rule) => rule.warningDisabled).slice(0, 3);
-
-  const hasWarningRules = warningRules.length > 0;
+  const hasWarningRules = recentWarnings.length > 0;
   const backgroundGradient = hasRules
     ? hasWarningRules
       ? 'linear-gradient(180deg, #fff1f2 0%, #f4f4f5 37.3%)'
       : 'linear-gradient(180deg, #e9f3fd 0%, #f4f4f5 37.3%)'
     : undefined;
 
-  const handleNotify = (_ruleId: RuleId) => {
-    // 집사에게 알리기 API 연동 후 구현
+  const handleNotify = (ruleId: RuleId) => {
+    setNotifyingRuleId(ruleId);
+
+    createRuleWarning(ruleId, {
+      onSuccess: () => {
+        toast('집사에게 알리기를 보냈어요.');
+
+        if (selectedRuleId === ruleId) {
+          setSelectedRuleId(null);
+        }
+      },
+      onError: (error: unknown) => {
+        const apiError = getApiErrorInfo(error);
+
+        if (apiError?.code === 440001) {
+          toast('이미 24시간 내에 알리기를 보냈어요.');
+          return;
+        }
+
+        toast(apiError?.message ?? '알리기에 실패했어요.');
+      },
+      onSettled: () => {
+        setNotifyingRuleId(null);
+      },
+    });
   };
 
   return (
@@ -50,7 +80,7 @@ const RulesPage = () => {
       }}
     >
       <div className="flex flex-col gap-7 pt-[15px]">
-        <RulesReportSection rules={rules} warningRules={warningRules} />
+        <RulesReportSection rules={rules} recentWarnings={recentWarnings} />
 
         <ListSection
           title="우리집 규칙 리스트"
@@ -134,7 +164,9 @@ const RulesPage = () => {
                     onClick={() => setSelectedRuleId(rule.id)}
                     right={
                       <RuleNotifyButton
-                        disabled={rule.warningDisabled}
+                        disabled={
+                          rule.warningDisabled || notifyingRuleId === rule.id
+                        }
                         onClick={() => handleNotify(rule.id)}
                       />
                     }
@@ -155,7 +187,6 @@ const RulesPage = () => {
           ruleId={selectedRuleId}
           onNotify={() => {
             handleNotify(selectedRuleId);
-            setSelectedRuleId(null);
           }}
         />
       )}
