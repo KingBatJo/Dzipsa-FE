@@ -532,7 +532,7 @@ export const mockRulesList: Rule[] = [
     memo: null,
     timeSettingEnabled: true,
     startTime: '08:00',
-    endTime: '08:01',
+    endTime: '08:00',
     repeatEnabled: false,
     repeatDays: null,
     notiEnabled: false,

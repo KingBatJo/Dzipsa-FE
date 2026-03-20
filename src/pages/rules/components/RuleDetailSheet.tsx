@@ -1,4 +1,4 @@
-﻿import { formatKoreanTime, parseRepeatDays } from '@/utils/ruleForm';
+﻿import { formatRuleRepeatDays, formatRuleTimeRange } from '@/utils/ruleForm';
 
 import AppButton from '@/components/common/AppButton';
 import BottomSheet from '@/components/common/BottomSheet';
@@ -22,31 +22,31 @@ const RuleDetailSheet = ({
 }: RuleDetailSheetProps) => {
   const navigate = useNavigate();
 
-  // 규칙 시간
-  const formattedStartTime = rule?.startTime
-    ? formatKoreanTime(rule.startTime)
-    : null;
-  const formattedEndTime = rule?.endTime
-    ? formatKoreanTime(rule.endTime)
-    : null;
-  let ruleTimeLabel = '-';
-  if (formattedStartTime && formattedEndTime) {
-    ruleTimeLabel =
-      formattedStartTime === formattedEndTime
-        ? formattedStartTime
-        : `${formattedStartTime} > ${formattedEndTime}`;
-  }
+  const hasRuleTime = Boolean(rule?.startTime && rule?.endTime);
+  const hasRepeatDays = Boolean(rule?.repeatDays?.trim());
 
-  // 반복 요일
-  const parsedRepeatDays = rule?.repeatDays
-    ? parseRepeatDays(rule.repeatDays)
-    : [];
-  const repeatDaysLabel =
-    parsedRepeatDays.length === 7
-      ? '매일'
-      : parsedRepeatDays.length > 0
-        ? `매주 ${parsedRepeatDays.join(', ')}`
-        : '매일';
+  const ruleTimeLabel = hasRuleTime ? (
+    formatRuleTimeRange(rule?.startTime, rule?.endTime, {
+      separator: ' > ',
+    })
+  ) : (
+    <span className="text-zinc-400">설정 안 함</span>
+  );
+
+  const repeatDaysLabel = hasRepeatDays ? (
+    formatRuleRepeatDays(rule?.repeatDays, {
+      emptyLabel: '설정 안 함',
+    })
+  ) : (
+    <span className="text-zinc-400">설정 안 함</span>
+  );
+
+  const memoLabel =
+    rule?.memo && rule.memo.trim().length > 0 ? (
+      rule.memo
+    ) : (
+      <span className="text-zinc-400">작성된 메모가 없습니다</span>
+    );
 
   return (
     <BottomSheet
@@ -72,15 +72,20 @@ const RuleDetailSheet = ({
       </div>
 
       {/* 스크롤 영역 */}
-      <div className="max-h-[250px] min-h-0 flex-1 overflow-y-auto px-5 pt-5 pb-7.5">
+      <div className="min-h-0 flex-1 overflow-y-auto px-5 pt-5 pb-7.5">
         <div className="flex flex-col gap-6">
           <DetailRow label="규칙 시간" value={ruleTimeLabel} />
 
-          <DetailRow label="반복 요일" value={repeatDaysLabel} />
+          <DetailRow label="운영 요일" value={repeatDaysLabel} />
 
-          <DetailRow label="메모" value={rule?.memo ?? '-'} alignTop />
+          <DetailRow label="메모" value={memoLabel} alignTop />
 
-          <DetailRow label="집사 리포트" value={'n회 누적'} />
+          <DetailRow
+            label="집사 리포트"
+            value={
+              <span className="text-zinc-400">규칙이 잘 지켜지고 있어요 !</span>
+            }
+          />
         </div>
       </div>
 

@@ -1,16 +1,22 @@
-﻿import { Button } from '@/components/ui/button';
+﻿import { Plus, Repeat2 } from 'lucide-react';
+import {
+  formatRuleRepeatDays,
+  formatRuleTimeRange,
+  parseRepeatDays,
+} from '@/utils/ruleForm';
+
+import { Button } from '@/components/ui/button';
 import EmptyState from '@/components/common/EmptyState';
 import { HEADER_HEIGHT } from '@/constants/layout';
 import ListItemCard from '@/components/common/ListItemCard';
 import ListSection from '@/components/common/ListSection';
-import { Plus } from 'lucide-react';
+import type { Rule } from '@/types/rules';
+import RuleDetailSheet from '@/pages/rules/components/RuleDetailSheet';
 import RuleNotifyButton from '@/pages/rules/components/RuleNotifyButton';
 import RulesReportSection from '@/pages/rules/components/RulesReportSection';
-import RuleDetailSheet from '@/pages/rules/components/RuleDetailSheet';
 import { mockRulesList } from '@/mocks/mockData';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import type { Rule } from '@/types/rules';
 
 const RulesPage = () => {
   const navigate = useNavigate();
@@ -20,9 +26,7 @@ const RulesPage = () => {
     rules.find((rule) => rule.id === selectedRuleId) ?? null;
   const hasRules = rules.length > 0;
 
-  const warningRules = rules
-    .filter((rule) => rule.warningDisabled)
-    .slice(0, 3);
+  const warningRules = rules.filter((rule) => rule.warningDisabled).slice(0, 3);
 
   const hasWarningRules = warningRules.length > 0;
   const backgroundGradient = hasRules
@@ -85,19 +89,53 @@ const RulesPage = () => {
             </EmptyState>
           ) : (
             <div className="flex flex-col gap-2">
-              {rules.map((rule) => (
-                <ListItemCard
-                  key={rule.id}
-                  title={rule.title}
-                  onClick={() => setSelectedRuleId(rule.id)}
-                  right={
-                    <RuleNotifyButton
-                      disabled={rule.warningDisabled}
-                      onClick={() => handleNotify(rule.id)}
-                    />
+              {rules.map((rule) => {
+                const hasTimeRange = Boolean(rule.startTime && rule.endTime);
+                const hasRepeatDays = parseRepeatDays(rule.repeatDays ?? '')
+                  .length > 0;
+                const timeLabel = formatRuleTimeRange(
+                  rule.startTime,
+                  rule.endTime,
+                  {
+                    separator: ' - ',
                   }
-                />
-              ))}
+                );
+                const repeatDaysLabel = formatRuleRepeatDays(rule.repeatDays, {
+                  joiner: '/',
+                  prefix: '',
+                });
+                const shouldShowSubtitle = hasTimeRange || hasRepeatDays;
+
+                return (
+                  <ListItemCard
+                    key={rule.id}
+                    title={rule.title}
+                    subtitle={
+                      shouldShowSubtitle ? (
+                      <div className="flex items-center gap-1 text-xs font-medium text-zinc-400">
+                        <div className="h-3.5 w-0.5 bg-zinc-400" />
+
+                        {hasTimeRange && <span>{timeLabel}</span>}
+
+                        {hasRepeatDays && (
+                          <>
+                            <Repeat2 className="h-[15px] w-[15px]" />
+                            <span>{repeatDaysLabel}</span>
+                          </>
+                        )}
+                      </div>
+                      ) : undefined
+                    }
+                    onClick={() => setSelectedRuleId(rule.id)}
+                    right={
+                      <RuleNotifyButton
+                        disabled={rule.warningDisabled}
+                        onClick={() => handleNotify(rule.id)}
+                      />
+                    }
+                  />
+                );
+              })}
             </div>
           )}
         </ListSection>
