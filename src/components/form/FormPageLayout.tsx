@@ -25,7 +25,7 @@ const FormPageLayout = ({
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-dvh">
+    <div className="min-h-dvh bg-zinc-100">
       <header
         className={cn(
           'fixed top-0 flex w-full items-center justify-between bg-white p-[15px] backdrop-blur-xl',

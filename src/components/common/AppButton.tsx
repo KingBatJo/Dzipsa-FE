@@ -19,7 +19,7 @@ const AppButton = ({
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        'h-12 w-full rounded-lg text-sm transition-colors',
+        'h-12 w-full rounded-[12px] text-sm font-medium transition-colors',
         'disabled:pointer-events-none disabled:opacity-50',
         className
       )}

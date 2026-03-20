@@ -1,6 +1,14 @@
 export type Rule = {
   id: number;
+  roomId: number;
+  registerId: number;
   title: string;
-  disabled?: boolean;
-  warnedAt?: number;
+  memo: string | null;
+  timeSettingEnabled: boolean;
+  startTime: string | null;
+  endTime: string | null;
+  repeatEnabled: boolean;
+  repeatDays: string | null;
+  notiEnabled: boolean;
+  warningDisabled: boolean;
 };

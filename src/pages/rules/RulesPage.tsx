@@ -1,9 +1,17 @@
-﻿import { Button } from '@/components/ui/button';
+﻿import { Plus, Repeat2 } from 'lucide-react';
+import {
+  formatRuleRepeatDays,
+  formatRuleTimeRange,
+  parseRepeatDays,
+} from '@/utils/ruleForm';
+
+import { Button } from '@/components/ui/button';
 import EmptyState from '@/components/common/EmptyState';
 import { HEADER_HEIGHT } from '@/constants/layout';
 import ListItemCard from '@/components/common/ListItemCard';
 import ListSection from '@/components/common/ListSection';
-import { Plus } from 'lucide-react';
+import type { Rule } from '@/types/rules';
+import RuleDetailSheet from '@/pages/rules/components/RuleDetailSheet';
 import RuleNotifyButton from '@/pages/rules/components/RuleNotifyButton';
 import RulesReportSection from '@/pages/rules/components/RulesReportSection';
 import { mockRulesList } from '@/mocks/mockData';
@@ -13,12 +21,12 @@ import { useState } from 'react';
 const RulesPage = () => {
   const navigate = useNavigate();
   const [rules, setRules] = useState(mockRulesList);
+  const [selectedRuleId, setSelectedRuleId] = useState<number | null>(null);
+  const selectedRule: Rule | null =
+    rules.find((rule) => rule.id === selectedRuleId) ?? null;
   const hasRules = rules.length > 0;
 
-  const warningRules = rules
-    .filter((rule) => rule.disabled && rule.warnedAt)
-    .sort((a, b) => (b.warnedAt ?? 0) - (a.warnedAt ?? 0))
-    .slice(0, 3);
+  const warningRules = rules.filter((rule) => rule.warningDisabled).slice(0, 3);
 
   const hasWarningRules = warningRules.length > 0;
   const backgroundGradient = hasRules
@@ -30,9 +38,7 @@ const RulesPage = () => {
   const handleNotify = (ruleId: number) => {
     setRules((prev) =>
       prev.map((rule) =>
-        rule.id === ruleId
-          ? { ...rule, disabled: true, warnedAt: Date.now() }
-          : rule
+        rule.id === ruleId ? { ...rule, warningDisabled: true } : rule
       )
     );
   };
@@ -83,25 +89,70 @@ const RulesPage = () => {
             </EmptyState>
           ) : (
             <div className="flex flex-col gap-2">
-              {rules.map((rule) => (
-                <ListItemCard
-                  key={rule.id}
-                  title={rule.title}
-                  onClick={() => {
-                    console.log('클릭');
-                  }}
-                  right={
-                    <RuleNotifyButton
-                      disabled={rule.disabled}
-                      onClick={() => handleNotify(rule.id)}
-                    />
+              {rules.map((rule) => {
+                const hasTimeRange = Boolean(rule.startTime && rule.endTime);
+                const hasRepeatDays =
+                  parseRepeatDays(rule.repeatDays ?? '').length > 0;
+                const timeLabel = formatRuleTimeRange(
+                  rule.startTime,
+                  rule.endTime,
+                  {
+                    separator: ' - ',
                   }
-                />
-              ))}
+                );
+                const repeatDaysLabel = formatRuleRepeatDays(rule.repeatDays, {
+                  joiner: '/',
+                  prefix: '',
+                });
+                const shouldShowSubtitle = hasTimeRange || hasRepeatDays;
+
+                return (
+                  <ListItemCard
+                    key={rule.id}
+                    title={rule.title}
+                    subtitle={
+                      shouldShowSubtitle ? (
+                        <div className="flex items-center gap-1 border-l-2 border-zinc-400 text-xs font-medium text-zinc-400">
+                          <div className="flex flex-wrap items-center gap-1 pl-1">
+                            {hasTimeRange && <span>{timeLabel}</span>}
+
+                            {hasRepeatDays && (
+                              <div className="flex gap-1">
+                                <Repeat2 className="h-[15px] w-[15px]" />
+                                <span>{repeatDaysLabel}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ) : undefined
+                    }
+                    onClick={() => setSelectedRuleId(rule.id)}
+                    right={
+                      <RuleNotifyButton
+                        disabled={rule.warningDisabled}
+                        onClick={() => handleNotify(rule.id)}
+                      />
+                    }
+                  />
+                );
+              })}
             </div>
           )}
         </ListSection>
       </div>
+
+      <RuleDetailSheet
+        open={selectedRule !== null}
+        onOpenChange={(open) => {
+          if (!open) setSelectedRuleId(null);
+        }}
+        rule={selectedRule}
+        onNotify={() => {
+          if (!selectedRule) return;
+          handleNotify(selectedRule.id);
+          setSelectedRuleId(null);
+        }}
+      />
     </div>
   );
 };

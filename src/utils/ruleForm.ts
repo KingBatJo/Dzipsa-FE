@@ -1,4 +1,4 @@
-import { WEEK_DAYS_MON_FIRST, type WeekDay } from '@/constants/weekdays';
+﻿import { WEEK_DAYS_MON_FIRST, type WeekDay } from '@/constants/weekdays';
 
 export const DEFAULT_RULE_TIME_RANGE = {
   startTime: '09:00:00',
@@ -37,4 +37,59 @@ export const formatKoreanTime = (time: string) => {
   const displayHour = hour % 12 === 0 ? 12 : hour % 12;
 
   return `${period} ${displayHour}:${minuteText}`;
+};
+
+type RuleTimeRangeFormatOptions = {
+  separator?: string;
+};
+
+export const formatRuleTimeRange = (
+  startTime: string | null | undefined,
+  endTime: string | null | undefined,
+  options?: RuleTimeRangeFormatOptions
+) => {
+  const { separator = ' > ' } = options ?? {};
+
+  if (!startTime || !endTime) {
+    return '-';
+  }
+
+  const formattedStartTime = formatKoreanTime(startTime);
+  const formattedEndTime = formatKoreanTime(endTime);
+
+  if (formattedStartTime === formattedEndTime) {
+    return formattedStartTime;
+  }
+
+  return `${formattedStartTime}${separator}${formattedEndTime}`;
+};
+
+type RuleRepeatDaysFormatOptions = {
+  joiner?: string;
+  prefix?: string;
+  dailyLabel?: string;
+  emptyLabel?: string;
+};
+
+export const formatRuleRepeatDays = (
+  repeatDays: string | null | undefined,
+  options?: RuleRepeatDaysFormatOptions
+) => {
+  const {
+    joiner = ', ',
+    prefix = '매주 ',
+    dailyLabel = '매일',
+    emptyLabel = dailyLabel,
+  } = options ?? {};
+  const parsedRepeatDays = repeatDays ? parseRepeatDays(repeatDays) : [];
+
+  if (parsedRepeatDays.length === 0) {
+    return emptyLabel;
+  }
+
+  if (parsedRepeatDays.length === 7) {
+    return dailyLabel;
+  }
+
+  return `${prefix}${parsedRepeatDays.join(joiner)}`;
 };
