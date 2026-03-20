@@ -20,7 +20,7 @@ const InviteCodeStep = ({ inviteCode }: InviteCodeStepProps) => {
             <img
               src={dzipsaCharacter}
               alt="디집사 캐릭터"
-              className="absolute top-8 left-1/2 h-[120px] -translate-x-1/2"
+              className="pointer-events-none absolute top-8 left-1/2 h-[120px] -translate-x-1/2"
             />
 
             <InviteCodeCard inviteCode={inviteCode} />
