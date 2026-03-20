@@ -16,7 +16,7 @@ const AppLayout = () => {
   };
 
   return (
-    <div>
+    <div className="bg-zinc-100">
       <Header
         title={getHeaderTitle()}
         showActions={isHomePage}
