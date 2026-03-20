@@ -1,9 +1,9 @@
 import type {
-  CreateRuleWarningResponse,
   CreateRuleRequest,
   CreateRuleResponse,
+  CreateRuleWarningResponse,
   GetRulesParams,
-  RecentWarningItemResponse,
+  RecentRuleWarningResponse,
   RuleDetailResponse,
   RuleId,
   RuleListItemResponse,
@@ -70,8 +70,10 @@ export const deleteRule = async (ruleId: RuleId): Promise<void> => {
 };
 
 // 최근 알리기(경고) 목록 조회
-export const getRecentWarnings = async (): Promise<RecentWarningItemResponse[]> => {
-  const { data } = await apiClient.get<RecentWarningItemResponse[]>(
+export const getRecentWarnings = async (): Promise<
+  RecentRuleWarningResponse[]
+> => {
+  const { data } = await apiClient.get<RecentRuleWarningResponse[]>(
     '/api/rules/warnings/recent'
   );
 
