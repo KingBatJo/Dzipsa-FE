@@ -52,3 +52,5 @@ export type RecentWarningItemResponse = {
   ruleTitle: string;
   createdAt: string;
 };
+
+export type CreateRuleWarningResponse = RecentWarningItemResponse;

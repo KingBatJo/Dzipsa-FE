@@ -1,4 +1,5 @@
 import type {
+  CreateRuleWarningResponse,
   CreateRuleRequest,
   CreateRuleResponse,
   GetRulesParams,
@@ -72,6 +73,17 @@ export const deleteRule = async (ruleId: RuleId): Promise<void> => {
 export const getRecentWarnings = async (): Promise<RecentWarningItemResponse[]> => {
   const { data } = await apiClient.get<RecentWarningItemResponse[]>(
     '/api/rules/warnings/recent'
+  );
+
+  return data;
+};
+
+// 집사에게 알리기(경고) 등록
+export const createRuleWarning = async (
+  ruleId: RuleId
+): Promise<CreateRuleWarningResponse> => {
+  const { data } = await apiClient.post<CreateRuleWarningResponse>(
+    `/api/rules/${ruleId}/warnings`
   );
 
   return data;
