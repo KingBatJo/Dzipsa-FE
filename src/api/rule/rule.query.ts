@@ -2,6 +2,7 @@ import type { GetRulesParams, RuleId } from '@/api/rule/rule.types';
 import {
   createRule,
   deleteRule,
+  getRecentWarnings,
   getRuleDetail,
   getRules,
   updateRule,
@@ -26,6 +27,15 @@ export const useRuleDetailQuery = (ruleId: RuleId) => {
   return useQuery({
     queryKey: queryKeys.rule.detail(ruleId),
     queryFn: () => getRuleDetail(ruleId),
+    staleTime: 1000 * 60 * 3,
+  });
+};
+
+// 최근 알리기(경고) 목록 조회
+export const useRecentWarningsQuery = () => {
+  return useQuery({
+    queryKey: queryKeys.rule.warningRecent(),
+    queryFn: getRecentWarnings,
     staleTime: 1000 * 60 * 3,
   });
 };

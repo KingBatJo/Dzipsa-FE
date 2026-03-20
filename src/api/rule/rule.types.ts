@@ -44,3 +44,11 @@ export type UpdateRuleParams = {
   ruleId: RuleId;
   payload: UpdateRuleRequest;
 };
+
+export type RecentWarningItemResponse = {
+  id: number;
+  roomId: number;
+  ruleId: RuleId;
+  ruleTitle: string;
+  createdAt: string;
+};

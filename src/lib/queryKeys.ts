@@ -22,5 +22,6 @@ export const queryKeys = {
     list: (params?: GetRulesParams) =>
       [...queryKeys.rule.all, 'list', normalizeRuleListParams(params)] as const,
     detail: (ruleId: RuleId) => [...queryKeys.rule.all, 'detail', ruleId] as const,
+    warningRecent: () => [...queryKeys.rule.all, 'warningRecent'] as const,
   },
 };
