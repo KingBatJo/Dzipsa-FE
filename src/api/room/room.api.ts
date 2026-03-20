@@ -13,13 +13,17 @@ import type {
 import { apiClient } from '@/api/client';
 
 // 방 생성
-export const createRoom = async (payload: CreateRoomRequest) => {
+export const createRoom = async (
+  payload: CreateRoomRequest
+): Promise<RoomResponse> => {
   const { data } = await apiClient.post<RoomResponse>('/api/rooms', payload);
   return data;
 };
 
 // 방 입장
-export const joinRoom = async (payload: JoinRoomRequest) => {
+export const joinRoom = async (
+  payload: JoinRoomRequest
+): Promise<RoomResponse> => {
   const { data } = await apiClient.post<RoomResponse>(
     '/api/rooms/join',
     payload
@@ -28,13 +32,15 @@ export const joinRoom = async (payload: JoinRoomRequest) => {
 };
 
 // 내 방 조회
-export const getMyRoom = async () => {
+export const getMyRoom = async (): Promise<MyRoomResponse> => {
   const { data } = await apiClient.get<MyRoomResponse>('/api/rooms/me');
   return data;
 };
 
 // 방 구성원 조회
-export const getRoomMembers = async (params?: GetRoomMembersParams) => {
+export const getRoomMembers = async (
+  params?: GetRoomMembersParams
+): Promise<RoomMemberResponse[]> => {
   const { data } = await apiClient.get<RoomMemberResponse[]>(
     '/api/rooms/members',
     {
@@ -47,7 +53,7 @@ export const getRoomMembers = async (params?: GetRoomMembersParams) => {
 // 사용 중인 프로필 조회
 export const getUsedProfileImages = async (
   params?: GetUsedProfileImagesParams
-) => {
+): Promise<GetUsedProfileImagesResponse> => {
   const { data } = await apiClient.get<GetUsedProfileImagesResponse>(
     '/api/rooms/used-profile-images',
     {
@@ -59,12 +65,12 @@ export const getUsedProfileImages = async (
 };
 
 // 방 나가기
-export const leaveRoom = async () => {
+export const leaveRoom = async (): Promise<void> => {
   await apiClient.delete('/api/rooms/leave');
 };
 
 // 초대 코드 조회
-export const getInvitationCode = async () => {
+export const getInvitationCode = async (): Promise<InvitationCodeResponse> => {
   const { data } = await apiClient.get<InvitationCodeResponse>(
     '/api/rooms/invitation-code'
   );
@@ -72,7 +78,7 @@ export const getInvitationCode = async () => {
 };
 
 // 초대 코드 재발급
-export const reissueInvitationCode = async () => {
+export const reissueInvitationCode = async (): Promise<InvitationCodeResponse> => {
   const { data } = await apiClient.post<InvitationCodeResponse>(
     '/api/rooms/invitation-code/reissue'
   );

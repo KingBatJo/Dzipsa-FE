@@ -1,8 +1,4 @@
-import type {
-  CreateRuleRequest,
-  GetRulesParams,
-  RuleId,
-} from '@/api/rule/rule.types';
+import type { GetRulesParams, RuleId } from '@/api/rule/rule.types';
 import { createRule, getRuleDetail, getRules } from '@/api/rule/rule.api';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
