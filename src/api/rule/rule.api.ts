@@ -5,6 +5,8 @@ import type {
   RuleDetailResponse,
   RuleId,
   RuleListItemResponse,
+  UpdateRuleParams,
+  UpdateRuleResponse,
 } from '@/api/rule/rule.types';
 
 import { DEFAULT_RULE_LIST_SIZE } from '@/constants/rule';
@@ -41,6 +43,19 @@ export const createRule = async (
 ): Promise<CreateRuleResponse> => {
   const { data } = await apiClient.post<CreateRuleResponse>(
     '/api/rules',
+    payload
+  );
+
+  return data;
+};
+
+// 규칙 수정
+export const updateRule = async (
+  params: UpdateRuleParams
+): Promise<UpdateRuleResponse> => {
+  const { ruleId, payload } = params;
+  const { data } = await apiClient.patch<UpdateRuleResponse>(
+    `/api/rules/${ruleId}`,
     payload
   );
 

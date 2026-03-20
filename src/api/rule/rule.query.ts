@@ -1,5 +1,10 @@
 import type { GetRulesParams, RuleId } from '@/api/rule/rule.types';
-import { createRule, getRuleDetail, getRules } from '@/api/rule/rule.api';
+import {
+  createRule,
+  getRuleDetail,
+  getRules,
+  updateRule,
+} from '@/api/rule/rule.api';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { queryClient } from '@/lib/queryClient';
@@ -31,6 +36,20 @@ export const useCreateRuleMutation = () => {
     mutationFn: createRule,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.rule.all });
+    },
+  });
+};
+
+// 규칙 수정
+export const useUpdateRuleMutation = () => {
+  return useMutation({
+    mutationFn: updateRule,
+    onSuccess: (updatedRule, variables) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.rule.all });
+      queryClient.setQueryData(
+        queryKeys.rule.detail(variables.ruleId),
+        updatedRule
+      );
     },
   });
 };

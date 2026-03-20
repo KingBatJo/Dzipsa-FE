@@ -35,3 +35,12 @@ export type CreateRuleRequest = {
 };
 
 export type CreateRuleResponse = RuleDetailResponse;
+
+export type UpdateRuleRequest = CreateRuleRequest;
+
+export type UpdateRuleResponse = RuleDetailResponse;
+
+export type UpdateRuleParams = {
+  ruleId: RuleId;
+  payload: UpdateRuleRequest;
+};
