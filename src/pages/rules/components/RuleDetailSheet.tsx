@@ -1,26 +1,28 @@
-﻿import { formatRuleRepeatDays, formatRuleTimeRange } from '@/utils/ruleForm';
+import { formatRuleRepeatDays, formatRuleTimeRange } from '@/utils/ruleForm';
 
 import AppButton from '@/components/common/AppButton';
 import BottomSheet from '@/components/common/BottomSheet';
 import { DetailRow } from '@/pages/todos/components/TodoDetailSheet';
 import { PencilLine } from 'lucide-react';
-import type { Rule } from '@/types/rules';
+import type { RuleId } from '@/api/rule/rule.types';
 import { useNavigate } from 'react-router-dom';
+import { useRuleDetailQuery } from '@/api/rule/rule.query';
 
 type RuleDetailSheetProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  rule: Rule | null;
+  ruleId: RuleId;
   onNotify?: () => void;
 };
 
 const RuleDetailSheet = ({
   open,
   onOpenChange,
-  rule,
+  ruleId,
   onNotify,
 }: RuleDetailSheetProps) => {
   const navigate = useNavigate();
+  const { data: rule, isLoading, isError } = useRuleDetailQuery(ruleId);
 
   const hasRuleTime = Boolean(rule?.startTime && rule?.endTime);
   const hasRepeatDays = Boolean(rule?.repeatDays?.trim());
@@ -41,12 +43,13 @@ const RuleDetailSheet = ({
     <span className="text-zinc-400">설정 안 함</span>
   );
 
-  const memoLabel =
-    rule?.memo && rule.memo.trim().length > 0 ? (
-      rule.memo
-    ) : (
-      <span className="text-zinc-400">작성된 메모가 없습니다</span>
-    );
+  const memoLabel = isLoading ? (
+    <span className="text-zinc-400">불러오는 중...</span>
+  ) : rule?.memo && rule.memo.trim().length > 0 ? (
+    rule.memo
+  ) : (
+    <span className="text-zinc-400">작성된 메모가 없습니다</span>
+  );
 
   return (
     <BottomSheet
@@ -56,14 +59,22 @@ const RuleDetailSheet = ({
     >
       <div className="flex items-center justify-between px-5 pt-8 pb-[15px]">
         <h2 className="text-xl font-semibold text-black">
-          {rule?.title ?? '-'}
+          {isLoading ? '불러오는 중...' : (rule?.title ?? '-')}
         </h2>
 
         <button
           type="button"
           onClick={() => {
             if (!rule) return;
-            navigate(`/rules/${rule.id}/edit`, { state: { rule } });
+            navigate(`/rules/${rule.id}/edit`, {
+              state: {
+                rule: {
+                  ...rule,
+                  memo: rule.memo ?? '',
+                  repeatDays: rule.repeatDays ?? '',
+                },
+              },
+            });
           }}
           className="text-[#A3A3A3]"
         >
@@ -83,7 +94,11 @@ const RuleDetailSheet = ({
           <DetailRow
             label="집사 리포트"
             value={
-              <span className="text-zinc-400">규칙이 잘 지켜지고 있어요 !</span>
+              <span className="text-zinc-400">
+                {isError
+                  ? '규칙 정보를 불러오지 못했어요.'
+                  : '규칙이 잘 지켜지고 있어요 !'}
+              </span>
             }
           />
         </div>
@@ -92,7 +107,7 @@ const RuleDetailSheet = ({
       <div className="shrink-0 p-5">
         <AppButton
           onClick={onNotify}
-          disabled={rule?.warningDisabled ?? false}
+          disabled={isLoading || isError || (rule?.warningDisabled ?? false)}
           className="bg-black px-4 py-2 text-white disabled:bg-zinc-200 disabled:text-zinc-400"
         >
           {rule?.warningDisabled ? '접수 완료!' : '집사에게 알리기'}

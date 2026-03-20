@@ -10,20 +10,21 @@ import EmptyState from '@/components/common/EmptyState';
 import { HEADER_HEIGHT } from '@/constants/layout';
 import ListItemCard from '@/components/common/ListItemCard';
 import ListSection from '@/components/common/ListSection';
-import type { Rule } from '@/types/rules';
 import RuleDetailSheet from '@/pages/rules/components/RuleDetailSheet';
+import type { RuleId } from '@/api/rule/rule.types';
 import RuleNotifyButton from '@/pages/rules/components/RuleNotifyButton';
 import RulesReportSection from '@/pages/rules/components/RulesReportSection';
-import { mockRulesList } from '@/mocks/mockData';
 import { useNavigate } from 'react-router-dom';
+import { useRulesQuery } from '@/api/rule/rule.query';
 import { useState } from 'react';
 
 const RulesPage = () => {
   const navigate = useNavigate();
-  const [rules, setRules] = useState(mockRulesList);
-  const [selectedRuleId, setSelectedRuleId] = useState<number | null>(null);
-  const selectedRule: Rule | null =
-    rules.find((rule) => rule.id === selectedRuleId) ?? null;
+
+  const { data: rules = [], isLoading, isError } = useRulesQuery();
+
+  const [selectedRuleId, setSelectedRuleId] = useState<RuleId | null>(null);
+
   const hasRules = rules.length > 0;
 
   const warningRules = rules.filter((rule) => rule.warningDisabled).slice(0, 3);
@@ -35,12 +36,8 @@ const RulesPage = () => {
       : 'linear-gradient(180deg, #e9f3fd 0%, #f4f4f5 37.3%)'
     : undefined;
 
-  const handleNotify = (ruleId: number) => {
-    setRules((prev) =>
-      prev.map((rule) =>
-        rule.id === ruleId ? { ...rule, warningDisabled: true } : rule
-      )
-    );
+  const handleNotify = (_ruleId: RuleId) => {
+    // 집사에게 알리기 API 연동 후 구현
   };
 
   return (
@@ -68,7 +65,15 @@ const RulesPage = () => {
             </Button>
           }
         >
-          {rules.length === 0 ? (
+          {isLoading ? (
+            <div className="py-8 text-center text-sm text-zinc-500">
+              규칙 목록을 불러오는 중...
+            </div>
+          ) : isError ? (
+            <div className="py-8 text-center text-sm text-red-500">
+              규칙 목록을 불러오지 못했어요.
+            </div>
+          ) : rules.length === 0 ? (
             <EmptyState
               message={
                 <p>
@@ -141,18 +146,19 @@ const RulesPage = () => {
         </ListSection>
       </div>
 
-      <RuleDetailSheet
-        open={selectedRule !== null}
-        onOpenChange={(open) => {
-          if (!open) setSelectedRuleId(null);
-        }}
-        rule={selectedRule}
-        onNotify={() => {
-          if (!selectedRule) return;
-          handleNotify(selectedRule.id);
-          setSelectedRuleId(null);
-        }}
-      />
+      {selectedRuleId !== null && (
+        <RuleDetailSheet
+          open={selectedRuleId !== null}
+          onOpenChange={(open) => {
+            if (!open) setSelectedRuleId(null);
+          }}
+          ruleId={selectedRuleId}
+          onNotify={() => {
+            handleNotify(selectedRuleId);
+            setSelectedRuleId(null);
+          }}
+        />
+      )}
     </div>
   );
 };

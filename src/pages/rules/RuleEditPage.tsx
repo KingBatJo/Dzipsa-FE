@@ -1,8 +1,13 @@
+﻿import type { CreateRuleRequest } from '@/api/rule/rule.types';
+import {
+  useDeleteRuleMutation,
+  useUpdateRuleMutation,
+} from '@/api/rule/rule.query';
 import RuleForm, {
   type RuleFormInitialValues,
-  type RuleFormSubmitValues,
 } from '@/pages/rules/components/RuleForm';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 type LocationState = {
   rule?: RuleFormInitialValues & {
@@ -14,9 +19,14 @@ const RuleEditPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const { mutate: updateRule, isPending: isUpdating } = useUpdateRuleMutation();
+  const { mutate: deleteRule, isPending: isDeleting } = useDeleteRuleMutation();
+
+  const isSubmitting = isUpdating || isDeleting;
+
   const rule = (location.state as LocationState | undefined)?.rule;
 
-  if (!rule) {
+  if (!rule || typeof rule.id !== 'number') {
     return (
       <div className="flex min-h-dvh items-center justify-center">
         <p className="text-base font-medium">수정할 규칙 정보가 없어요.</p>
@@ -24,14 +34,36 @@ const RuleEditPage = () => {
     );
   }
 
-  const handleEdit = (values: RuleFormSubmitValues) => {
-    console.log('규칙 수정:', rule.id, values);
-    navigate(-1);
+  const ruleId = rule.id;
+
+  const handleEdit = (values: CreateRuleRequest) => {
+    updateRule(
+      {
+        ruleId,
+        payload: values,
+      },
+      {
+        onSuccess: () => {
+          toast('규칙이 수정되었어요.');
+          navigate('/rules');
+        },
+        onError: () => {
+          toast('규칙 수정에 실패했어요. 다시 시도해주세요.');
+        },
+      }
+    );
   };
 
   const handleDelete = () => {
-    console.log('규칙 삭제:', rule.id);
-    navigate(-1);
+    deleteRule(ruleId, {
+      onSuccess: () => {
+        toast('규칙이 삭제되었어요.');
+        navigate('/rules');
+      },
+      onError: () => {
+        toast('규칙 삭제에 실패했어요. 다시 시도해주세요.');
+      },
+    });
   };
 
   return (
@@ -40,6 +72,7 @@ const RuleEditPage = () => {
       initialValues={rule}
       onSubmit={handleEdit}
       onDelete={handleDelete}
+      isSubmitting={isSubmitting}
     />
   );
 };

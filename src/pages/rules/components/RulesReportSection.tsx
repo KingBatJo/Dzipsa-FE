@@ -1,14 +1,14 @@
 import type { CSSProperties } from 'react';
 import ListSection from '@/components/common/ListSection';
 import ReportBubble from '@/components/common/ReportBubble';
-import type { Rule } from '@/types/rules';
+import type { RuleListItemResponse } from '@/api/rule/rule.types';
 import alertMegaphone from '@/assets/dzipsa/alert-megaphone.svg';
 import dzipsaDefault from '@/assets/dzipsa/dzipsa-default.svg';
 import dzipsaPeaceful from '@/assets/dzipsa/dzipsa-peaceful.svg';
 
 type RulesReportSectionProps = {
-  rules: Rule[];
-  warningRules: Rule[];
+  rules: RuleListItemResponse[];
+  warningRules: RuleListItemResponse[];
 };
 
 type ReportState = 'empty-rules' | 'no-warning' | 'with-warning';
