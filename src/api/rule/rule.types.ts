@@ -22,3 +22,16 @@ export type RuleListItemResponse = {
 export type RuleDetailResponse = RuleListItemResponse & {
   notiEnabled: boolean;
 };
+
+export type CreateRuleRequest = {
+  title: string;
+  memo: string | null;
+  timeSettingEnabled: boolean;
+  startTime: string | null;
+  endTime: string | null;
+  repeatEnabled: boolean;
+  repeatDays: string | null;
+  notiEnabled: boolean;
+};
+
+export type CreateRuleResponse = RuleDetailResponse;

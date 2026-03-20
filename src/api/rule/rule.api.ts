@@ -1,4 +1,6 @@
 import type {
+  CreateRuleRequest,
+  CreateRuleResponse,
   GetRulesParams,
   RuleDetailResponse,
   RuleId,
@@ -26,7 +28,21 @@ export const getRules = async (
 export const getRuleDetail = async (
   ruleId: RuleId
 ): Promise<RuleDetailResponse> => {
-  const { data } = await apiClient.get<RuleDetailResponse>(`/api/rules/${ruleId}`);
+  const { data } = await apiClient.get<RuleDetailResponse>(
+    `/api/rules/${ruleId}`
+  );
+
+  return data;
+};
+
+// 규칙 등록
+export const createRule = async (
+  payload: CreateRuleRequest
+): Promise<CreateRuleResponse> => {
+  const { data } = await apiClient.post<CreateRuleResponse>(
+    '/api/rules',
+    payload
+  );
 
   return data;
 };
