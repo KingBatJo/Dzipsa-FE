@@ -23,7 +23,7 @@ import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import dzipsaDefault from '@/assets/dzipsa/dzipsa-default.svg';
 import { formatDueDateLabel } from '@/utils/date';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type TodoListCategory = 'today' | 'missed' | 'all';
 
@@ -33,6 +33,10 @@ const TodoListPage = () => {
 
   const [selectedTodo, setSelectedTodo] = useState<TodoWithLocal | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, []);
 
   const todos = addLocalToTodos(mockTodoList);
   const { todayTodos, missedTodos } = getTodoSections(todos, MOCK_TODAY);
