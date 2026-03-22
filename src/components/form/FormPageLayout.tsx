@@ -7,6 +7,7 @@ import {
 
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 type FormPageLayoutProps = {
@@ -23,6 +24,10 @@ const FormPageLayout = ({
   submitDisabled = false,
 }: FormPageLayoutProps) => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, []);
 
   return (
     <div className="min-h-dvh bg-zinc-100">

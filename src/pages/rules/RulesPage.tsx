@@ -9,7 +9,7 @@ import {
   useInfiniteRulesQuery,
   useRecentRuleWarningsQuery,
 } from '@/api/rule/rule.query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import EmptyState from '@/components/common/EmptyState';
@@ -21,12 +21,16 @@ import type { RuleId } from '@/api/rule/rule.types';
 import RuleNotifyButton from '@/pages/rules/components/RuleNotifyButton';
 import RulesReportSection from '@/pages/rules/components/RulesReportSection';
 import { getApiErrorInfo } from '@/api/error';
-import { useInfiniteScrollObserver } from '@/hooks/useInfiniteScrollObserver';
 import { toast } from 'sonner';
+import { useInfiniteScrollObserver } from '@/hooks/useInfiniteScrollObserver';
 import { useNavigate } from 'react-router-dom';
 
 const RulesPage = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, []);
 
   const {
     data,
