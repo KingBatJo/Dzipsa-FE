@@ -6,12 +6,15 @@ import {
   isTodoDelayed,
 } from '@/utils/todos';
 
+import { Button } from '@/components/ui/button';
 import EmptyState from '@/components/common/EmptyState';
 import ListItemCard from '@/components/common/ListItemCard';
 import ListSection from '@/components/common/ListSection';
 import type { TodoWithLocal } from '@/types/todo';
 import { cn } from '@/lib/utils';
+import dzipsaCharacter from '@/assets/dzipsa.svg';
 import { formatDueDateLabel } from '@/utils/date';
+import { useNavigate } from 'react-router-dom';
 
 type MyTodosTabProps = {
   onTodoClick?: (todo: TodoWithLocal) => void;
@@ -72,6 +75,8 @@ const TodoCompleteButton = ({
 };
 
 const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
+  const navigate = useNavigate();
+
   // 임시
   const myId = MOCK_MY_ID;
   const today = MOCK_TODAY;
@@ -114,7 +119,25 @@ const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
 
       <ListSection title="Today">
         {visibleTodayTodos.length === 0 ? (
-          <EmptyState message="오늘 할 일이 없어요" />
+          <EmptyState>
+            <img
+              src={dzipsaCharacter}
+              alt="디집사 캐릭터"
+              className="h-[74px] w-20"
+            />
+
+            <div className="text-center text-sm font-semibold text-zinc-500">
+              <p>오늘 할 일은 무엇인가요?</p>
+              <p>첫 번째 할 일을 추가해 보세요!</p>
+            </div>
+
+            <Button
+              onClick={() => navigate('/todos/new')}
+              className="h-12 w-full rounded-[10px] bg-zinc-800"
+            >
+              첫 규칙 만들기
+            </Button>
+          </EmptyState>
         ) : (
           visibleTodayTodos.map((todo) => (
             <ListItemCard
@@ -128,11 +151,9 @@ const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
         )}
       </ListSection>
 
-      <ListSection title="예정된 할 일">
-        {upcomingTodos.length === 0 ? (
-          <EmptyState message="예정된 할 일이 없어요" />
-        ) : (
-          upcomingTodos.map((todo) => (
+      {upcomingTodos.length > 0 && (
+        <ListSection title="예정된 할 일">
+          {upcomingTodos.map((todo) => (
             <ListItemCard
               key={todo.id}
               title={todo.title}
@@ -140,9 +161,10 @@ const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
               right={<TodoCompleteButton />}
               onClick={() => onTodoClick?.(todo)}
             />
-          ))
-        )}
-      </ListSection>
+          ))}
+          )
+        </ListSection>
+      )}
     </div>
   );
 };

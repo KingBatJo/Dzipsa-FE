@@ -145,7 +145,6 @@ export const mockTodoList: Todo[] = [
     memo: '',
     completed: false,
   },
-
   // 예정
   {
     id: 6,
@@ -255,7 +254,6 @@ export const mockTodoList: Todo[] = [
     memo: '',
     completed: false,
   },
-
   // 지난
   {
     id: 9,
@@ -320,7 +318,6 @@ export const mockTodoList: Todo[] = [
     memo: '',
     completed: false,
   },
-
   // 완료 데이터
   {
     id: 32,
@@ -394,7 +391,6 @@ export const mockTodoList: Todo[] = [
     completedAt: '2026-03-06T16:45:00',
     proofImageUrl: 'test',
   },
-
   // 추가: 2번 사용자 미완료 데이터
   {
     id: 39,

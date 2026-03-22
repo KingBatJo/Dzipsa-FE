@@ -6,11 +6,13 @@ import {
 } from '@/utils/todos';
 
 import { Card } from '@/components/ui/card';
+import EmptyState from '@/components/common/EmptyState';
 import ListSection from '@/components/common/ListSection';
 import RoundedBadge from '@/components/common/RoundedBadge';
 import type { TodoWithLocal } from '@/types/todo';
 import UserAvatar from '@/components/common/UserAvatar';
 import { cn } from '@/lib/utils';
+import dzipsaDefault from '@/assets/dzipsa/dzipsa-default.svg';
 import { formatStatusDateLabel } from '@/utils/date';
 
 type CompletedTodosTabProps = {
@@ -118,32 +120,47 @@ const CompletedTodosTab = ({ onTodoClick }: CompletedTodosTabProps) => {
 
   return (
     <ListSection title="TimeLine">
-      <div className="flex flex-col">
-        {completedTodos.map((todo) => {
-          const member = mockMembers.find((m) => m.id === todo.assigneeId);
-          const statusLabel = getTodoStatusLabel(todo, MOCK_TODAY);
-          const completedDateLabel = todo.completedAt
-            ? formatStatusDateLabel(todo.completedAt)
-            : '';
-
-          if (statusLabel !== '완료' && statusLabel !== '지연 완료') {
-            return null;
-          }
-
-          return (
-            <CompletedTodoFeedItem
-              key={todo.id}
-              onClick={() => onTodoClick?.(todo)}
-              userName={member?.name ?? '알 수 없음'}
-              profileImage={member?.profileImage}
-              todoTitle={todo.title}
-              completedDate={completedDateLabel}
-              statusLabel={statusLabel}
-              proofImageUrl={todo.proofImageUrl}
+      {completedTodos.length === 0 ? (
+        <EmptyState
+          variant="minimal"
+          image={
+            <img
+              src={dzipsaDefault}
+              alt="집사 캐릭터"
+              className="h-26 w-26 object-contain"
             />
-          );
-        })}
-      </div>
+          }
+          title="완료된 할 일이 없어요 !"
+          description="하나만 끝내도 우리집 기록이 쌓이기 시작해요."
+        />
+      ) : (
+        <div className="flex flex-col">
+          {completedTodos.map((todo) => {
+            const member = mockMembers.find((m) => m.id === todo.assigneeId);
+            const statusLabel = getTodoStatusLabel(todo, MOCK_TODAY);
+            const completedDateLabel = todo.completedAt
+              ? formatStatusDateLabel(todo.completedAt)
+              : '';
+
+            if (statusLabel !== '완료' && statusLabel !== '지연 완료') {
+              return null;
+            }
+
+            return (
+              <CompletedTodoFeedItem
+                key={todo.id}
+                onClick={() => onTodoClick?.(todo)}
+                userName={member?.name ?? '알 수 없음'}
+                profileImage={member?.profileImage}
+                todoTitle={todo.title}
+                completedDate={completedDateLabel}
+                statusLabel={statusLabel}
+                proofImageUrl={todo.proofImageUrl}
+              />
+            );
+          })}
+        </div>
+      )}
     </ListSection>
   );
 };

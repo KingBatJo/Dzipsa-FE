@@ -14,6 +14,7 @@ import UserAvatar from '@/components/common/UserAvatar';
 import dzipsaCharacter from '@/assets/dzipsa.svg';
 
 type HouseTodosSummaryProps = {
+  registeredTotal: number;
   total: number;
   completed: number;
   userName: string;
@@ -36,12 +37,20 @@ type SummaryMessage = {
 
 // 오늘 할 일 상태에 따른 요약 메시지 생성
 const getSummaryMessage = ({
+  registeredTotal,
   total,
   completed,
   userName,
   myRemaining,
 }: HouseTodosSummaryProps): SummaryMessage => {
   const remaining = Math.max(total - completed, 0);
+
+  if (registeredTotal === 0) {
+    return {
+      title: '아직 등록된 할 일이 없어요.',
+      description: '첫 할 일을 추가하면 집사가 정리해드려요!',
+    };
+  }
 
   if (total === 0) {
     return {
@@ -72,12 +81,14 @@ const getSummaryMessage = ({
 
 // 집사 캐릭터 + 요약 말풍선 UI 컴포넌트
 const HouseTodosSummary = ({
+  registeredTotal,
   total,
   completed,
   userName,
   myRemaining,
 }: HouseTodosSummaryProps) => {
   const summaryCopy = getSummaryMessage({
+    registeredTotal,
     total,
     completed,
     userName,
@@ -154,6 +165,7 @@ const HouseTodosTab = ({
   return (
     <div className="flex flex-col gap-7">
       <HouseTodosSummary
+        registeredTotal={todos.length}
         total={total}
         completed={completed}
         myRemaining={myRemaining}

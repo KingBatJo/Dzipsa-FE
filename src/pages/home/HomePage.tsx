@@ -51,7 +51,7 @@ const HomePage = () => {
       <DashboardSection missedCount={missedCount} />
       <ListSection title="오늘 할 일">
         {visibleTodayTodos.length === 0 ? (
-          <EmptyState message="오늘 할 일이 없어요" />
+          <EmptyState>오늘 할 일이 없어요.</EmptyState>
         ) : (
           visibleTodayTodos.map((todo) => (
             <ListItemCard

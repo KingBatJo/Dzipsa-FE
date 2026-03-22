@@ -125,17 +125,14 @@ const RulesPage = () => {
               규칙 목록을 불러오지 못했어요.
             </div>
           ) : rules.length === 0 ? (
-            <EmptyState
-              message={
-                <p>
-                  공동생활의 첫걸음!
-                  <br />
-                  우리 집만의 규칙을 만들고
-                  <br />
-                  평화로운 공동생활을 시작해보세요!
-                </p>
-              }
-            >
+            <EmptyState>
+              <p className="text-center text-sm font-semibold text-zinc-500">
+                공동생활의 첫걸음!
+                <br />
+                우리 집만의 규칙을 만들고
+                <br />
+                평화로운 공동생활을 시작해보세요!
+              </p>
               <Button
                 onClick={() => navigate('/rules/new')}
                 className="h-12 w-full rounded-[10px] bg-zinc-800"
