@@ -18,7 +18,7 @@ const RuleNotifyButton = ({
         onClick?.();
       }}
       className={cn(
-        'flex rounded-[10px] px-2.5 py-1.5 text-white',
+        'flex rounded-[10px] px-2.5 py-1.5 text-white transition-colors',
         disabled
           ? 'cursor-default bg-zinc-200'
           : 'bg-zinc-500 hover:bg-zinc-600'

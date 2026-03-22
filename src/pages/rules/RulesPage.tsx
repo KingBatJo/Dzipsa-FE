@@ -4,43 +4,91 @@ import {
   formatRuleTimeRange,
   parseRepeatDays,
 } from '@/utils/ruleForm';
+import {
+  useCreateRuleWarningMutation,
+  useInfiniteRulesQuery,
+  useRecentRuleWarningsQuery,
+} from '@/api/rule/rule.query';
+import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import EmptyState from '@/components/common/EmptyState';
 import { HEADER_HEIGHT } from '@/constants/layout';
 import ListItemCard from '@/components/common/ListItemCard';
 import ListSection from '@/components/common/ListSection';
-import type { Rule } from '@/types/rules';
 import RuleDetailSheet from '@/pages/rules/components/RuleDetailSheet';
+import type { RuleId } from '@/api/rule/rule.types';
 import RuleNotifyButton from '@/pages/rules/components/RuleNotifyButton';
 import RulesReportSection from '@/pages/rules/components/RulesReportSection';
-import { mockRulesList } from '@/mocks/mockData';
+import { getApiErrorInfo } from '@/api/error';
+import { toast } from 'sonner';
+import { useInfiniteScrollObserver } from '@/hooks/useInfiniteScrollObserver';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
 
 const RulesPage = () => {
   const navigate = useNavigate();
-  const [rules, setRules] = useState(mockRulesList);
-  const [selectedRuleId, setSelectedRuleId] = useState<number | null>(null);
-  const selectedRule: Rule | null =
-    rules.find((rule) => rule.id === selectedRuleId) ?? null;
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, []);
+
+  const {
+    data,
+    isPending,
+    isError,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteRulesQuery();
+  const rules = data?.pages.flat() ?? [];
+
+  const { data: recentWarnings = [] } = useRecentRuleWarningsQuery();
+  const { mutate: createRuleWarning } = useCreateRuleWarningMutation();
+  const loadMoreRef = useInfiniteScrollObserver<HTMLDivElement>({
+    hasNextPage,
+    isFetching: isFetchingNextPage || isPending,
+    onLoadMore: fetchNextPage,
+    rootMargin: '0px 0px 40px 0px',
+    threshold: 0,
+  });
+
+  const [selectedRuleId, setSelectedRuleId] = useState<RuleId | null>(null);
+  const [notifyingRuleId, setNotifyingRuleId] = useState<RuleId | null>(null);
+
   const hasRules = rules.length > 0;
 
-  const warningRules = rules.filter((rule) => rule.warningDisabled).slice(0, 3);
-
-  const hasWarningRules = warningRules.length > 0;
+  const hasWarningRules = recentWarnings.length > 0;
   const backgroundGradient = hasRules
     ? hasWarningRules
       ? 'linear-gradient(180deg, #fff1f2 0%, #f4f4f5 37.3%)'
       : 'linear-gradient(180deg, #e9f3fd 0%, #f4f4f5 37.3%)'
     : undefined;
 
-  const handleNotify = (ruleId: number) => {
-    setRules((prev) =>
-      prev.map((rule) =>
-        rule.id === ruleId ? { ...rule, warningDisabled: true } : rule
-      )
-    );
+  const handleNotify = (ruleId: RuleId) => {
+    setNotifyingRuleId(ruleId);
+
+    createRuleWarning(ruleId, {
+      onSuccess: () => {
+        toast('집사에게 알리기를 보냈어요.');
+
+        if (selectedRuleId === ruleId) {
+          setSelectedRuleId(null);
+        }
+      },
+      onError: (error: unknown) => {
+        const apiError = getApiErrorInfo(error);
+
+        if (apiError?.code === 440001) {
+          toast('이미 24시간 내에 알리기를 보냈어요.');
+          return;
+        }
+
+        toast(apiError?.message ?? '알리기에 실패했어요.');
+      },
+      onSettled: () => {
+        setNotifyingRuleId(null);
+      },
+    });
   };
 
   return (
@@ -53,7 +101,7 @@ const RulesPage = () => {
       }}
     >
       <div className="flex flex-col gap-7 pt-[15px]">
-        <RulesReportSection rules={rules} warningRules={warningRules} />
+        <RulesReportSection rules={rules} recentWarnings={recentWarnings} />
 
         <ListSection
           title="우리집 규칙 리스트"
@@ -68,7 +116,15 @@ const RulesPage = () => {
             </Button>
           }
         >
-          {rules.length === 0 ? (
+          {isPending ? (
+            <div className="py-8 text-center text-sm text-zinc-500">
+              규칙 목록을 불러오는 중...
+            </div>
+          ) : isError ? (
+            <div className="py-8 text-center text-sm text-red-500">
+              규칙 목록을 불러오지 못했어요.
+            </div>
+          ) : rules.length === 0 ? (
             <EmptyState
               message={
                 <p>
@@ -129,30 +185,49 @@ const RulesPage = () => {
                     onClick={() => setSelectedRuleId(rule.id)}
                     right={
                       <RuleNotifyButton
-                        disabled={rule.warningDisabled}
+                        disabled={
+                          rule.warningDisabled || notifyingRuleId === rule.id
+                        }
                         onClick={() => handleNotify(rule.id)}
                       />
                     }
                   />
                 );
               })}
+
+              {rules.length > 0 && (
+                <div
+                  ref={loadMoreRef}
+                  className="flex h-12 items-center justify-center"
+                >
+                  {isFetchingNextPage ? (
+                    <div className="py-3 text-center text-sm text-zinc-500">
+                      집사가 더 가져오고 있어요...
+                    </div>
+                  ) : hasNextPage ? null : (
+                    <div className="py-3 text-center text-sm text-zinc-500">
+                      집사가 다 찾아왔어요!
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
         </ListSection>
       </div>
 
-      <RuleDetailSheet
-        open={selectedRule !== null}
-        onOpenChange={(open) => {
-          if (!open) setSelectedRuleId(null);
-        }}
-        rule={selectedRule}
-        onNotify={() => {
-          if (!selectedRule) return;
-          handleNotify(selectedRule.id);
-          setSelectedRuleId(null);
-        }}
-      />
+      {selectedRuleId !== null && (
+        <RuleDetailSheet
+          open={selectedRuleId !== null}
+          onOpenChange={(open) => {
+            if (!open) setSelectedRuleId(null);
+          }}
+          ruleId={selectedRuleId}
+          onNotify={() => {
+            handleNotify(selectedRuleId);
+          }}
+        />
+      )}
     </div>
   );
 };

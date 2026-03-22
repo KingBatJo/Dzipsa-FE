@@ -31,7 +31,7 @@ const BottomSheet = ({
     <Drawer open={open} onOpenChange={onOpenChange} dismissible={dismissible}>
       <DrawerContent
         className={cn(
-          'mx-auto max-h-[70dvh] min-h-[442px] w-full rounded-t-[16px]',
+          'mx-auto max-h-[70dvh] w-full rounded-t-[16px]',
           !dismissible && '[&>div:first-child]:hidden',
           className,
           MOBILE_MAX_WIDTH

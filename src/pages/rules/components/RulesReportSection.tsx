@@ -1,14 +1,18 @@
+import type {
+  RecentRuleWarningResponse,
+  RuleListItemResponse,
+} from '@/api/rule/rule.types';
+
 import type { CSSProperties } from 'react';
 import ListSection from '@/components/common/ListSection';
 import ReportBubble from '@/components/common/ReportBubble';
-import type { Rule } from '@/types/rules';
 import alertMegaphone from '@/assets/dzipsa/alert-megaphone.svg';
 import dzipsaDefault from '@/assets/dzipsa/dzipsa-default.svg';
 import dzipsaPeaceful from '@/assets/dzipsa/dzipsa-peaceful.svg';
 
 type RulesReportSectionProps = {
-  rules: Rule[];
-  warningRules: Rule[];
+  rules: RuleListItemResponse[];
+  recentWarnings: RecentRuleWarningResponse[];
 };
 
 type ReportState = 'empty-rules' | 'no-warning' | 'with-warning';
@@ -16,9 +20,9 @@ type ShadowVariant = 'neutral' | 'sky' | 'red';
 
 const getReportState = ({
   rules,
-  warningRules,
+  recentWarnings,
 }: RulesReportSectionProps): ReportState => {
-  if (warningRules.length > 0) return 'with-warning';
+  if (recentWarnings.length > 0) return 'with-warning';
   if (rules.length > 0) return 'no-warning';
   return 'empty-rules';
 };
@@ -34,9 +38,9 @@ const WarningText = ({ title, body }: { title: string; body: string }) => {
 
 const RulesReportSection = ({
   rules,
-  warningRules,
+  recentWarnings,
 }: RulesReportSectionProps) => {
-  const reportState = getReportState({ rules, warningRules });
+  const reportState = getReportState({ rules, recentWarnings });
   const isWarningMode = reportState === 'with-warning';
   const reportAvatarImage =
     reportState === 'no-warning' ? dzipsaPeaceful : dzipsaDefault;
@@ -73,14 +77,14 @@ const RulesReportSection = ({
 
         {isWarningMode ? (
           <div className="flex min-w-0 flex-1 flex-col gap-3">
-            {warningRules.map((rule, index) => (
+            {recentWarnings.slice(0, 3).map((warning, index) => (
               <ReportBubble
-                key={rule.id}
+                key={warning.id}
                 showPointer={index === 0}
                 shadowStyle={shadowStyle}
               >
                 <WarningText
-                  title={rule.title}
+                  title={warning.ruleTitle}
                   body={
                     index === 0
                       ? ' 규칙이 지켜지지 않아 곤란해요. 구성원을 위해 즉시 규칙을 다시 확인해주세요.'

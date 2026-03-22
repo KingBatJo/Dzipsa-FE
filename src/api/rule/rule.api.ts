@@ -1,0 +1,92 @@
+import type {
+  CreateRuleRequest,
+  CreateRuleResponse,
+  CreateRuleWarningResponse,
+  GetRulesParams,
+  RecentRuleWarningResponse,
+  RuleDetailResponse,
+  RuleId,
+  RuleListItemResponse,
+  UpdateRuleParams,
+  UpdateRuleResponse,
+} from '@/api/rule/rule.types';
+
+import { DEFAULT_RULE_LIST_SIZE } from '@/constants/rule';
+import { apiClient } from '@/api/client';
+
+// 규칙 목록 조회
+export const getRules = async (
+  params?: GetRulesParams
+): Promise<RuleListItemResponse[]> => {
+  const { data } = await apiClient.get<RuleListItemResponse[]>('/api/rules', {
+    params: {
+      ...params,
+      size: params?.size ?? DEFAULT_RULE_LIST_SIZE,
+    },
+  });
+
+  return data;
+};
+
+// 규칙 상세 조회
+export const getRuleDetail = async (
+  ruleId: RuleId
+): Promise<RuleDetailResponse> => {
+  const { data } = await apiClient.get<RuleDetailResponse>(
+    `/api/rules/${ruleId}`
+  );
+
+  return data;
+};
+
+// 규칙 등록
+export const createRule = async (
+  payload: CreateRuleRequest
+): Promise<CreateRuleResponse> => {
+  const { data } = await apiClient.post<CreateRuleResponse>(
+    '/api/rules',
+    payload
+  );
+
+  return data;
+};
+
+// 규칙 수정
+export const updateRule = async (
+  params: UpdateRuleParams
+): Promise<UpdateRuleResponse> => {
+  const { ruleId, payload } = params;
+  const { data } = await apiClient.patch<UpdateRuleResponse>(
+    `/api/rules/${ruleId}`,
+    payload
+  );
+
+  return data;
+};
+
+// 규칙 삭제
+export const deleteRule = async (ruleId: RuleId): Promise<void> => {
+  await apiClient.delete(`/api/rules/${ruleId}`);
+};
+
+// 최근 알리기(경고) 목록 조회
+export const getRecentWarnings = async (): Promise<
+  RecentRuleWarningResponse[]
+> => {
+  const { data } = await apiClient.get<RecentRuleWarningResponse[]>(
+    '/api/rules/warnings/recent'
+  );
+
+  return data;
+};
+
+// 집사에게 알리기(경고) 등록
+export const createRuleWarning = async (
+  ruleId: RuleId
+): Promise<CreateRuleWarningResponse> => {
+  const { data } = await apiClient.post<CreateRuleWarningResponse>(
+    `/api/rules/${ruleId}/warnings`
+  );
+
+  return data;
+};

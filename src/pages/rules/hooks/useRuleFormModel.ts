@@ -1,3 +1,4 @@
+import type { CreateRuleRequest } from '@/api/rule/rule.types';
 import type { WeekDay } from '@/constants/weekdays';
 import {
   ruleCreateSchema,
@@ -12,18 +13,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-export type RuleFormSubmitValues = {
-  title: string;
-  memo: string;
-  notiEnabled: boolean;
-  timeSettingEnabled: boolean;
-  repeatEnabled: boolean;
-  startTime: string | null;
-  endTime: string | null;
-  repeatDays: string;
-};
-
-export type RuleFormInitialValues = Partial<RuleFormSubmitValues>;
+export type RuleFormInitialValues = Partial<CreateRuleRequest>;
 export type RuleFormMode = 'create' | 'edit';
 
 type RuleSettings = {
@@ -57,7 +47,7 @@ const getInitialTimeRange = (initialValues?: RuleFormInitialValues) => ({
 
 type UseRuleFormModelParams = {
   initialValues?: RuleFormInitialValues;
-  onSubmit: (values: RuleFormSubmitValues) => void;
+  onSubmit: (values: CreateRuleRequest) => void | Promise<void>;
 };
 
 export const useRuleFormModel = ({
@@ -100,6 +90,11 @@ export const useRuleFormModel = ({
         next.timeSettingEnabled = true;
       }
 
+      // 시간 설정 off -> 알림도 off
+      if (key === 'timeSettingEnabled' && !checked) {
+        next.notiEnabled = false;
+      }
+
       return next;
     });
   };
@@ -114,19 +109,24 @@ export const useRuleFormModel = ({
     setActiveTimeField(null);
   };
 
+  const toNullableString = (value: string) => {
+    const trimmed = value.trim();
+    return trimmed.length > 0 ? trimmed : null;
+  };
+
   // 화면 상태와 RHF 입력값을 API 요청 스펙에 맞춰 결합
-  const handleFormSubmit = (data: RuleCreateValues) => {
-    onSubmit({
-      title: data.title,
-      memo: data.memo ?? '',
+  const handleFormSubmit = async (data: RuleCreateValues) => {
+    await onSubmit({
+      title: data.title.trim(),
+      memo: toNullableString(data.memo ?? ''),
       notiEnabled: settings.notiEnabled,
       timeSettingEnabled: settings.timeSettingEnabled,
       repeatEnabled: settings.repeatEnabled,
       startTime: settings.timeSettingEnabled ? timeRange.startTime : null,
       endTime: settings.timeSettingEnabled ? timeRange.endTime : null,
       repeatDays: settings.repeatEnabled
-        ? toRepeatDays(selectedOperatingDays)
-        : '',
+        ? toNullableString(toRepeatDays(selectedOperatingDays))
+        : null,
     });
   };
 

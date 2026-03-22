@@ -14,16 +14,17 @@ import { ChevronRight } from 'lucide-react';
 import {
   type RuleFormInitialValues,
   type RuleFormMode,
-  type RuleFormSubmitValues,
   useRuleFormModel,
 } from '@/pages/rules/hooks/useRuleFormModel';
+import type { CreateRuleRequest } from '@/api/rule/rule.types';
 import { formatKoreanTime } from '@/utils/ruleForm';
 
 type RuleFormProps = {
   mode: RuleFormMode;
   initialValues?: RuleFormInitialValues;
-  onSubmit: (values: RuleFormSubmitValues) => void;
+  onSubmit: (values: CreateRuleRequest) => void;
   onDelete?: () => void;
+  isSubmitting?: boolean;
 };
 
 const RuleForm = ({
@@ -31,6 +32,7 @@ const RuleForm = ({
   initialValues,
   onSubmit,
   onDelete,
+  isSubmitting = false,
 }: RuleFormProps) => {
   const model = useRuleFormModel({
     initialValues,
@@ -41,7 +43,7 @@ const RuleForm = ({
     <FormPageLayout
       title={mode === 'create' ? '규칙 등록' : '규칙 편집'}
       onSubmit={model.form.submitForm}
-      submitDisabled={!model.form.isValid}
+      submitDisabled={!model.form.isValid || isSubmitting}
     >
       <div className="bg-zinc-100 pb-6">
         <div className="bg-white px-[15px] pt-[15px] pb-[30px]">
@@ -179,7 +181,5 @@ const RuleForm = ({
 export type {
   RuleFormInitialValues,
   RuleFormMode,
-  RuleFormSubmitValues,
 } from '@/pages/rules/hooks/useRuleFormModel';
 export default RuleForm;
-

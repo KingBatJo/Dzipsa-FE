@@ -1,4 +1,3 @@
-import type { CreateRoomRequest, JoinRoomRequest } from '@/api/room/room.types';
 import {
   createRoom,
   getInvitationCode,
@@ -36,14 +35,14 @@ export const useInvitationCodeQuery = () => {
 // 방 생성
 export const useCreateRoomMutation = () => {
   return useMutation({
-    mutationFn: (payload: CreateRoomRequest) => createRoom(payload),
+    mutationFn: createRoom,
   });
 };
 
 // 방 입장
 export const useJoinRoomMutation = () => {
   return useMutation({
-    mutationFn: (payload: JoinRoomRequest) => joinRoom(payload),
+    mutationFn: joinRoom,
   });
 };
 

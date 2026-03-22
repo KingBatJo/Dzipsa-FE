@@ -2,7 +2,6 @@ import { agreeToTerms, getMe, logout, updateMe } from '@/api/auth/auth.api';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import type { MeResponse } from '@/api/auth/auth.types';
-import type { UpdateMeRequest } from '@/api/auth/auth.types';
 import { queryClient } from '@/lib/queryClient';
 import { queryKeys } from '@/lib/queryKeys';
 
@@ -39,7 +38,7 @@ export const useAgreeToTermsMutation = () => {
 // 내 정보 수정
 export const useUpdateMeMutation = () => {
   return useMutation({
-    mutationFn: (payload: UpdateMeRequest) => updateMe(payload),
+    mutationFn: updateMe,
     onSuccess: (updatedMe) => {
       queryClient.setQueryData(queryKeys.auth.me, updatedMe);
     },
