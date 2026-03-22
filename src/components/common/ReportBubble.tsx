@@ -6,15 +6,22 @@ type ReportBubbleProps = {
   shadowStyle?: CSSProperties;
 };
 
+const DEFAULT_SHADOW_STYLE = {
+  '--report-shadow': 'var(--shadow-surface-neutral)',
+  '--report-shadow-drop': 'var(--shadow-surface-neutral-drop)',
+} as CSSProperties;
+
 const ReportBubble = ({
   children,
   showPointer = false,
   shadowStyle,
 }: ReportBubbleProps) => {
+  const mergedShadowStyle = { ...DEFAULT_SHADOW_STYLE, ...shadowStyle };
+
   return (
     <div
       className="relative w-full rounded-2xl bg-white px-[18px] py-4 shadow-(--report-shadow)"
-      style={shadowStyle}
+      style={mergedShadowStyle}
     >
       {showPointer && (
         <svg
