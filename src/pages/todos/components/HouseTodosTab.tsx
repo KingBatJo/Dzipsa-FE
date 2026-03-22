@@ -1,4 +1,4 @@
-import {
+﻿import {
   MOCK_MY_ID,
   MOCK_TODAY,
   mockMembers,
@@ -29,28 +29,74 @@ type CountIndicatorProps = {
   count: number;
 };
 
+type SummaryMessage = {
+  title: string;
+  description: string;
+};
+
+// 오늘 할 일 상태에 따른 요약 메시지 생성
+const getSummaryMessage = ({
+  total,
+  completed,
+  userName,
+  myRemaining,
+}: HouseTodosSummaryProps): SummaryMessage => {
+  const remaining = Math.max(total - completed, 0);
+
+  if (total === 0) {
+    return {
+      title: '오늘 우리집은 할 일이 없네요!',
+      description: `${userName}님, 여유로운 하루를 보내보세요 ☕`,
+    };
+  }
+
+  if (completed === total) {
+    return {
+      title: '오늘 우리집 할 일 모두 완료!',
+      description: `${userName}님, 오늘은 푹 쉬셔도 좋겠어요.`,
+    };
+  }
+
+  if (myRemaining === 0) {
+    return {
+      title: `${userName}님은 오늘 할 일을 다 하셨네요!`,
+      description: `구성원분들의 남은 ${remaining}개 할 일도 확인해 보세요`,
+    };
+  }
+
+  return {
+    title: `우리집 할 일 총 ${total}개 중 ${completed}개 완료! ✅`,
+    description: `${userName}님의 남은 ${myRemaining}개의 할 일도 확인해 볼까요?`,
+  };
+};
+
+// 집사 캐릭터 + 요약 말풍선 UI 컴포넌트
 const HouseTodosSummary = ({
   total,
   completed,
   userName,
   myRemaining,
 }: HouseTodosSummaryProps) => {
+  const summaryCopy = getSummaryMessage({
+    total,
+    completed,
+    userName,
+    myRemaining,
+  });
+
   return (
     <div className="flex">
       <img src={dzipsaCharacter} className="h-15 w-15" />
 
       <ReportBubble showPointer>
-        <p>
-          우리집 할 일 총 {total}개 중 {completed}개 완료! ✅
-        </p>
-        <p>
-          {userName}님의 남은 {myRemaining}개의 할 일도 확인해 볼까요?
-        </p>
+        <p>{summaryCopy.title}</p>
+        <p>{summaryCopy.description}</p>
       </ReportBubble>
     </div>
   );
 };
 
+// 리스트 오른쪽에 공통적으로 표시되는 개수
 const CountIndicator = ({ count }: CountIndicatorProps) => {
   return (
     <div className="flex items-center gap-1 text-zinc-500">
