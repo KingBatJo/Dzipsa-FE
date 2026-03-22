@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 type HeaderProps = {
   title: string;
   showActions?: boolean;
-  variant?: 'default' | 'white';
+  variant?: 'default' | 'white' | 'transparent';
 };
 
 const Header = ({
@@ -20,7 +20,8 @@ const Header = ({
   return (
     <header
       className={cn(
-        'fixed top-0 z-10 w-full backdrop-blur-xl',
+        'fixed top-0 z-10 w-full',
+        variant !== 'transparent' && 'backdrop-blur-xl',
         variant === 'white' ? 'bg-white/60' : 'bg-transparent',
         MOBILE_MAX_WIDTH
       )}

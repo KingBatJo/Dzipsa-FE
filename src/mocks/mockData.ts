@@ -145,7 +145,6 @@ export const mockTodoList: Todo[] = [
     memo: '',
     completed: false,
   },
-
   // 예정
   {
     id: 6,
@@ -255,7 +254,6 @@ export const mockTodoList: Todo[] = [
     memo: '',
     completed: false,
   },
-
   // 지난
   {
     id: 9,
@@ -320,7 +318,6 @@ export const mockTodoList: Todo[] = [
     memo: '',
     completed: false,
   },
-
   // 완료 데이터
   {
     id: 32,
@@ -393,5 +390,96 @@ export const mockTodoList: Todo[] = [
     completed: true,
     completedAt: '2026-03-06T16:45:00',
     proofImageUrl: 'test',
+  },
+  // 추가: 2번 사용자 미완료 데이터
+  {
+    id: 39,
+    title: '싱크대 상판 닦기',
+    dueAt: '2026-03-06T14:00:00',
+    createdAt: '2026-03-06T14:00:00',
+    assigneeId: 2,
+    memo: '',
+    completed: false,
+  },
+  {
+    id: 40,
+    title: '전자레인지 내부 청소',
+    dueAt: '2026-03-06T19:30:00',
+    createdAt: '2026-03-06T19:30:00',
+    assigneeId: 2,
+    memo: '',
+    completed: false,
+  },
+  {
+    id: 41,
+    title: '식탁 의자 정리',
+    dueAt: '2026-03-06T17:00:00',
+    createdAt: '2026-03-06T17:00:00',
+    assigneeId: 2,
+    memo: '',
+    completed: false,
+  },
+  {
+    id: 42,
+    title: '베란다 바닥 쓸기',
+    dueAt: '2026-03-07T10:00:00',
+    createdAt: '2026-03-07T10:00:00',
+    assigneeId: 2,
+    memo: '',
+    completed: false,
+  },
+  {
+    id: 43,
+    title: '욕실 수건 교체',
+    dueAt: '2026-03-07T12:00:00',
+    createdAt: '2026-03-07T12:00:00',
+    assigneeId: 2,
+    memo: '',
+    completed: false,
+  },
+  {
+    id: 44,
+    title: '주방 행주 세탁',
+    dueAt: '2026-03-07T18:00:00',
+    createdAt: '2026-03-07T18:00:00',
+    assigneeId: 2,
+    memo: '',
+    completed: false,
+  },
+  {
+    id: 45,
+    title: '현관 먼지 제거',
+    dueAt: '2026-03-08T09:00:00',
+    createdAt: '2026-03-08T09:00:00',
+    assigneeId: 2,
+    memo: '',
+    completed: false,
+  },
+  {
+    id: 46,
+    title: '청소기 필터 점검',
+    dueAt: '2026-03-08T13:00:00',
+    createdAt: '2026-03-08T13:00:00',
+    assigneeId: 2,
+    memo: '',
+    completed: false,
+  },
+  {
+    id: 47,
+    title: '분리수거함 세척',
+    dueAt: '2026-03-09T11:00:00',
+    createdAt: '2026-03-09T11:00:00',
+    assigneeId: 2,
+    memo: '',
+    completed: false,
+  },
+  {
+    id: 48,
+    title: '싱크대 하부 정리',
+    dueAt: '2026-03-09T16:00:00',
+    createdAt: '2026-03-09T16:00:00',
+    assigneeId: 2,
+    memo: '',
+    completed: false,
   },
 ];

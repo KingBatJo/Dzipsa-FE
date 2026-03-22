@@ -125,17 +125,14 @@ const RulesPage = () => {
               규칙 목록을 불러오지 못했어요.
             </div>
           ) : rules.length === 0 ? (
-            <EmptyState
-              message={
-                <p>
-                  공동생활의 첫걸음!
-                  <br />
-                  우리 집만의 규칙을 만들고
-                  <br />
-                  평화로운 공동생활을 시작해보세요!
-                </p>
-              }
-            >
+            <EmptyState>
+              <p className="text-center text-sm font-semibold text-zinc-500">
+                공동생활의 첫걸음!
+                <br />
+                우리 집만의 규칙을 만들고
+                <br />
+                평화로운 공동생활을 시작해보세요!
+              </p>
               <Button
                 onClick={() => navigate('/rules/new')}
                 className="h-12 w-full rounded-[10px] bg-zinc-800"
@@ -144,7 +141,7 @@ const RulesPage = () => {
               </Button>
             </EmptyState>
           ) : (
-            <div className="flex flex-col gap-2">
+            <>
               {rules.map((rule) => {
                 const hasTimeRange = Boolean(rule.startTime && rule.endTime);
                 const hasRepeatDays =
@@ -168,17 +165,15 @@ const RulesPage = () => {
                     title={rule.title}
                     subtitle={
                       shouldShowSubtitle ? (
-                        <div className="flex items-center gap-1 border-l-2 border-zinc-400 text-xs font-medium text-zinc-400">
-                          <div className="flex flex-wrap items-center gap-1 pl-1">
-                            {hasTimeRange && <span>{timeLabel}</span>}
+                        <div className="flex flex-wrap items-center gap-1">
+                          {hasTimeRange && <span>{timeLabel}</span>}
 
-                            {hasRepeatDays && (
-                              <div className="flex gap-1">
-                                <Repeat2 className="h-[15px] w-[15px]" />
-                                <span>{repeatDaysLabel}</span>
-                              </div>
-                            )}
-                          </div>
+                          {hasRepeatDays && (
+                            <div className="flex gap-1">
+                              <Repeat2 className="h-[15px] w-[15px]" />
+                              <span>{repeatDaysLabel}</span>
+                            </div>
+                          )}
                         </div>
                       ) : undefined
                     }
@@ -211,7 +206,7 @@ const RulesPage = () => {
                   )}
                 </div>
               )}
-            </div>
+            </>
           )}
         </ListSection>
       </div>

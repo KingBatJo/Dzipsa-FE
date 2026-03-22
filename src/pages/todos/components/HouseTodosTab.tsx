@@ -1,4 +1,4 @@
-import {
+﻿import {
   MOCK_MY_ID,
   MOCK_TODAY,
   mockMembers,
@@ -6,17 +6,19 @@ import {
 } from '@/mocks/mockData';
 import { addLocalToTodos, getTodoSections } from '@/utils/todos';
 
-import { Card } from '@/components/ui/card';
 import { ChevronRight } from 'lucide-react';
+import ListItemCard from '@/components/common/ListItemCard';
+import ListSection from '@/components/common/ListSection';
+import ReportBubble from '@/components/common/ReportBubble';
 import UserAvatar from '@/components/common/UserAvatar';
 import dzipsaCharacter from '@/assets/dzipsa.svg';
 
 type HouseTodosSummaryProps = {
+  registeredTotal: number;
   total: number;
   completed: number;
   userName: string;
   myRemaining: number;
-  message: string;
 };
 
 type HouseTodosTabProps = {
@@ -24,65 +26,94 @@ type HouseTodosTabProps = {
   onMemberClick?: (memberId: number) => void;
 };
 
-type SummaryItemProps = {
-  title: string;
+type CountIndicatorProps = {
   count: number;
-  onClick?: () => void;
-  left?: React.ReactNode;
 };
 
-const getTodosSummaryMessage = (
-  remaining: number,
-  myRemaining: number,
-  userName: string
-) => {
-  if (remaining === 0) return '오늘 할 일이 없어요';
-  if (myRemaining === 0) return `오늘 할 일 중 ${userName}님의 할 일이 없어요`;
-
-  return `남은 할 일 중 ${userName}님의 할 일이 ${myRemaining}개 남있어요`;
+type SummaryMessage = {
+  title: string;
+  description: string;
 };
 
-const HouseTodosSummary = ({
+// 오늘 할 일 상태에 따른 요약 메시지 생성
+const getSummaryMessage = ({
+  registeredTotal,
   total,
   completed,
   userName,
   myRemaining,
-  message,
-}: HouseTodosSummaryProps) => {
+}: HouseTodosSummaryProps): SummaryMessage => {
   const remaining = Math.max(total - completed, 0);
 
-  return (
-    <Card className="relative mb-4 flex items-center rounded-md border-none bg-[#BDBDBD] py-[10px] pr-4">
-      <img src={dzipsaCharacter} className="h-20 w-20" />
+  if (registeredTotal === 0) {
+    return {
+      title: '아직 등록된 할 일이 없어요.',
+      description: '첫 할 일을 추가하면 집사가 정리해드려요!',
+    };
+  }
 
-      <div className="text-center text-xs font-semibold">
-        <p>
-          오늘 우리집 할 일 {total}개 중 벌써 {completed}개가 완료됐어요
-        </p>
-        <p>{getTodosSummaryMessage(remaining, myRemaining, userName)}</p>
-        <p>{message}</p>
-      </div>
-    </Card>
+  if (total === 0) {
+    return {
+      title: '오늘 우리집은 할 일이 없네요!',
+      description: `${userName}님, 여유로운 하루를 보내보세요 ☕`,
+    };
+  }
+
+  if (completed === total) {
+    return {
+      title: '오늘 우리집 할 일 모두 완료!',
+      description: `${userName}님, 오늘은 푹 쉬셔도 좋겠어요.`,
+    };
+  }
+
+  if (myRemaining === 0) {
+    return {
+      title: `${userName}님은 오늘 할 일을 다 하셨네요!`,
+      description: `구성원분들의 남은 ${remaining}개 할 일도 확인해 보세요`,
+    };
+  }
+
+  return {
+    title: `우리집 할 일 총 ${total}개 중 ${completed}개 완료! ✅`,
+    description: `${userName}님의 남은 ${myRemaining}개의 할 일도 확인해 볼까요?`,
+  };
+};
+
+// 집사 캐릭터 + 요약 말풍선 UI 컴포넌트
+const HouseTodosSummary = ({
+  registeredTotal,
+  total,
+  completed,
+  userName,
+  myRemaining,
+}: HouseTodosSummaryProps) => {
+  const summaryCopy = getSummaryMessage({
+    registeredTotal,
+    total,
+    completed,
+    userName,
+    myRemaining,
+  });
+
+  return (
+    <div className="flex">
+      <img src={dzipsaCharacter} className="h-15 w-15" />
+
+      <ReportBubble showPointer>
+        <p>{summaryCopy.title}</p>
+        <p>{summaryCopy.description}</p>
+      </ReportBubble>
+    </div>
   );
 };
 
-const SummaryItem = ({ title, count, onClick, left }: SummaryItemProps) => {
+// 리스트 오른쪽에 공통적으로 표시되는 개수
+const CountIndicator = ({ count }: CountIndicatorProps) => {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="hover:bg-secondary flex w-full items-center justify-between rounded-lg border border-[#DDDDDD] px-4 py-4"
-    >
-      <div className="flex items-center gap-2">
-        {left}
-        <span className="text-base font-semibold">{title}</span>
-      </div>
-
-      <div className="flex items-center gap-1">
-        <span className="text-sm font-semibold">{count}건</span>
-        <ChevronRight className="text-muted-foreground h-5 w-5" />
-      </div>
-    </button>
+    <div className="flex items-center gap-1 text-zinc-500">
+      <span className="text-base leading-[19px] font-semibold">{count}건</span>
+      <ChevronRight className="text-muted-foreground h-5 w-5" />
+    </div>
   );
 };
 
@@ -121,53 +152,48 @@ const HouseTodosTab = ({
       count: activeTodos.filter((todo) => todo.assigneeId === member.id).length,
     }));
 
+  const categoryCards: Array<{
+    title: string;
+    type: 'today' | 'missed' | 'all';
+    count: number;
+  }> = [
+    { title: '오늘 할 일', type: 'today', count: todayActiveTodos.length },
+    { title: '지연된 할 일', type: 'missed', count: missedTodos.length },
+    { title: '모든 할 일', type: 'all', count: activeTodos.length },
+  ];
+
   return (
-    <div className="space-y-5">
+    <div className="flex flex-col gap-7">
       <HouseTodosSummary
+        registeredTotal={todos.length}
         total={total}
         completed={completed}
         myRemaining={myRemaining}
         userName={myName}
-        message="우리집을 위해 힘내볼까요?"
       />
 
-      <section className="space-y-3">
-        <h2 className="text-base font-semibold">전체 할 일</h2>
-
-        <div className="space-y-2">
-          <SummaryItem
-            title="오늘 할 일"
-            count={todayActiveTodos.length}
-            onClick={() => onCategoryClick?.('today')}
+      <ListSection title="전체 할 일">
+        {categoryCards.map((card) => (
+          <ListItemCard
+            key={card.type}
+            title={card.title}
+            right={<CountIndicator count={card.count} />}
+            onClick={() => onCategoryClick?.(card.type)}
           />
-          <SummaryItem
-            title="지연된 할 일"
-            count={missedTodos.length}
-            onClick={() => onCategoryClick?.('missed')}
-          />
-          <SummaryItem
-            title="모든 할 일"
-            count={activeTodos.length}
-            onClick={() => onCategoryClick?.('all')}
-          />
-        </div>
-      </section>
+        ))}
+      </ListSection>
 
-      <section className="space-y-3">
-        <h2 className="text-base font-semibold">구성원 할 일</h2>
-
-        <div className="space-y-2">
-          {memberTodoCounts.map((member) => (
-            <SummaryItem
-              key={member.memberId}
-              title={member.name}
-              count={member.count}
-              left={<UserAvatar src={member.profileImage} />}
-              onClick={() => onMemberClick?.(member.memberId)}
-            />
-          ))}
-        </div>
-      </section>
+      <ListSection title="구성원 할 일">
+        {memberTodoCounts.map((member) => (
+          <ListItemCard
+            key={member.memberId}
+            title={member.name}
+            right={<CountIndicator count={member.count} />}
+            left={<UserAvatar size="xs" src={member.profileImage} />}
+            onClick={() => onMemberClick?.(member.memberId)}
+          />
+        ))}
+      </ListSection>
     </div>
   );
 };

@@ -22,7 +22,7 @@ const ListSection = ({
       </div>
 
       {/* 리스트 영역 */}
-      <div>{children}</div>
+      <div className="flex flex-col gap-2">{children}</div>
     </section>
   );
 };

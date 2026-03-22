@@ -1,4 +1,4 @@
-import {
+﻿import {
   MOCK_MY_ID,
   MOCK_TODAY,
   mockMembers,
@@ -14,14 +14,16 @@ import {
 import { useNavigate, useParams } from 'react-router-dom';
 
 import EmptyState from '@/components/common/EmptyState';
-import { HEADER_HEIGHT_CLASS } from '@/constants/layout';
 import ListItemCard from '@/components/common/ListItemCard';
+import { MOBILE_MAX_WIDTH } from '@/constants/layout';
 import TodoDetailSheet from '@/pages/todos/components/TodoDetailSheet';
 import type { TodoWithLocal } from '@/types/todo';
 import UserAvatar from '@/components/common/UserAvatar';
 import { X } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import dzipsaDefault from '@/assets/dzipsa/dzipsa-default.svg';
 import { formatDueDateLabel } from '@/utils/date';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type TodoListCategory = 'today' | 'missed' | 'all';
 
@@ -31,6 +33,10 @@ const TodoListPage = () => {
 
   const [selectedTodo, setSelectedTodo] = useState<TodoWithLocal | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, []);
 
   const todos = addLocalToTodos(mockTodoList);
   const { todayTodos, missedTodos } = getTodoSections(todos, MOCK_TODAY);
@@ -47,7 +53,7 @@ const TodoListPage = () => {
       const member = mockMembers.find((item) => item.id === assigneeId);
 
       return {
-        title: member ? `${member.name}님의 할 일` : '구성원 할 일',
+        title: member ? `${member.name}의 할 일` : '구성원 할 일',
         filteredTodos: activeTodos.filter(
           (todo) => todo.assigneeId === assigneeId
         ),
@@ -82,11 +88,14 @@ const TodoListPage = () => {
   };
 
   return (
-    <div>
+    <div className="min-h-dvh bg-zinc-100">
       <header
-        className={`relative flex items-center justify-center ${HEADER_HEIGHT_CLASS} px-4 py-4`}
+        className={cn(
+          'fixed top-0 z-10 flex w-full items-center justify-center p-[15px] backdrop-blur-xl',
+          MOBILE_MAX_WIDTH
+        )}
       >
-        <h1 className="text-lg font-semibold">{title}</h1>
+        <h1 className="text-lg leading-5 font-semibold">{title}</h1>
 
         <button
           type="button"
@@ -98,9 +107,20 @@ const TodoListPage = () => {
         </button>
       </header>
 
-      <div className="space-y-2 px-4 pt-1 pb-6">
+      <div className="flex flex-col gap-2 px-[15px] pt-[65px] pb-[15px]">
         {filteredTodos.length === 0 ? (
-          <EmptyState message="표시할 할 일이 없어요" />
+          <EmptyState
+            variant="minimal"
+            image={
+              <img
+                src={dzipsaDefault}
+                alt="집사 캐릭터"
+                className="h-26 w-26 object-contain"
+              />
+            }
+            title="우리 집 할 일이 아직 없어요 !"
+            description="함께 할 일을 하나 만들어보세요."
+          />
         ) : (
           filteredTodos.map((todo) => {
             const isDelayed = isTodoDelayed(todo, MOCK_TODAY);
@@ -109,18 +129,15 @@ const TodoListPage = () => {
               <ListItemCard
                 key={todo.id}
                 title={todo.title}
-                subtitle={
-                  isDelayed
-                    ? `D+${getDateDiffDays(todo.dueAt, MOCK_TODAY)}`
-                    : formatDueDateLabel(todo.dueAt)
-                }
-                className={isDelayed ? 'bg-destructive/10' : undefined}
+                subtitle={formatDueDateLabel(todo.dueAt)}
                 right={
                   <UserAvatar
                     src={membersById.get(todo.assigneeId)?.profileImage}
                   />
                 }
                 onClick={() => handleTodoClick(todo)}
+                isDelayed={isDelayed}
+                badge={`D+${getDateDiffDays(todo.dueAt, MOCK_TODAY)}`}
               />
             );
           })
