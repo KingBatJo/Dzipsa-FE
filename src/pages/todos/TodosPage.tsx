@@ -92,6 +92,12 @@ const TodosPage = () => {
         </div>
       </Tabs>
 
+      {/* 탭바 그라데이션 */}
+      <div
+        aria-hidden
+        className={`pointer-events-none fixed bottom-0 left-1/2 z-7 h-53 w-full -translate-x-1/2 bg-[linear-gradient(180deg,rgba(244,244,245,0)_6%,#F4F4F5_67.886%)] blur-[2px] ${MOBILE_MAX_WIDTH}`}
+      />
+
       {/* 할일 추가 플로팅 버튼 */}
       <div
         className={`pointer-events-none fixed bottom-20 left-1/2 z-10 w-full -translate-x-1/2 p-4 ${MOBILE_MAX_WIDTH}`}
