@@ -1,5 +1,4 @@
 import type {
-  GetRulesParams,
   RuleDetailResponse,
   RuleId,
   RuleListItemResponse,
@@ -13,17 +12,24 @@ import {
   getRules,
   updateRule,
 } from '@/api/rule/rule.api';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
 
+import { DEFAULT_RULE_LIST_SIZE } from '@/constants/rule';
 import { queryClient } from '@/lib/queryClient';
 import { queryKeys } from '@/lib/queryKeys';
 
 // Queries
-// 규칙 목록 조회
-export const useRulesQuery = (params?: GetRulesParams) => {
-  return useQuery({
-    queryKey: queryKeys.rule.list(params),
-    queryFn: () => getRules(params),
+// 규칙 목록 무한스크롤 조회
+export const useInfiniteRulesQuery = (size = DEFAULT_RULE_LIST_SIZE) => {
+  return useInfiniteQuery({
+    queryKey: [...queryKeys.rule.all, 'list', 'infinite', size] as const,
+    queryFn: ({ pageParam }) =>
+      getRules({ cursor: pageParam as number | undefined, size }),
+    initialPageParam: undefined as number | undefined,
+    getNextPageParam: (lastPage) => {
+      if (lastPage.length < size) return undefined;
+      return lastPage[lastPage.length - 1]?.id;
+    },
     staleTime: 1000 * 60 * 3,
   });
 };

@@ -6,8 +6,8 @@ import {
 } from '@/utils/ruleForm';
 import {
   useCreateRuleWarningMutation,
+  useInfiniteRulesQuery,
   useRecentRuleWarningsQuery,
-  useRulesQuery,
 } from '@/api/rule/rule.query';
 
 import { Button } from '@/components/ui/button';
@@ -27,7 +27,16 @@ import { useState } from 'react';
 const RulesPage = () => {
   const navigate = useNavigate();
 
-  const { data: rules = [], isLoading, isError } = useRulesQuery();
+  const {
+    data,
+    isLoading,
+    isError,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteRulesQuery();
+  const rules = data?.pages.flat() ?? [];
+
   const { data: recentWarnings = [] } = useRecentRuleWarningsQuery();
   const { mutate: createRuleWarning } = useCreateRuleWarningMutation();
 
@@ -173,6 +182,18 @@ const RulesPage = () => {
                   />
                 );
               })}
+
+              <button
+                onClick={() => fetchNextPage()}
+                disabled={!hasNextPage || isFetchingNextPage}
+                className="py-3 text-sm text-zinc-500"
+              >
+                {isFetchingNextPage
+                  ? '불러오는 중...'
+                  : hasNextPage
+                    ? '다음 규칙 불러오기'
+                    : '마지막 규칙입니다'}
+              </button>
             </div>
           )}
         </ListSection>
