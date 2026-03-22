@@ -51,6 +51,14 @@ const RuleDetailSheet = ({
     <span className="text-zinc-400">작성된 메모가 없습니다</span>
   );
 
+  const reportLabel = isLoading ? (
+    <span className="text-zinc-400">불러오는 중...</span>
+  ) : (rule?.totalWarningCount ?? 0) > 0 ? (
+    <span>누적 {rule?.totalWarningCount}회</span>
+  ) : (
+    <span className="text-zinc-400">규칙이 잘 지켜지고 있어요!</span>
+  );
+
   return (
     <BottomSheet
       open={open}
@@ -91,16 +99,7 @@ const RuleDetailSheet = ({
 
           <DetailRow label="메모" value={memoLabel} alignTop />
 
-          <DetailRow
-            label="집사 리포트"
-            value={
-              <span className="text-zinc-400">
-                {isError
-                  ? '규칙 정보를 불러오지 못했어요.'
-                  : '규칙이 잘 지켜지고 있어요 !'}
-              </span>
-            }
-          />
+          <DetailRow label="집사 리포트" value={reportLabel} />
         </div>
       </div>
 

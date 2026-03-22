@@ -21,6 +21,7 @@ export type RuleListItemResponse = {
 
 export type RuleDetailResponse = RuleListItemResponse & {
   notiEnabled: boolean;
+  totalWarningCount: number;
 };
 
 export type CreateRuleRequest = {
