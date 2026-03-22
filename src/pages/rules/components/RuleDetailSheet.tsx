@@ -86,7 +86,7 @@ const RuleDetailSheet = ({
           }}
           className="text-[#A3A3A3]"
         >
-          <PencilLine className="h-6 w-6" />
+          <PencilLine className="h-6 w-6 transition-colors hover:text-black" />
         </button>
       </div>
 
