@@ -42,8 +42,8 @@ const ListItemCard = ({
     <div className="flex min-w-0 flex-1 items-center gap-4">
       {left && <div className="shrink-0">{left}</div>}
 
-      <div className="min-w-0 flex-1 space-y-2">
-        <p className="text-base font-semibold">{title}</p>
+      <div className="flex min-w-0 flex-1 flex-col gap-2">
+        <p className="text-base leading-[19px] font-semibold">{title}</p>
 
         <div className="flex items-center gap-[9px]">
           {badge && (
