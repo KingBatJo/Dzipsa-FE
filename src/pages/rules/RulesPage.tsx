@@ -9,6 +9,7 @@ import {
   useInfiniteRulesQuery,
   useRecentRuleWarningsQuery,
 } from '@/api/rule/rule.query';
+import { useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import EmptyState from '@/components/common/EmptyState';
@@ -22,14 +23,13 @@ import RulesReportSection from '@/pages/rules/components/RulesReportSection';
 import { getApiErrorInfo } from '@/api/error';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
 
 const RulesPage = () => {
   const navigate = useNavigate();
 
   const {
     data,
-    isLoading,
+    isPending,
     isError,
     fetchNextPage,
     hasNextPage,
@@ -39,6 +39,7 @@ const RulesPage = () => {
 
   const { data: recentWarnings = [] } = useRecentRuleWarningsQuery();
   const { mutate: createRuleWarning } = useCreateRuleWarningMutation();
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
   const [selectedRuleId, setSelectedRuleId] = useState<RuleId | null>(null);
   const [notifyingRuleId, setNotifyingRuleId] = useState<RuleId | null>(null);
@@ -79,6 +80,29 @@ const RulesPage = () => {
     });
   };
 
+  useEffect(() => {
+    const target = loadMoreRef.current;
+    if (!target) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (!entry?.isIntersecting) return;
+        if (!hasNextPage || isFetchingNextPage || isPending) return;
+        fetchNextPage();
+      },
+      {
+        root: null,
+        rootMargin: '0px 0px 40px 0px',
+        threshold: 0,
+      }
+    );
+
+    observer.observe(target);
+
+    return () => observer.disconnect();
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage, isPending]);
+
   return (
     <div
       className="min-h-dvh bg-zinc-100 px-[15px] pb-[15px]"
@@ -104,7 +128,7 @@ const RulesPage = () => {
             </Button>
           }
         >
-          {isLoading ? (
+          {isPending ? (
             <div className="py-8 text-center text-sm text-zinc-500">
               규칙 목록을 불러오는 중...
             </div>
@@ -183,17 +207,22 @@ const RulesPage = () => {
                 );
               })}
 
-              <button
-                onClick={() => fetchNextPage()}
-                disabled={!hasNextPage || isFetchingNextPage}
-                className="py-3 text-sm text-zinc-500"
-              >
-                {isFetchingNextPage
-                  ? '불러오는 중...'
-                  : hasNextPage
-                    ? '다음 규칙 불러오기'
-                    : '마지막 규칙입니다'}
-              </button>
+              {rules.length > 0 && (
+                <div
+                  ref={loadMoreRef}
+                  className="flex h-12 items-center justify-center"
+                >
+                  {isFetchingNextPage ? (
+                    <div className="py-3 text-center text-sm text-zinc-500">
+                      집사가 더 가져오고 있어요...
+                    </div>
+                  ) : hasNextPage ? null : (
+                    <div className="py-3 text-center text-sm text-zinc-500">
+                      집사가 다 찾아왔어요!
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
         </ListSection>

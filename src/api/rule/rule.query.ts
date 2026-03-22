@@ -1,8 +1,4 @@
-import type {
-  RuleDetailResponse,
-  RuleId,
-  RuleListItemResponse,
-} from '@/api/rule/rule.types';
+import type { RuleDetailResponse, RuleId } from '@/api/rule/rule.types';
 import {
   createRule,
   createRuleWarning,
@@ -92,19 +88,11 @@ export const useDeleteRuleMutation = () => {
 export const useCreateRuleWarningMutation = () => {
   return useMutation({
     mutationFn: createRuleWarning,
-    onSuccess: (createdWarning, ruleId) => {
+    onSuccess: (_, ruleId) => {
       queryClient.setQueryData(
         queryKeys.rule.detail(ruleId),
         (prev: RuleDetailResponse | undefined) =>
           prev ? { ...prev, warningDisabled: true } : prev
-      );
-
-      queryClient.setQueriesData(
-        { queryKey: queryKeys.rule.all },
-        (prev: RuleListItemResponse[] | undefined) =>
-          prev?.map((rule) =>
-            rule.id === ruleId ? { ...rule, warningDisabled: true } : rule
-          ) ?? prev
       );
 
       queryClient.invalidateQueries({ queryKey: queryKeys.rule.all });
