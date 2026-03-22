@@ -31,7 +31,6 @@ type CompletedTodoFeedItemProps = CompletedTodoFeedCardProps & {
 };
 
 const CompletedTodoFeedCard = ({
-  userName,
   todoTitle,
   completedDate,
   proofImageUrl,
@@ -44,33 +43,47 @@ const CompletedTodoFeedCard = ({
       tabIndex={onClick ? 0 : undefined}
       onClick={onClick}
       className={cn(
-        'flex flex-1 flex-col gap-3 border-slate-100 p-4',
-        onClick && 'hover:cursor-pointer'
+        'mb-4.5 flex flex-1 flex-col gap-3 border-zinc-200 shadow-none',
+        onClick && 'hover:cursor-pointer',
+        proofImageUrl ? 'py-2 pr-2 pl-6' : 'px-6 py-4'
       )}
     >
-      <p className="text-sm font-medium">
-        {userName}님이 할 일을 완료하였습니다.
-      </p>
+      <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2">
+            <p className="text-primary text-base leading-[19px] font-semibold">
+              {todoTitle}
+            </p>
 
-      {proofImageUrl && (
-        // 임시 (추후 img로 교체)
-        <div className="bg-accent h-[150px] w-full rounded-xl"></div>
-      )}
+            {/* 완료된 날짜 */}
+            <div className="flex gap-1">
+              <div className="w-0.5 bg-zinc-400" />
+              <p className="text-xs font-medium text-zinc-400">
+                {completedDate}
+              </p>
+            </div>
+          </div>
 
-      <div className="flex gap-2">
-        <RoundedBadge className="bg-slate-100 text-slate-600">
-          {todoTitle}
-        </RoundedBadge>
+          {statusLabel === '지연 완료' && (
+            <RoundedBadge className="w-fit bg-red-400 font-bold text-red-50">
+              기한 후 완료
+            </RoundedBadge>
+          )}
+        </div>
 
-        {statusLabel === '지연 완료' && (
-          <RoundedBadge className="bg-[#FFEDD5] text-[#FF602C]">
-            지연 완료
-          </RoundedBadge>
-        )}
+        <div>
+          {proofImageUrl ? (
+            // 임시 (추후 img로 교체)
+            <div className="bg-accent h-25 w-25 rounded-xl"></div>
+          ) : (
+            statusLabel === '완료' && (
+              <RoundedBadge className="bg-neutral-400 font-bold text-neutral-200">
+                기한 내 완료
+              </RoundedBadge>
+            )
+          )}
+        </div>
       </div>
-
-      {/* 완료된 날짜 */}
-      <p className="text-sm font-normal text-slate-400">{completedDate}</p>
     </Card>
   );
 };
@@ -80,12 +93,20 @@ const CompletedTodoFeedItem = ({
   ...props
 }: CompletedTodoFeedItemProps) => {
   return (
-    <div className="flex gap-4">
-      <div className="pt-1">
+    <div className="flex flex-col">
+      <div className="flex items-center gap-3">
         <UserAvatar src={profileImage} />
+
+        <p className="text-primary text-sm font-semibold">
+          {props.userName}님이 할 일을 완료하였어요 !
+        </p>
       </div>
 
-      <CompletedTodoFeedCard {...props} />
+      <div className="flex gap-[23px] px-3 py-[5px]">
+        <div className="w-[1px] bg-zinc-300" />
+
+        <CompletedTodoFeedCard {...props} />
+      </div>
     </div>
   );
 };
@@ -96,8 +117,8 @@ const CompletedTodosTab = ({ onTodoClick }: CompletedTodosTabProps) => {
   const { completedTodos } = getTodoSections(todosWithLocal, MOCK_TODAY);
 
   return (
-    <ListSection title="Today">
-      <div className="flex flex-col gap-8 pt-3">
+    <ListSection title="TimeLine">
+      <div className="flex flex-col">
         {completedTodos.map((todo) => {
           const member = mockMembers.find((m) => m.id === todo.assigneeId);
           const statusLabel = getTodoStatusLabel(todo, MOCK_TODAY);
