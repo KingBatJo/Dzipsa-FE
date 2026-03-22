@@ -27,15 +27,11 @@ type TodoFormProps = {
 };
 
 const TodoForm = ({ mode, initialValues, onSubmit }: TodoFormProps) => {
-  const model = useTodoFormModel({
-    mode,
-    initialValues,
-    onSubmit,
-  });
+  const model = useTodoFormModel({ initialValues, onSubmit });
 
   return (
     <FormPageLayout
-      title={mode === 'create' ? '할 일 등록' : '할 일 수정'}
+      title={mode === 'create' ? '할 일 등록' : '할 일 편집'}
       onSubmit={model.form.submitForm}
       submitDisabled={!model.form.isValid}
     >
@@ -65,7 +61,7 @@ const TodoForm = ({ mode, initialValues, onSubmit }: TodoFormProps) => {
                       if (model.state.repeatValue.enabled) return;
                       model.actions.setIsDueDateDialogOpen(true);
                     }}
-                    className="bg-zinc-100 text-zinc-300 border-zinc-200 border text-lg font-semibold"
+                    className="border border-zinc-200 bg-zinc-100 text-lg font-semibold text-zinc-300"
                   >
                     {model.state.dueDate
                       ? `${formatDate(model.state.dueDate)} 까지`
@@ -114,17 +110,15 @@ const TodoForm = ({ mode, initialValues, onSubmit }: TodoFormProps) => {
                     })}
                   </div>
 
-                  {mode === 'create' && (
-                    <AppButton
-                      onClick={model.actions.handleRandomAssign}
-                      disabled={model.state.isRandomAssigneeLocked}
-                      className="from-primary bg-gradient-to-r to-zinc-500 text-sm font-medium text-white"
-                    >
-                      운명에 맡기기
-                    </AppButton>
-                  )}
+                  <AppButton
+                    onClick={model.actions.handleRandomAssign}
+                    disabled={model.state.isRandomAssigneeLocked}
+                    className="from-primary bg-gradient-to-r to-zinc-500 text-sm font-medium text-white"
+                  >
+                    운명에 맡기기
+                  </AppButton>
 
-                  {model.state.isRandomAssigneeLocked && mode === 'create' && (
+                  {model.state.isRandomAssigneeLocked && (
                     <p className="text-destructive/50 text-xs font-medium">
                       랜덤 배정 시 반복 설정은 사용할 수 없어요.
                     </p>
@@ -162,6 +156,15 @@ const TodoForm = ({ mode, initialValues, onSubmit }: TodoFormProps) => {
               </section>
             </div>
           </section>
+
+          {mode === 'edit' && (
+            <AppButton
+              onClick={() => {}}
+              className="bg-red-500 text-base font-semibold text-white"
+            >
+              할 일 삭제
+            </AppButton>
+          )}
         </div>
       </div>
 
@@ -175,7 +178,7 @@ const TodoForm = ({ mode, initialValues, onSubmit }: TodoFormProps) => {
         }}
       />
 
-      {model.state.randomAssignStage !== 'idle' && mode === 'create' && (
+      {model.state.randomAssignStage !== 'idle' && (
         <RandomAssignOverlay
           stage={model.state.randomAssignStage}
           candidateName={model.state.randomCandidate?.name}
