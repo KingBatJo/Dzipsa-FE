@@ -18,6 +18,7 @@ import {
 } from '@/pages/rules/hooks/useRuleFormModel';
 import type { CreateRuleRequest } from '@/api/rule/rule.types';
 import { formatKoreanTime } from '@/utils/ruleForm';
+import AppButton from '@/components/common/AppButton';
 
 type RuleFormProps = {
   mode: RuleFormMode;
@@ -149,13 +150,12 @@ const RuleForm = ({
           </section>
 
           {mode === 'edit' && (
-            <button
-              type="button"
+            <AppButton
               onClick={onDelete}
-              className="h-12 w-full rounded-[12px] bg-red-500 text-base font-semibold text-white"
+              className="bg-red-500 text-base font-semibold text-white"
             >
               규칙 삭제
-            </button>
+            </AppButton>
           )}
         </section>
       </div>

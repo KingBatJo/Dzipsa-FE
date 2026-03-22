@@ -33,7 +33,7 @@ const FormPageLayout = ({
     <div className="min-h-dvh bg-zinc-100">
       <header
         className={cn(
-          'fixed top-0 flex w-full items-center justify-between bg-white p-[15px] backdrop-blur-xl',
+          'fixed top-0 z-10 flex w-full items-center justify-between bg-white/60 p-[15px] backdrop-blur-xl',
           MOBILE_MAX_WIDTH,
           FORM_HEADER_HEIGHT_CLASS
         )}

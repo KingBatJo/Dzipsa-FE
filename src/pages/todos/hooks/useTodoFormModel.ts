@@ -1,4 +1,4 @@
-import { mockMembers } from '@/mocks/mockData';
+﻿import { mockMembers } from '@/mocks/mockData';
 import {
   todoCreateSchema,
   type TodoCreateValues,
@@ -9,17 +9,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-type TodoFormMode = 'create' | 'edit';
 type RandomAssignStage = 'idle' | 'loading' | 'result';
 
 type UseTodoFormModelParams = {
-  mode: TodoFormMode;
   initialValues?: Partial<TodoFormValues>;
   onSubmit: (values: TodoFormValues) => void;
 };
 
 export const useTodoFormModel = ({
-  mode,
   initialValues,
   onSubmit,
 }: UseTodoFormModelParams) => {
@@ -70,8 +67,7 @@ export const useTodoFormModel = ({
   }, []);
 
   const handleRandomAssign = () => {
-    // 편집 화면에서는 랜덤 배정 사용하지 않음
-    if (mode === 'edit' || isRandomAssigneeLocked) return;
+    if (isRandomAssigneeLocked) return;
 
     if (randomAssignTimeoutRef.current) {
       window.clearTimeout(randomAssignTimeoutRef.current);
