@@ -162,7 +162,6 @@ const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
               onClick={() => onTodoClick?.(todo)}
             />
           ))}
-          )
         </ListSection>
       )}
     </div>
