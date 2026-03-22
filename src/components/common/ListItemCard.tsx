@@ -47,7 +47,7 @@ const ListItemCard = ({
 
         {(badge || subtitle) && (
           <div className="flex items-center gap-[9px]">
-            {badge && (
+            {isDelayed && badge && (
               <RoundedBadge className="bg-red-400 text-red-50">
                 {badge}
               </RoundedBadge>

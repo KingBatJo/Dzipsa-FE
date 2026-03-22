@@ -91,7 +91,7 @@ const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
   const visibleTodayTodos = todayTodos.filter((todo) => !todo.completed);
 
   return (
-    <div className="space-y-8">
+    <div className="flex flex-col gap-7">
       {missedTodos.length > 0 && (
         <ListSection title="놓친 할 일이 있어요 !">
           {missedTodos.map((todo) => {
