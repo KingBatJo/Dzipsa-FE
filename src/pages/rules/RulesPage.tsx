@@ -9,7 +9,7 @@ import {
   useInfiniteRulesQuery,
   useRecentRuleWarningsQuery,
 } from '@/api/rule/rule.query';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import EmptyState from '@/components/common/EmptyState';
@@ -21,6 +21,7 @@ import type { RuleId } from '@/api/rule/rule.types';
 import RuleNotifyButton from '@/pages/rules/components/RuleNotifyButton';
 import RulesReportSection from '@/pages/rules/components/RulesReportSection';
 import { getApiErrorInfo } from '@/api/error';
+import { useInfiniteScrollObserver } from '@/hooks/useInfiniteScrollObserver';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 
@@ -39,7 +40,13 @@ const RulesPage = () => {
 
   const { data: recentWarnings = [] } = useRecentRuleWarningsQuery();
   const { mutate: createRuleWarning } = useCreateRuleWarningMutation();
-  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  const loadMoreRef = useInfiniteScrollObserver<HTMLDivElement>({
+    hasNextPage,
+    isFetching: isFetchingNextPage || isPending,
+    onLoadMore: fetchNextPage,
+    rootMargin: '0px 0px 40px 0px',
+    threshold: 0,
+  });
 
   const [selectedRuleId, setSelectedRuleId] = useState<RuleId | null>(null);
   const [notifyingRuleId, setNotifyingRuleId] = useState<RuleId | null>(null);
@@ -79,29 +86,6 @@ const RulesPage = () => {
       },
     });
   };
-
-  useEffect(() => {
-    const target = loadMoreRef.current;
-    if (!target) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const [entry] = entries;
-        if (!entry?.isIntersecting) return;
-        if (!hasNextPage || isFetchingNextPage || isPending) return;
-        fetchNextPage();
-      },
-      {
-        root: null,
-        rootMargin: '0px 0px 40px 0px',
-        threshold: 0,
-      }
-    );
-
-    observer.observe(target);
-
-    return () => observer.disconnect();
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage, isPending]);
 
   return (
     <div
