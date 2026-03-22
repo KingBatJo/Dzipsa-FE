@@ -1,4 +1,8 @@
-import type { RuleDetailResponse, RuleId } from '@/api/rule/rule.types';
+import type {
+  RuleDetailResponse,
+  RuleId,
+  RuleListItemResponse,
+} from '@/api/rule/rule.types';
 import {
   createRule,
   createRuleWarning,
@@ -8,7 +12,12 @@ import {
   getRules,
   updateRule,
 } from '@/api/rule/rule.api';
-import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  type InfiniteData,
+} from '@tanstack/react-query';
 
 import { DEFAULT_RULE_LIST_SIZE } from '@/constants/rule';
 import { queryClient } from '@/lib/queryClient';
@@ -93,6 +102,22 @@ export const useCreateRuleWarningMutation = () => {
         queryKeys.rule.detail(ruleId),
         (prev: RuleDetailResponse | undefined) =>
           prev ? { ...prev, warningDisabled: true } : prev
+      );
+
+      queryClient.setQueriesData(
+        { queryKey: [...queryKeys.rule.all, 'list', 'infinite'] },
+        (prev: InfiniteData<RuleListItemResponse[]> | undefined) => {
+          if (!prev) return prev;
+
+          return {
+            ...prev,
+            pages: prev.pages.map((page) =>
+              page.map((rule) =>
+                rule.id === ruleId ? { ...rule, warningDisabled: true } : rule
+              )
+            ),
+          };
+        }
       );
 
       queryClient.invalidateQueries({ queryKey: queryKeys.rule.all });
