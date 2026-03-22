@@ -45,25 +45,27 @@ const ListItemCard = ({
       <div className="flex min-w-0 flex-1 flex-col gap-2">
         <p className="text-base leading-[19px] font-semibold">{title}</p>
 
-        <div className="flex items-center gap-[9px]">
-          {badge && (
-            <RoundedBadge className="bg-red-400 text-red-50">
-              {badge}
-            </RoundedBadge>
-          )}
-          {subtitle && (
-            <div
-              className={cn(
-                'border-l-2 pl-1 text-xs font-medium',
-                isDelayed
-                  ? 'border-red-400 font-semibold text-red-400'
-                  : 'border-zinc-400 text-zinc-400'
-              )}
-            >
-              {subtitle}
-            </div>
-          )}
-        </div>
+        {(badge || subtitle) && (
+          <div className="flex items-center gap-[9px]">
+            {badge && (
+              <RoundedBadge className="bg-red-400 text-red-50">
+                {badge}
+              </RoundedBadge>
+            )}
+            {subtitle && (
+              <div
+                className={cn(
+                  'border-l-2 pl-1 text-xs font-medium',
+                  isDelayed
+                    ? 'border-red-400 font-semibold text-red-400'
+                    : 'border-zinc-400 text-zinc-400'
+                )}
+              >
+                {subtitle}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
 

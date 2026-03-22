@@ -3,7 +3,7 @@ import type { CSSProperties, ReactNode } from 'react';
 type ReportBubbleProps = {
   children: ReactNode;
   showPointer?: boolean;
-  shadowStyle: CSSProperties;
+  shadowStyle?: CSSProperties;
 };
 
 const ReportBubble = ({
