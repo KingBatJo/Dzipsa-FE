@@ -1,4 +1,4 @@
-import type { TodoFormValues, TodoWithLocal } from '@/types/todo';
+﻿import type { TodoFormValues, TodoWithLocal } from '@/types/todo';
 import {
   createDefaultRepeatValue,
   toTodoRequestPayload,
@@ -41,8 +41,18 @@ const TodoEditPage = () => {
     navigate(-1);
   };
 
+  const handleDelete = () => {
+    console.log('할 일 삭제:', todo.id);
+    navigate(-1);
+  };
+
   return (
-    <TodoForm mode="edit" initialValues={initialValues} onSubmit={handleEdit} />
+    <TodoForm
+      mode="edit"
+      initialValues={initialValues}
+      onSubmit={handleEdit}
+      onDelete={handleDelete}
+    />
   );
 };
 

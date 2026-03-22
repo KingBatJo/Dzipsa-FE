@@ -8,6 +8,7 @@ import {
 } from '@/schemas/todoCreateSchema';
 
 import AppButton from '@/components/common/AppButton';
+import AppDialog from '@/components/common/AppDialog';
 import DateWheelDialog from '@/pages/todos/components/DateWheelDialog';
 import FormPageLayout from '@/components/form/FormPageLayout';
 import RandomAssignOverlay from '@/pages/todos/components/RandomAssignOverlay';
@@ -16,6 +17,7 @@ import type { TodoFormValues } from '@/types/todo';
 import { cn } from '@/lib/utils';
 import { formatDate } from '@/utils/date';
 import { mockMembers } from '@/mocks/mockData';
+import { useState } from 'react';
 import { useTodoFormModel } from '@/pages/todos/hooks/useTodoFormModel';
 
 type TodoFormMode = 'create' | 'edit';
@@ -24,10 +26,17 @@ type TodoFormProps = {
   mode: TodoFormMode;
   initialValues?: Partial<TodoFormValues>;
   onSubmit: (values: TodoFormValues) => void;
+  onDelete?: () => void;
 };
 
-const TodoForm = ({ mode, initialValues, onSubmit }: TodoFormProps) => {
+const TodoForm = ({
+  mode,
+  initialValues,
+  onSubmit,
+  onDelete,
+}: TodoFormProps) => {
   const model = useTodoFormModel({ initialValues, onSubmit });
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   return (
     <FormPageLayout
@@ -159,7 +168,7 @@ const TodoForm = ({ mode, initialValues, onSubmit }: TodoFormProps) => {
 
           {mode === 'edit' && (
             <AppButton
-              onClick={() => {}}
+              onClick={() => setIsDeleteDialogOpen(true)}
               className="bg-red-500 text-base font-semibold text-white"
             >
               할 일 삭제
@@ -186,6 +195,38 @@ const TodoForm = ({ mode, initialValues, onSubmit }: TodoFormProps) => {
           onConfirm={model.actions.handleConfirmRandomAssignee}
         />
       )}
+
+      <AppDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        title="할 일 삭제 확인"
+        contentClassName="w-[300px] p-4 pt-8 pb-4"
+      >
+        <div className="flex flex-col items-center gap-10">
+          <h2 className="text-center text-base font-semibold text-black">
+            할 일을 삭제하시겠습니까?
+          </h2>
+
+          <div className="flex w-full items-center justify-between">
+            <AppButton
+              onClick={() => setIsDeleteDialogOpen(false)}
+              className="w-32 border border-zinc-800 text-zinc-800"
+            >
+              취소
+            </AppButton>
+
+            <AppButton
+              onClick={() => {
+                setIsDeleteDialogOpen(false);
+                onDelete?.();
+              }}
+              className="w-32 bg-zinc-800 text-zinc-100"
+            >
+              확인
+            </AppButton>
+          </div>
+        </div>
+      </AppDialog>
     </FormPageLayout>
   );
 };
