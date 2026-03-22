@@ -144,7 +144,7 @@ const RulesPage = () => {
               </Button>
             </EmptyState>
           ) : (
-            <div className="flex flex-col gap-2">
+            <>
               {rules.map((rule) => {
                 const hasTimeRange = Boolean(rule.startTime && rule.endTime);
                 const hasRepeatDays =
@@ -168,17 +168,15 @@ const RulesPage = () => {
                     title={rule.title}
                     subtitle={
                       shouldShowSubtitle ? (
-                        <div className="flex items-center gap-1 border-l-2 border-zinc-400 text-xs font-medium text-zinc-400">
-                          <div className="flex flex-wrap items-center gap-1 pl-1">
-                            {hasTimeRange && <span>{timeLabel}</span>}
+                        <div className="flex flex-wrap items-center gap-1">
+                          {hasTimeRange && <span>{timeLabel}</span>}
 
-                            {hasRepeatDays && (
-                              <div className="flex gap-1">
-                                <Repeat2 className="h-[15px] w-[15px]" />
-                                <span>{repeatDaysLabel}</span>
-                              </div>
-                            )}
-                          </div>
+                          {hasRepeatDays && (
+                            <div className="flex gap-1">
+                              <Repeat2 className="h-[15px] w-[15px]" />
+                              <span>{repeatDaysLabel}</span>
+                            </div>
+                          )}
                         </div>
                       ) : undefined
                     }
@@ -211,7 +209,7 @@ const RulesPage = () => {
                   )}
                 </div>
               )}
-            </div>
+            </>
           )}
         </ListSection>
       </div>

@@ -15,7 +15,7 @@ const AppLayout = () => {
     pathname === `/todos/${TODO_TABS.COMPLETED}`;
 
   const getHeaderTitle = () => {
-    if (pathname.startsWith('/todos')) return '할 일 홈';
+    if (pathname.startsWith('/todos')) return '할 일';
     if (pathname.startsWith('/rules')) return '우리집 규칙';
     return 'Dzipsa';
   };
@@ -25,7 +25,9 @@ const AppLayout = () => {
       <Header
         title={getHeaderTitle()}
         showActions={isHomePage}
-        variant={isTodosTabsPage ? 'transparent' : isTodoPage ? 'white' : 'default'}
+        variant={
+          isTodosTabsPage ? 'transparent' : isTodoPage ? 'white' : 'default'
+        }
       />
 
       <main

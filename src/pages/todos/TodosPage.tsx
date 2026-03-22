@@ -70,7 +70,7 @@ const TodosPage = () => {
           ))}
         </TabsList>
 
-        <div className="p-4 pt-2">
+        <div className="px-[15px] pt-7.5 pb-24">
           <TabsContent value={TODO_TABS.MY}>
             <MyTodosTab onTodoClick={handleTodoClick} />
           </TabsContent>
