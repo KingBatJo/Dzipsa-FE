@@ -90,6 +90,11 @@ export const useRuleFormModel = ({
         next.timeSettingEnabled = true;
       }
 
+      // 시간 설정 off -> 알림도 off
+      if (key === 'timeSettingEnabled' && !checked) {
+        next.notiEnabled = false;
+      }
+
       return next;
     });
   };
