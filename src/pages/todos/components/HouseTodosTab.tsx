@@ -177,7 +177,7 @@ const HouseTodosTab = ({
             key={member.memberId}
             title={member.name}
             right={<CountIndicator count={member.count} />}
-            left={<UserAvatar src={member.profileImage} />}
+            left={<UserAvatar size="xs" src={member.profileImage} />}
             onClick={() => onMemberClick?.(member.memberId)}
           />
         ))}

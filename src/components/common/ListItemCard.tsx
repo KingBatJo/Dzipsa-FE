@@ -39,7 +39,7 @@ const ListItemCard = ({
       className
     )}
   >
-    <div className="flex min-w-0 flex-1 items-center gap-4">
+    <div className="flex min-w-0 flex-1 items-center gap-2">
       {left && <div className="shrink-0">{left}</div>}
 
       <div className="flex min-w-0 flex-1 flex-col gap-2">
