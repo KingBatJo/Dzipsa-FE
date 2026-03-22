@@ -1,6 +1,7 @@
 import { HEADER_HEIGHT, MOBILE_MAX_WIDTH } from '@/constants/layout';
 import { MOCK_MY_ID, mockMembers } from '@/mocks/mockData';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
@@ -11,7 +12,6 @@ import { TODO_TABS } from '@/constants/todos';
 import TodoDetailSheet from '@/pages/todos/components/TodoDetailSheet';
 import type { TodoWithLocal } from '@/types/todo';
 import { cn } from '@/lib/utils';
-import { useState } from 'react';
 
 const TABS = [
   { value: TODO_TABS.MY, label: '나의 할 일' },
@@ -41,6 +41,10 @@ const TodosPage = () => {
     setDetailOpen(open);
     if (!open) setSelectedTodo(null);
   };
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+  }, [tab]);
 
   return (
     <div>
