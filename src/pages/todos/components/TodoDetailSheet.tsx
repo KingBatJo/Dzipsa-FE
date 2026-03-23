@@ -167,7 +167,10 @@ const TodoDetailSheet = ({
               {viewState.isCompleted &&
                 !viewState.hasProofImage &&
                 viewState.canAddProofImage && (
-                  <AppButton className="flex-1 bg-black text-white">
+                  <AppButton
+                    className="flex-1 bg-black text-white"
+                    onClick={handleOpenCompleteSheet}
+                  >
                     인증 사진 추가
                   </AppButton>
                 )}
