@@ -1,4 +1,6 @@
 import type {
+  CompleteTodoParams,
+  CompleteTodoResponse,
   CreateTodoRequest,
   CreateTodoResponse,
   GetMyMissedTodosParams,
@@ -90,4 +92,22 @@ export const updateTodo = async (
     payload
   );
   return data;
+};
+
+// 할 일 완료
+export const completeTodo = async ({
+  instanceId,
+  image,
+}: CompleteTodoParams): Promise<CompleteTodoResponse> => {
+  const formData = new FormData();
+
+  // 사진 있는 경우만 append (없는 경우 key 생략)
+  if (image) {
+    formData.append('image', image);
+  }
+
+  await apiClient.patch(
+    `/api/todos/instances/${instanceId}/complete`,
+    formData
+  );
 };

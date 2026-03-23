@@ -108,3 +108,11 @@ export type UpdateTodoParams = {
   todoId: TodoId;
   payload: UpdateTodoRequest;
 };
+
+// 할 일 완료
+export type CompleteTodoParams = {
+  instanceId: TodoInstanceId;
+  image?: File | null;
+};
+
+export type CompleteTodoResponse = void;

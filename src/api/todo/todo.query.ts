@@ -3,6 +3,7 @@ import type {
   TodoInstanceId,
 } from '@/api/todo/todo.types';
 import {
+  completeTodo,
   createTodo,
   getMyMissedTodos,
   getMyTodayTodos,
@@ -76,6 +77,19 @@ export const useUpdateTodoMutation = () => {
     mutationFn: updateTodo,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.todo.all });
+    },
+  });
+};
+
+// 할 일 완료
+export const useCompleteTodoMutation = () => {
+  return useMutation({
+    mutationFn: completeTodo,
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.todo.all });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.todo.detail(variables.instanceId),
+      });
     },
   });
 };
