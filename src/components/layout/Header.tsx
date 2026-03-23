@@ -1,13 +1,12 @@
 import { HEADER_HEIGHT_CLASS, MOBILE_MAX_WIDTH } from '@/constants/layout';
 
-import Bell from '@/assets/icon/bell.svg';
 import { Link } from 'react-router-dom';
-import { PROFILE_IMAGE } from '@/mocks/mockData';
-import UserAvatar from '@/components/common/UserAvatar';
+import Mypage from '@/assets/icon/mypage.svg';
+import NotiDefault from '@/assets/icon/noti-default.svg';
 import { cn } from '@/lib/utils';
 
 type HeaderProps = {
-  title: string;
+  title: React.ReactNode;
   showActions?: boolean;
   variant?: 'default' | 'white' | 'transparent';
 };
@@ -32,18 +31,20 @@ const Header = ({
         <h1 className="text-[28px] font-semibold text-zinc-900">{title}</h1>
 
         {showActions && (
-          <div className="flex items-center gap-2">
-            {/* 알림 */}
+          <div className="flex items-center gap-[9px]">
             <Link to="/notifications" aria-label="알림">
-              <img src={Bell} alt="알림" className="h-8 w-8 hover:scale-105" />
+              <img
+                src={NotiDefault}
+                alt="알림"
+                className="h-8 w-8 transition-all hover:scale-105"
+              />
             </Link>
 
-            {/* 프로필 */}
             <Link to="/mypage" aria-label="마이페이지">
-              <UserAvatar
-                src={PROFILE_IMAGE}
-                size="md"
-                className="transition-transform hover:scale-105"
+              <img
+                src={Mypage}
+                alt="마이페이지"
+                className="h-8 w-8 transition-all hover:scale-105"
               />
             </Link>
           </div>
