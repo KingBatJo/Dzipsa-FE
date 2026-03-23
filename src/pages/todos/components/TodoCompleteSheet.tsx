@@ -1,4 +1,4 @@
-import { Camera, ImagePlus, Images } from 'lucide-react';
+import { Camera, ImagePlus, Images, Minus } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 import AppButton from '@/components/common/AppButton';
@@ -82,7 +82,7 @@ const TodoCompleteSheet = ({
       </div>
 
       <div className="px-5">
-        <div className="flex h-50 items-center justify-center overflow-hidden rounded-[24px] bg-zinc-200">
+        <div className="relative flex h-50 items-center justify-center overflow-hidden rounded-[24px] bg-zinc-200">
           {previewUrl ? (
             <img
               src={previewUrl}
@@ -99,6 +99,20 @@ const TodoCompleteSheet = ({
                 JPG((jpeg)), PNG, webp 파일만 가능 (최대 10MB)
               </p>
             </div>
+          )}
+
+          {previewUrl && (
+            <button
+              type="button"
+              aria-label="첨부한 사진 제거"
+              onClick={() => {
+                setSelectedFile(undefined);
+                setErrorMessage('');
+              }}
+              className="absolute top-[15px] right-[14px] flex size-6 items-center justify-center rounded-[12px] bg-zinc-100 shadow-[0px_1px_6px_0px_rgba(0,0,0,0.25)]"
+            >
+              <Minus className="h-4 w-4 text-zinc-600" />
+            </button>
           )}
         </div>
 
@@ -138,7 +152,7 @@ const TodoCompleteSheet = ({
           className="bg-black text-white"
           onClick={() => onConfirmComplete?.(selectedFile)}
         >
-          완료 하기
+          {selectedFile ? '등록 하기' : '완료 하기'}
         </AppButton>
       </div>
 
