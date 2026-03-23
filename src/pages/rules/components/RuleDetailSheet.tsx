@@ -60,11 +60,7 @@ const RuleDetailSheet = ({
   );
 
   return (
-    <BottomSheet
-      open={open}
-      onOpenChange={onOpenChange}
-      className="min-h-[442px] rounded-t-[24px] [&>div:first-child]:my-[10px] [&>div:first-child]:h-[5px] [&>div:first-child]:w-20 [&>div:first-child]:rounded-[5px] [&>div:first-child]:bg-zinc-400"
-    >
+    <BottomSheet open={open} onOpenChange={onOpenChange}>
       <div className="flex items-center justify-between px-5 pt-8 pb-[15px]">
         <h2 className="text-xl font-semibold text-black">
           {isLoading ? '불러오는 중...' : (rule?.title ?? '-')}
