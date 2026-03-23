@@ -2,9 +2,9 @@ import AppButton from '@/components/common/AppButton';
 import { MOBILE_MAX_WIDTH } from '@/constants/layout';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import randomComplete from '@/assets/random/random-complete.svg';
-import randomCompleteBackground from '@/assets/random/random-complete-background.svg';
-import randomLoading from '@/assets/random/random-loading.svg';
+import randomComplete from '@/assets/random/random-complete.png';
+import randomCompleteBackground from '@/assets/random/random-complete-background.png';
+import randomLoading from '@/assets/random/random-loading.png';
 
 export type RandomAssignStage = 'loading' | 'result';
 
