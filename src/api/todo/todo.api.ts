@@ -1,4 +1,6 @@
 import type {
+  CreateTodoRequest,
+  CreateTodoResponse,
   GetMyMissedTodosParams,
   GetMyMissedTodosResponse,
   GetMyTodayTodosParams,
@@ -61,6 +63,17 @@ export const getTodoDetail = async (
 ): Promise<TodoDetailResponse> => {
   const { data } = await apiClient.get<TodoDetailResponse>(
     `/api/todos/instances/${instanceId}`
+  );
+  return data;
+};
+
+// 할 일 등록
+export const createTodo = async (
+  payload: CreateTodoRequest
+): Promise<CreateTodoResponse> => {
+  const { data } = await apiClient.post<CreateTodoResponse>(
+    '/api/todos',
+    payload
   );
   return data;
 };
