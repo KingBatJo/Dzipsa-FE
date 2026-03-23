@@ -5,6 +5,7 @@ import type {
 import {
   completeTodo,
   createTodo,
+  deleteTodoImage,
   getMyMissedTodos,
   getMyTodayTodos,
   getMyTodosAll,
@@ -85,6 +86,19 @@ export const useUpdateTodoMutation = () => {
 export const useCompleteTodoMutation = () => {
   return useMutation({
     mutationFn: completeTodo,
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.todo.all });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.todo.detail(variables.instanceId),
+      });
+    },
+  });
+};
+
+// 할 일 인증샷 삭제
+export const useDeleteTodoImageMutation = () => {
+  return useMutation({
+    mutationFn: deleteTodoImage,
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.todo.all });
       queryClient.invalidateQueries({

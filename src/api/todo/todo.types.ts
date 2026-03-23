@@ -116,3 +116,10 @@ export type CompleteTodoParams = {
 };
 
 export type CompleteTodoResponse = void;
+
+// 할 일 인증샷 삭제
+export type DeleteTodoImageParams = {
+  instanceId: TodoInstanceId;
+};
+
+export type DeleteTodoImageResponse = void;

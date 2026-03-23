@@ -3,6 +3,8 @@ import type {
   CompleteTodoResponse,
   CreateTodoRequest,
   CreateTodoResponse,
+  DeleteTodoImageParams,
+  DeleteTodoImageResponse,
   GetMyMissedTodosParams,
   GetMyMissedTodosResponse,
   GetMyTodayTodosParams,
@@ -110,4 +112,11 @@ export const completeTodo = async ({
     `/api/todos/instances/${instanceId}/complete`,
     formData
   );
+};
+
+// 할 일 인증샷 삭제
+export const deleteTodoImage = async ({
+  instanceId,
+}: DeleteTodoImageParams): Promise<DeleteTodoImageResponse> => {
+  await apiClient.delete(`/api/todos/instances/${instanceId}/image`);
 };
