@@ -4,6 +4,7 @@ import type {
   TodoPageParams,
 } from '@/api/todo/todo.types';
 import type { GetRulesParams, RuleId } from '@/api/rule/rule.types';
+import type { GetRoomMembersParams } from '@/api/room/room.types';
 
 import { DEFAULT_RULE_LIST_SIZE } from '@/constants/rule';
 import { DEFAULT_TODO_PAGE_SIZE } from '@/constants/todos';
@@ -27,6 +28,10 @@ const normalizeMyTodosCursorParams = (params?: MyTodosCursorParams) => ({
   upcomingCursor: params?.upcomingCursor ?? null,
 });
 
+const normalizeRoomMembersParams = (params?: GetRoomMembersParams) => ({
+  excludeMe: params?.excludeMe ?? null,
+});
+
 export const queryKeys = {
   auth: {
     me: ['auth', 'me'] as const,
@@ -34,6 +39,8 @@ export const queryKeys = {
   room: {
     myRoom: ['room', 'myRoom'] as const,
     invitationCode: ['room', 'invitationCode'] as const,
+    members: (params?: GetRoomMembersParams) =>
+      ['room', 'members', normalizeRoomMembersParams(params)] as const,
   },
   rule: {
     all: ['rule'] as const,

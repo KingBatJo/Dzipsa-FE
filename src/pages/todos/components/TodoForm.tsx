@@ -17,10 +17,10 @@ import RepeatSection from '@/pages/todos/components/RepeatSection';
 import type { TodoFormValues } from '@/types/todo';
 import { cn } from '@/lib/utils';
 import { formatDate } from '@/utils/date';
-import { mockMembers } from '@/mocks/mockData';
 import randomComplete from '@/assets/random/random-complete.png';
 import randomCompleteBackground from '@/assets/random/random-complete-background.png';
 import randomLoading from '@/assets/random/random-loading.png';
+import { useRoomMembersQuery } from '@/api/room/room.query';
 import { useTodoFormModel } from '@/pages/todos/hooks/useTodoFormModel';
 
 type TodoFormMode = 'create' | 'edit';
@@ -30,6 +30,7 @@ type TodoFormProps = {
   initialValues?: Partial<TodoFormValues>;
   onSubmit: (values: TodoFormValues) => void;
   onDelete?: () => void;
+  isSubmitting?: boolean;
 };
 
 const RANDOM_ASSIGN_ASSETS = [
@@ -43,8 +44,15 @@ const TodoForm = ({
   initialValues,
   onSubmit,
   onDelete,
+  isSubmitting,
 }: TodoFormProps) => {
-  const model = useTodoFormModel({ initialValues, onSubmit });
+  const { data: roomMembers = [] } = useRoomMembersQuery();
+  const members = roomMembers.map((member) => ({
+    id: member.id,
+    name: member.nickname,
+    profileImageUrl: member.profileImageUrl,
+  }));
+  const model = useTodoFormModel({ initialValues, onSubmit, members });
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   // 이미지 preload
@@ -60,7 +68,7 @@ const TodoForm = ({
     <FormPageLayout
       title={mode === 'create' ? '할 일 등록' : '할 일 편집'}
       onSubmit={model.form.submitForm}
-      submitDisabled={!model.form.isValid}
+      submitDisabled={!model.form.isValid || isSubmitting}
     >
       <div className="bg-zinc-100 pb-6">
         <div className="bg-white/60 px-[15px] pt-[15px] pb-[30px] backdrop-blur-xl">
@@ -106,7 +114,7 @@ const TodoForm = ({
 
                 <div className="flex flex-col gap-[10px]">
                   <div className="grid grid-cols-3 gap-2">
-                    {mockMembers.map((member) => {
+                    {members.map((member) => {
                       const isSelected =
                         model.state.selectedAssigneeId === member.id;
                       const isRandomAssigned =

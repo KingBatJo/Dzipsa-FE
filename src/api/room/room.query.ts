@@ -2,6 +2,7 @@ import {
   createRoom,
   getInvitationCode,
   getMyRoom,
+  getRoomMembers,
   joinRoom,
   leaveRoom,
   reissueInvitationCode,
@@ -9,6 +10,7 @@ import {
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import type { MeResponse } from '@/api/auth/auth.types';
+import type { GetRoomMembersParams } from '@/api/room/room.types';
 import { queryClient } from '@/lib/queryClient';
 import { queryKeys } from '@/lib/queryKeys';
 
@@ -28,6 +30,15 @@ export const useInvitationCodeQuery = () => {
     queryKey: queryKeys.room.invitationCode,
     queryFn: getInvitationCode,
     staleTime: 1000 * 60,
+  });
+};
+
+// 방 구성원 조회
+export const useRoomMembersQuery = (params?: GetRoomMembersParams) => {
+  return useQuery({
+    queryKey: queryKeys.room.members(params),
+    queryFn: () => getRoomMembers(params),
+    staleTime: 1000 * 60 * 5,
   });
 };
 

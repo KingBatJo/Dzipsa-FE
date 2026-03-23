@@ -1,5 +1,5 @@
 import { HEADER_HEIGHT, MOBILE_MAX_WIDTH } from '@/constants/layout';
-import { MOCK_MY_ID, mockMembers } from '@/mocks/mockData';
+import type { TodoInstanceId } from '@/api/todo/todo.types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -10,7 +10,6 @@ import HouseTodosTab from '@/pages/todos/components/HouseTodosTab';
 import MyTodosTab from '@/pages/todos/components/MyTodosTab';
 import { TODO_TABS } from '@/constants/todos';
 import TodoDetailSheet from '@/pages/todos/components/TodoDetailSheet';
-import type { TodoWithLocal } from '@/types/todo';
 import { cn } from '@/lib/utils';
 
 const TABS = [
@@ -25,21 +24,21 @@ const TodosPage = () => {
   const { tab } = useParams();
   const navigate = useNavigate();
 
-  const [selectedTodo, setSelectedTodo] = useState<TodoWithLocal | null>(null);
+  const [selectedInstanceId, setSelectedInstanceId] =
+    useState<TodoInstanceId | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
 
-  const selectedAssignee = selectedTodo
-    ? mockMembers.find((member) => member.id === selectedTodo.assigneeId)
-    : undefined;
+  const handleTodoClick = (todo: { id?: number; instanceId?: number }) => {
+    const id = todo.instanceId ?? todo.id;
+    if (id == null) return;
 
-  const handleTodoClick = (todo: TodoWithLocal) => {
-    setSelectedTodo(todo);
+    setSelectedInstanceId(id);
     setDetailOpen(true);
   };
 
   const handleDetailOpenChange = (open: boolean) => {
     setDetailOpen(open);
-    if (!open) setSelectedTodo(null);
+    if (!open) setSelectedInstanceId(null);
   };
 
   useEffect(() => {
@@ -120,10 +119,7 @@ const TodosPage = () => {
       <TodoDetailSheet
         open={detailOpen}
         onOpenChange={handleDetailOpenChange}
-        todo={selectedTodo}
-        myId={MOCK_MY_ID}
-        assigneeName={selectedAssignee?.name}
-        assigneeImage={selectedAssignee?.profileImage}
+        instanceId={selectedInstanceId}
       />
     </div>
   );

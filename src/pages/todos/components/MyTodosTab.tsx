@@ -1,23 +1,16 @@
-import { MOCK_MY_ID, MOCK_TODAY, mockTodoList } from '@/mocks/mockData';
-import {
-  addLocalToTodos,
-  getDateDiffDays,
-  getTodoSections,
-  isTodoDelayed,
-} from '@/utils/todos';
-
 import { Button } from '@/components/ui/button';
 import EmptyState from '@/components/common/EmptyState';
 import ListItemCard from '@/components/common/ListItemCard';
 import ListSection from '@/components/common/ListSection';
-import type { TodoWithLocal } from '@/types/todo';
+import type { MyTodoListItem } from '@/api/todo/todo.types';
 import { cn } from '@/lib/utils';
 import dzipsaCharacter from '@/assets/dzipsa.svg';
 import { formatDueDateLabel } from '@/utils/date';
+import { useMyTodosAllQuery } from '@/api/todo/todo.query';
 import { useNavigate } from 'react-router-dom';
 
 type MyTodosTabProps = {
-  onTodoClick?: (todo: TodoWithLocal) => void;
+  onTodoClick?: (todo: MyTodoListItem) => void;
 };
 
 type TodoCompleteButtonProps = {
@@ -76,44 +69,32 @@ const TodoCompleteButton = ({
 
 const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
   const navigate = useNavigate();
+  const { data } = useMyTodosAllQuery();
 
-  // 임시
-  const myId = MOCK_MY_ID;
-  const today = MOCK_TODAY;
-
-  const todos = addLocalToTodos(mockTodoList);
-
-  // 내 할 일만
-  const myTodos = todos.filter((todo) => todo.assigneeId === myId);
-
-  // 할 일 섹션 분류
-  const { todayTodos, missedTodos, upcomingTodos } = getTodoSections(
-    myTodos,
-    today
-  );
+  const missedTodos = data?.missedTodos.content ?? [];
+  const todayTodos = data?.todayTodos.content ?? [];
+  const upcomingTodos = data?.upcomingTodos.content ?? [];
 
   // 놓친 할 일 (미완료만 - 렌더링용)
-  const visibleTodayTodos = todayTodos.filter((todo) => !todo.completed);
+  const visibleTodayTodos = todayTodos.filter(
+    (todo) => todo.status !== 'COMPLETED'
+  );
 
   return (
     <div className="flex flex-col gap-7">
       {missedTodos.length > 0 && (
         <ListSection title="놓친 할 일이 있어요 !">
-          {missedTodos.map((todo) => {
-            const isDelayed = isTodoDelayed(todo, today);
-
-            return (
-              <ListItemCard
-                key={todo.id}
-                title={todo.title}
-                subtitle={formatDueDateLabel(todo.dueAt)}
-                right={<TodoCompleteButton isDelayed={isDelayed} />}
-                onClick={() => onTodoClick?.(todo)}
-                isDelayed={isDelayed}
-                badge={`D+${getDateDiffDays(todo.dueAt, today)}`}
-              />
-            );
-          })}
+          {missedTodos.map((todo) => (
+            <ListItemCard
+              key={todo.instanceId}
+              title={todo.title}
+              subtitle={formatDueDateLabel(todo.targetDate)}
+              right={<TodoCompleteButton isDelayed={todo.delayDays > 0} />}
+              onClick={() => onTodoClick?.(todo)}
+              isDelayed={todo.delayDays > 0}
+              badge={todo.delayDays > 0 ? `D+${todo.delayDays}` : undefined}
+            />
+          ))}
         </ListSection>
       )}
 
@@ -135,15 +116,15 @@ const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
               onClick={() => navigate('/todos/new')}
               className="h-12 w-full rounded-[10px] bg-zinc-800"
             >
-              첫 규칙 만들기
+              첫 할 일 만들기
             </Button>
           </EmptyState>
         ) : (
           visibleTodayTodos.map((todo) => (
             <ListItemCard
-              key={todo.id}
+              key={todo.instanceId}
               title={todo.title}
-              subtitle={formatDueDateLabel(todo.dueAt)}
+              subtitle={formatDueDateLabel(todo.targetDate)}
               right={<TodoCompleteButton />}
               onClick={() => onTodoClick?.(todo)}
             />
@@ -155,9 +136,9 @@ const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
         <ListSection title="예정된 할 일">
           {upcomingTodos.map((todo) => (
             <ListItemCard
-              key={todo.id}
+              key={todo.instanceId}
               title={todo.title}
-              subtitle={formatDueDateLabel(todo.dueAt)}
+              subtitle={formatDueDateLabel(todo.targetDate)}
               right={<TodoCompleteButton />}
               onClick={() => onTodoClick?.(todo)}
             />

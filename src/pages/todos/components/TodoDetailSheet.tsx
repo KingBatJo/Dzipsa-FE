@@ -1,16 +1,14 @@
-﻿import {
-  getTodoDetailViewState,
-  getTodoStatusLabel,
-  getTodoStatusSubLabel,
-} from '@/utils/todos';
+import {
+  useCompleteTodoMutation,
+  useTodoDetailQuery,
+} from '@/api/todo/todo.query';
+import { getProfileOptionById } from '@/api/room/room.utils';
 
 import AppButton from '@/components/common/AppButton';
 import BottomSheet from '@/components/common/BottomSheet';
-import { MOCK_TODAY } from '@/mocks/mockData';
 import { PencilLine } from 'lucide-react';
-import TodoCompleteSheet from '@/pages/todos/components/TodoCompleteSheet';
 import type { ReactNode } from 'react';
-import type { TodoWithLocal } from '@/types/todo';
+import TodoCompleteSheet from '@/pages/todos/components/TodoCompleteSheet';
 import UserAvatar from '@/components/common/UserAvatar';
 import { formatDueDateLabel } from '@/utils/date';
 import { useNavigate } from 'react-router-dom';
@@ -19,10 +17,7 @@ import { useState } from 'react';
 type TodoDetailSheetProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  todo: TodoWithLocal | null;
-  myId: number;
-  assigneeName?: string;
-  assigneeImage?: string;
+  instanceId: number | null;
 };
 
 export const DetailRow = ({
@@ -47,18 +42,36 @@ export const DetailRow = ({
 const TodoDetailSheet = ({
   open,
   onOpenChange,
-  todo,
-  myId,
-  assigneeName,
-  assigneeImage,
+  instanceId,
 }: TodoDetailSheetProps) => {
-  const viewState = todo ? getTodoDetailViewState(todo, myId) : null;
   const navigate = useNavigate();
   const [completeSheetOpen, setCompleteSheetOpen] = useState(false);
+
+  const { data: todoDetail } = useTodoDetailQuery(instanceId);
+  const { mutate: completeTodo, isPending: isCompleting } =
+    useCompleteTodoMutation();
+  const assigneeProfile = getProfileOptionById(todoDetail?.profileImageUrl);
+
+  const isCompleted = todoDetail?.status.includes('완료') ?? false;
+  const hasProofImage = Boolean(todoDetail?.imageUrl);
 
   const handleOpenCompleteSheet = () => {
     setCompleteSheetOpen(true);
     onOpenChange(false);
+  };
+
+  const handleConfirmComplete = (proofImageFile?: File) => {
+    if (instanceId == null) return;
+
+    completeTodo(
+      { instanceId, image: proofImageFile ?? null },
+      {
+        onSuccess: () => {
+          setCompleteSheetOpen(false);
+          onOpenChange(true);
+        },
+      }
+    );
   };
 
   return (
@@ -66,14 +79,29 @@ const TodoDetailSheet = ({
       <BottomSheet open={open} onOpenChange={onOpenChange}>
         <div className="flex items-center justify-between px-5 pt-8 pb-[15px]">
           <h2 className="text-xl font-semibold text-black">
-            {todo?.title ?? '-'}
+            {todoDetail?.title ?? '-'}
           </h2>
 
-          {viewState?.canEdit && (
+          {todoDetail?.owner && (
             <button
               type="button"
               onClick={() => {
-                navigate(`/todos/${todo?.id}/edit`, { state: { todo } });
+                if (!todoDetail) return;
+                navigate(`/todos/${todoDetail.instanceId}/edit`, {
+                  state: {
+                    todo: {
+                      id: todoDetail.instanceId,
+                      title: todoDetail.title,
+                      dueAt: `${todoDetail.targetDate}T00:00:00`,
+                      createdAt: `${todoDetail.targetDate}T00:00:00`,
+                      assigneeId: todoDetail.assigneeId,
+                      memo: todoDetail.memo ?? undefined,
+                      completed: isCompleted,
+                      proofImageUrl: todoDetail.imageUrl ?? undefined,
+                      local: { dueDate: todoDetail.targetDate },
+                    },
+                  },
+                });
               }}
               className="text-zinc-400"
             >
@@ -82,31 +110,39 @@ const TodoDetailSheet = ({
           )}
         </div>
 
-        {/* 스크롤 영역 */}
         <div className="min-h-0 flex-1 gap-8 overflow-y-auto p-5">
           <div className="flex flex-col gap-6">
             <DetailRow
               label="마감일"
-              value={todo ? formatDueDateLabel(todo.dueAt) : '-'}
+              value={
+                todoDetail ? formatDueDateLabel(todoDetail.targetDate) : '-'
+              }
             />
 
             <DetailRow
               label="담당자"
               value={
                 <span className="inline-flex items-center gap-1">
-                  <UserAvatar size="sm" src={assigneeImage} alt={assigneeName} />
-                  <span>{assigneeName ?? '-'}</span>
+                  <UserAvatar
+                    size="sm"
+                    src={assigneeProfile.imageUrl}
+                    alt={todoDetail?.assigneeNickname}
+                  />
+                  <span>{todoDetail?.assigneeNickname ?? '-'}</span>
                 </span>
               }
             />
 
-            <DetailRow label="반복" value="반복 없음" />
+            <DetailRow
+              label="반복"
+              value={todoDetail?.recurringInfo ?? '반복 없음'}
+            />
 
             <DetailRow
               label="메모"
               value={
-                todo?.memo ? (
-                  <span className="break-keep">{todo.memo}</span>
+                todoDetail?.memo ? (
+                  <span className="break-keep">{todoDetail.memo}</span>
                 ) : (
                   '-'
                 )
@@ -118,62 +154,59 @@ const TodoDetailSheet = ({
               label="상태"
               value={
                 <div className="flex flex-col items-end gap-1">
-                  <span>{todo ? getTodoStatusLabel(todo, MOCK_TODAY) : '-'}</span>
-
-                  {todo && (
-                    <span className="text-zinc-300">
-                      {getTodoStatusSubLabel(todo, MOCK_TODAY)}
-                    </span>
-                  )}
+                  <span>{todoDetail?.status === '진행' ? '진행중' : '-'}</span>
+                  <span className="text-zinc-300">
+                    {todoDetail?.status === '진행'
+                      ? ''
+                      : (todoDetail?.statusDetail ?? '')}
+                  </span>
                 </div>
               }
               alignTop
             />
 
             {/* 인증 사진 */}
-            {viewState?.isCompleted && todo?.proofImageUrl && (
+            {hasProofImage && (
               <div className="flex justify-end">
-                <div className="h-37.5 w-50 rounded-[20px] bg-zinc-200" />
+                <img
+                  src={todoDetail?.imageUrl ?? undefined}
+                  alt="인증 사진"
+                  className="h-37.5 w-50 rounded-[20px] object-cover"
+                />
               </div>
             )}
           </div>
         </div>
 
         {/* 하단 버튼 */}
-        {viewState?.isMine && (
+        {todoDetail?.owner && (
           <div className="flex items-center justify-between gap-1 p-5">
             <div className="flex flex-1 items-center gap-1">
-              {!viewState.isCompleted && viewState.canConfirmComplete && (
+              {!isCompleted && (
                 <AppButton
                   className="flex-1 bg-black text-white"
                   onClick={handleOpenCompleteSheet}
+                  disabled={isCompleting}
                 >
                   완료하기
                 </AppButton>
               )}
 
-              {viewState.isCompleted && viewState.canRevertToInProgress && (
-                <AppButton
-                  className={`flex-1 ${
-                    viewState.hasProofImage
-                      ? 'bg-black text-white'
-                      : 'border border-zinc-400'
-                  }`}
-                >
+              {isCompleted && (
+                <AppButton className="flex-1 border border-zinc-400" disabled>
                   진행 중으로 변경
                 </AppButton>
               )}
 
-              {viewState.isCompleted &&
-                !viewState.hasProofImage &&
-                viewState.canAddProofImage && (
-                  <AppButton
-                    className="flex-1 bg-black text-white"
-                    onClick={handleOpenCompleteSheet}
-                  >
-                    인증 사진 추가
-                  </AppButton>
-                )}
+              {isCompleted && !hasProofImage && (
+                <AppButton
+                  className="flex-1 bg-black text-white"
+                  onClick={handleOpenCompleteSheet}
+                  disabled={isCompleting}
+                >
+                  인증 사진 추가
+                </AppButton>
+              )}
             </div>
           </div>
         )}
@@ -182,9 +215,7 @@ const TodoDetailSheet = ({
       <TodoCompleteSheet
         open={completeSheetOpen}
         onOpenChange={setCompleteSheetOpen}
-        onConfirmComplete={() => {
-          setCompleteSheetOpen(false);
-        }}
+        onConfirmComplete={handleConfirmComplete}
       />
     </>
   );

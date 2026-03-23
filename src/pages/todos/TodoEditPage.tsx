@@ -1,21 +1,29 @@
-﻿import type { TodoFormValues, TodoWithLocal } from '@/types/todo';
-import {
+﻿import {
   createDefaultRepeatValue,
-  toTodoRequestPayload,
+  toCreateTodoPayload,
 } from '@/utils/todoForm';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import TodoForm from '@/pages/todos/components/TodoForm';
+import type { TodoFormValues } from '@/types/todo';
+import { toast } from 'sonner';
+import { useUpdateTodoMutation } from '@/api/todo/todo.query';
 
-type LocationState = {
-  todo?: TodoWithLocal;
+type EditTodoLocationState = {
+  todoId: number;
+  title: string;
+  memo: string | null;
+  targetDate: string | null;
+  assigneeId: number;
 };
 
 const TodoEditPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const todo = (location.state as LocationState | undefined)?.todo;
+  const { mutateAsync: updateTodo, isPending } = useUpdateTodoMutation();
+
+  const todo = location.state as EditTodoLocationState | undefined;
 
   if (!todo) {
     return (
@@ -28,21 +36,29 @@ const TodoEditPage = () => {
   const initialValues: Partial<TodoFormValues> = {
     title: todo.title,
     memo: todo.memo ?? '',
-    dueDate: todo.dueAt ? new Date(todo.dueAt) : null,
+    dueDate: todo.targetDate ? new Date(todo.targetDate) : null,
     assigneeId: todo.assigneeId,
     repeatValue: createDefaultRepeatValue(),
   };
 
-  const handleEdit = (values: TodoFormValues) => {
-    const submitData = toTodoRequestPayload(values);
+  const handleEdit = async (values: TodoFormValues) => {
+    const payload = toCreateTodoPayload(values);
 
-    console.log('할 일 수정:', todo.id, submitData);
+    try {
+      await updateTodo({
+        todoId: todo.todoId,
+        payload,
+      });
 
-    navigate(-1);
+      toast('할 일이 수정되었어요.');
+      navigate(-1);
+    } catch {
+      toast('할 일 수정에 실패했어요. 다시 시도해주세요.');
+    }
   };
 
   const handleDelete = () => {
-    console.log('할 일 삭제:', todo.id);
+    // TODO: delete mutation 연결
     navigate(-1);
   };
 
@@ -52,6 +68,7 @@ const TodoEditPage = () => {
       initialValues={initialValues}
       onSubmit={handleEdit}
       onDelete={handleDelete}
+      isSubmitting={isPending}
     />
   );
 };

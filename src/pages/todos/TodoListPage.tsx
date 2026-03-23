@@ -1,9 +1,4 @@
-ï»¿import {
-  MOCK_MY_ID,
-  MOCK_TODAY,
-  mockMembers,
-  mockTodoList,
-} from '@/mocks/mockData';
+import { MOCK_TODAY, mockMembers, mockTodoList } from '@/mocks/mockData';
 import {
   addLocalToTodos,
   getDateDiffDays,
@@ -31,7 +26,9 @@ const TodoListPage = () => {
   const navigate = useNavigate();
   const { type, memberId } = useParams();
 
-  const [selectedTodo, setSelectedTodo] = useState<TodoWithLocal | null>(null);
+  const [selectedInstanceId, setSelectedInstanceId] = useState<number | null>(
+    null
+  );
   const [detailOpen, setDetailOpen] = useState(false);
 
   useEffect(() => {
@@ -53,7 +50,7 @@ const TodoListPage = () => {
       const member = mockMembers.find((item) => item.id === assigneeId);
 
       return {
-        title: member ? `${member.name}ì˜ í•  ì¼` : 'êµ¬ì„±ì› í•  ì¼',
+        title: member ? `${member.name}ÀÇ ÇÒ ÀÏ` : '±¸¼º¿ø ÇÒ ÀÏ',
         filteredTodos: activeTodos.filter(
           (todo) => todo.assigneeId === assigneeId
         ),
@@ -62,29 +59,25 @@ const TodoListPage = () => {
 
     switch (type as TodoListCategory) {
       case 'today':
-        return { title: 'ì˜¤ëŠ˜ í•  ì¼', filteredTodos: todayActiveTodos };
+        return { title: '¿À´Ã ÇÒ ÀÏ', filteredTodos: todayActiveTodos };
       case 'missed':
-        return { title: 'ì§€ì—°ëœ í•  ì¼', filteredTodos: missedTodos };
+        return { title: 'Áö¿¬µÈ ÇÒ ÀÏ', filteredTodos: missedTodos };
       case 'all':
       default:
-        return { title: 'ëª¨ë“  í•  ì¼', filteredTodos: activeTodos };
+        return { title: '¸ðµç ÇÒ ÀÏ', filteredTodos: activeTodos };
     }
   };
 
   const { title, filteredTodos } = getTodoListData();
 
-  const selectedAssignee = selectedTodo
-    ? mockMembers.find((member) => member.id === selectedTodo.assigneeId)
-    : undefined;
-
   const handleTodoClick = (todo: TodoWithLocal) => {
-    setSelectedTodo(todo);
+    setSelectedInstanceId(todo.id);
     setDetailOpen(true);
   };
 
   const handleDetailOpenChange = (open: boolean) => {
     setDetailOpen(open);
-    if (!open) setSelectedTodo(null);
+    if (!open) setSelectedInstanceId(null);
   };
 
   return (
@@ -101,7 +94,7 @@ const TodoListPage = () => {
           type="button"
           onClick={() => navigate(-1)}
           className="absolute right-4"
-          aria-label="ë‹«ê¸°"
+          aria-label="´Ý±â"
         >
           <X className="h-6 w-6" />
         </button>
@@ -114,12 +107,12 @@ const TodoListPage = () => {
             image={
               <img
                 src={dzipsaDefault}
-                alt="ì§‘ì‚¬ ìºë¦­í„°"
+                alt="Áý»ç Ä³¸¯ÅÍ"
                 className="h-26 w-26 object-contain"
               />
             }
-            title="ìš°ë¦¬ ì§‘ í•  ì¼ì´ ì•„ì§ ì—†ì–´ìš” !"
-            description="í•¨ê»˜ í•  ì¼ì„ í•˜ë‚˜ ë§Œë“¤ì–´ë³´ì„¸ìš”."
+            title="¿ì¸® Áý ÇÒ ÀÏÀÌ ¾ÆÁ÷ ¾ø¾î¿ä !"
+            description="ÇÔ²² ÇÒ ÀÏÀ» ÇÏ³ª ¸¸µé¾îº¸¼¼¿ä."
           />
         ) : (
           filteredTodos.map((todo) => {
@@ -147,10 +140,7 @@ const TodoListPage = () => {
       <TodoDetailSheet
         open={detailOpen}
         onOpenChange={handleDetailOpenChange}
-        todo={selectedTodo}
-        myId={MOCK_MY_ID}
-        assigneeName={selectedAssignee?.name}
-        assigneeImage={selectedAssignee?.profileImage}
+        instanceId={selectedInstanceId}
       />
     </div>
   );

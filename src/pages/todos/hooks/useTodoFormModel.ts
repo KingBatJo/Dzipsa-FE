@@ -1,4 +1,3 @@
-﻿import { mockMembers } from '@/mocks/mockData';
 import {
   todoCreateSchema,
   type TodoCreateValues,
@@ -11,22 +10,28 @@ import { useForm } from 'react-hook-form';
 
 type RandomAssignStage = 'idle' | 'loading' | 'result';
 
+type FormMember = {
+  id: number;
+  name: string;
+};
+
 type UseTodoFormModelParams = {
   initialValues?: Partial<TodoFormValues>;
   onSubmit: (values: TodoFormValues) => void;
+  members: FormMember[];
 };
 
 export const useTodoFormModel = ({
   initialValues,
   onSubmit,
+  members,
 }: UseTodoFormModelParams) => {
-  // 폼 외부 UI 상태(다이얼로그/선택값/랜덤 배정 상태) 관리
   const [isDueDateDialogOpen, setIsDueDateDialogOpen] = useState(false);
   const [dueDate, setDueDate] = useState<Date | null>(
     initialValues?.dueDate ?? new Date()
   );
   const [selectedAssigneeId, setSelectedAssigneeId] = useState<number>(
-    initialValues?.assigneeId ?? mockMembers[0]?.id ?? 0
+    initialValues?.assigneeId ?? members[0]?.id ?? 0
   );
   const [repeatValue, setRepeatValue] = useState<RepeatValue>(
     initialValues?.repeatValue ?? createDefaultRepeatValue()
@@ -42,7 +47,6 @@ export const useTodoFormModel = ({
 
   const randomAssignTimeoutRef = useRef<number | null>(null);
 
-  // 입력 필드 값 검증/제출 처리 전용 상태
   const { control, handleSubmit, formState } = useForm<TodoCreateValues>({
     resolver: zodResolver(todoCreateSchema),
     mode: 'onChange',
@@ -53,11 +57,17 @@ export const useTodoFormModel = ({
   });
 
   const isRandomAssigneeLocked = randomAssignedAssigneeId !== null;
-  const randomCandidate = mockMembers.find(
+  const randomCandidate = members.find(
     (member) => member.id === randomCandidateAssigneeId
   );
 
-  // 언마운트 시 타이머 정리(메모리 릭/불필요 setState 방지)
+  useEffect(() => {
+    if (selectedAssigneeId !== 0) return;
+    if (!members[0]) return;
+
+    setSelectedAssigneeId(members[0].id);
+  }, [members, selectedAssigneeId]);
+
   useEffect(() => {
     return () => {
       if (randomAssignTimeoutRef.current) {
@@ -77,8 +87,12 @@ export const useTodoFormModel = ({
     setRandomCandidateAssigneeId(null);
 
     randomAssignTimeoutRef.current = window.setTimeout(() => {
-      const randomMember =
-        mockMembers[Math.floor(Math.random() * mockMembers.length)];
+      const randomMember = members[Math.floor(Math.random() * members.length)];
+      if (!randomMember) {
+        setRandomAssignStage('idle');
+        return;
+      }
+
       setRandomCandidateAssigneeId(randomMember.id);
       setRandomAssignStage('result');
     }, 1200);
@@ -102,7 +116,6 @@ export const useTodoFormModel = ({
     setRandomAssignStage('idle');
     setRandomCandidateAssigneeId(null);
 
-    // 랜덤 배정이 확정되면 반복 설정 비활성화
     if (repeatValue.enabled) {
       setRepeatValue((prev) => ({
         ...prev,
@@ -116,7 +129,6 @@ export const useTodoFormModel = ({
   };
 
   const handleFormSubmit = (data: TodoCreateValues) => {
-    // 화면 상태와 RHF 입력값을 최종 TodoFormValues로 결합해 상위로 전달
     onSubmit({
       title: data.title,
       memo: data.memo ?? '',
@@ -127,7 +139,6 @@ export const useTodoFormModel = ({
   };
 
   return {
-    // TodoForm에서 역할이 바로 보이도록 그룹화해서 반환
     form: {
       control,
       isValid: formState.isValid,

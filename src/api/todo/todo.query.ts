@@ -52,10 +52,10 @@ export const useMyUpcomingTodosQuery = () =>
   });
 
 // 할 일 상세 조회
-export const useTodoDetailQuery = (instanceId: TodoInstanceId) => {
+export const useTodoDetailQuery = (instanceId: TodoInstanceId | null) => {
   return useQuery({
-    queryKey: queryKeys.todo.detail(instanceId),
-    queryFn: () => getTodoDetail(instanceId),
+    queryKey: queryKeys.todo.detail(instanceId ?? -1),
+    queryFn: () => getTodoDetail(instanceId as TodoInstanceId),
     enabled: instanceId != null,
     staleTime: TODO_QUERY_STALE_TIME,
   });
