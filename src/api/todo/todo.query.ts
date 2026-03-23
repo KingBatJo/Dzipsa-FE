@@ -9,6 +9,7 @@ import {
   getMyTodosAll,
   getMyUpcomingTodos,
   getTodoDetail,
+  updateTodo,
 } from '@/api/todo/todo.api';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
@@ -63,6 +64,16 @@ export const useTodoDetailQuery = (instanceId: TodoInstanceId) => {
 export const useCreateTodoMutation = () => {
   return useMutation({
     mutationFn: createTodo,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.todo.all });
+    },
+  });
+};
+
+// 할 일 수정
+export const useUpdateTodoMutation = () => {
+  return useMutation({
+    mutationFn: updateTodo,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.todo.all });
     },

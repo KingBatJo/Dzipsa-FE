@@ -97,3 +97,14 @@ export type CreateTodoResponse = {
   startDate: string;
   endDate: string | null;
 };
+
+// 할 일 수정
+export type TodoId = number;
+
+export type UpdateTodoRequest = CreateTodoRequest;
+export type UpdateTodoResponse = CreateTodoResponse;
+
+export type UpdateTodoParams = {
+  todoId: TodoId;
+  payload: UpdateTodoRequest;
+};

@@ -11,6 +11,8 @@ import type {
   MyTodosCursorParams,
   TodoDetailResponse,
   TodoInstanceId,
+  UpdateTodoParams,
+  UpdateTodoResponse,
 } from '@/api/todo/todo.types';
 
 import { apiClient } from '@/api/client';
@@ -73,6 +75,18 @@ export const createTodo = async (
 ): Promise<CreateTodoResponse> => {
   const { data } = await apiClient.post<CreateTodoResponse>(
     '/api/todos',
+    payload
+  );
+  return data;
+};
+
+// 할 일 수정
+export const updateTodo = async (
+  params: UpdateTodoParams
+): Promise<UpdateTodoResponse> => {
+  const { todoId, payload } = params;
+  const { data } = await apiClient.put<UpdateTodoResponse>(
+    `/api/todos/${todoId}`,
     payload
   );
   return data;
