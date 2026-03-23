@@ -69,5 +69,7 @@ export const queryKeys = {
         'upcoming',
         normalizeTodoPageParams(params),
       ] as const,
+    detail: (instanceId: number) =>
+      [...queryKeys.todo.all, 'detail', instanceId] as const,
   },
 };

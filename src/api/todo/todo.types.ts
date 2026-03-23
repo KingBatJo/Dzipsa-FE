@@ -47,3 +47,23 @@ export type GetMyMissedTodosResponse = TodoCursorPageResponse;
 
 export type GetMyUpcomingTodosParams = TodoPageParams;
 export type GetMyUpcomingTodosResponse = TodoCursorPageResponse;
+
+// 상세 조회
+export type TodoInstanceId = number;
+
+export type TodoDetailStatus = '진행' | '지연' | '완료' | '지연완료';
+
+export type TodoDetailResponse = {
+  instanceId: TodoInstanceId;
+  title: string;
+  targetDate: string; // yyyy-MM-dd
+  memo: string | null;
+  assigneeId: number;
+  assigneeNickname: string;
+  profileImageUrl: string | null;
+  recurringInfo: string;
+  status: TodoDetailStatus;
+  statusDetail: string;
+  imageUrl: string | null;
+  owner: boolean;
+};

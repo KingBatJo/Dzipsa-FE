@@ -7,6 +7,8 @@ import type {
   GetMyUpcomingTodosParams,
   GetMyUpcomingTodosResponse,
   MyTodosCursorParams,
+  TodoDetailResponse,
+  TodoInstanceId,
 } from '@/api/todo/todo.types';
 
 import { apiClient } from '@/api/client';
@@ -49,6 +51,16 @@ export const getMyUpcomingTodos = async (params?: GetMyUpcomingTodosParams) => {
   const { data } = await apiClient.get<GetMyUpcomingTodosResponse>(
     '/api/todos/me/upcoming',
     { params }
+  );
+  return data;
+};
+
+// 할 일 상세 조회
+export const getTodoDetail = async (
+  instanceId: TodoInstanceId
+): Promise<TodoDetailResponse> => {
+  const { data } = await apiClient.get<TodoDetailResponse>(
+    `/api/todos/instances/${instanceId}`
   );
   return data;
 };

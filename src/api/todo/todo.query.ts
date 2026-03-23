@@ -1,11 +1,15 @@
+import type {
+  MyTodosCursorParams,
+  TodoInstanceId,
+} from '@/api/todo/todo.types';
 import {
   getMyMissedTodos,
   getMyTodayTodos,
   getMyTodosAll,
   getMyUpcomingTodos,
+  getTodoDetail,
 } from '@/api/todo/todo.api';
 
-import type { MyTodosCursorParams } from '@/api/todo/todo.types';
 import { queryKeys } from '@/lib/queryKeys';
 import { useQuery } from '@tanstack/react-query';
 
@@ -40,3 +44,13 @@ export const useMyUpcomingTodosQuery = () =>
     queryFn: () => getMyUpcomingTodos(),
     staleTime: TODO_QUERY_STALE_TIME,
   });
+
+// 할 일 상세 조회
+export const useTodoDetailQuery = (instanceId: TodoInstanceId) => {
+  return useQuery({
+    queryKey: queryKeys.todo.detail(instanceId),
+    queryFn: () => getTodoDetail(instanceId),
+    enabled: instanceId != null,
+    staleTime: TODO_QUERY_STALE_TIME,
+  });
+};
