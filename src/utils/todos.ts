@@ -67,7 +67,7 @@ export const getTodoStatusLabel = (
     return delayed ? '지연 완료' : '완료';
   }
 
-  return delayed ? '지연' : '진행';
+  return delayed ? '지연' : '진행중';
 };
 
 // 상태 하단 라벨
@@ -86,7 +86,7 @@ export const getTodoStatusSubLabel = (todo: TodoWithLocal, today: string) => {
     return formatStatusDateLabel(todo.completedAt);
   }
 
-  return formatStatusDateLabel(todo.dueAt);
+  return;
 };
 
 // 상세 보기용 상태

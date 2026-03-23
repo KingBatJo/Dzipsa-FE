@@ -21,7 +21,7 @@ export type TodoWithLocal = Todo & {
   };
 };
 
-export type TodoStatusLabel = '진행' | '지연' | '완료' | '지연 완료';
+export type TodoStatusLabel = '진행중' | '지연' | '완료' | '지연 완료';
 
 export type TodoDetailViewState = {
   isMine: boolean;

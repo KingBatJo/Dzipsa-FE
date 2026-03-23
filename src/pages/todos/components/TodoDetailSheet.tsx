@@ -1,13 +1,13 @@
-import { PencilLine, Trash2 } from 'lucide-react';
-import {
+﻿import {
   getTodoDetailViewState,
   getTodoStatusLabel,
   getTodoStatusSubLabel,
 } from '@/utils/todos';
 
+import AppButton from '@/components/common/AppButton';
 import BottomSheet from '@/components/common/BottomSheet';
-import { Button } from '@/components/ui/button';
 import { MOCK_TODAY } from '@/mocks/mockData';
+import { PencilLine } from 'lucide-react';
 import type { ReactNode } from 'react';
 import type { TodoWithLocal } from '@/types/todo';
 import UserAvatar from '@/components/common/UserAvatar';
@@ -57,147 +57,111 @@ const TodoDetailSheet = ({
     <BottomSheet
       open={open}
       onOpenChange={onOpenChange}
-      className="rounded-t-[24px] pb-[30px] [&>div:first-child]:my-2 [&>div:first-child]:h-[5px] [&>div:first-child]:w-20 [&>div:first-child]:bg-[#CECECE]"
+      className="rounded-t-[24px] [&>div:first-child]:my-2.5 [&>div:first-child]:h-[5px] [&>div:first-child]:w-20 [&>div:first-child]:bg-zinc-400"
     >
-      <div className="px-[15px] pt-5">
-        <div className="flex flex-col pt-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-black">
-              {todo?.title ?? '-'}
-            </h2>
+      <div className="flex items-center justify-between px-5 pt-8 pb-[15px]">
+        <h2 className="text-xl font-semibold text-black">
+          {todo?.title ?? '-'}
+        </h2>
 
-            {viewState?.canEdit && (
-              <button
-                type="button"
-                onClick={() => {
-                  navigate(`/todos/${todo?.id}/edit`, { state: { todo } });
-                }}
-                className="text-[#A3A3A3]"
-              >
-                <PencilLine className="h-6 w-6" />
-              </button>
-            )}
-          </div>
+        {viewState?.canEdit && (
+          <button
+            type="button"
+            onClick={() => {
+              navigate(`/todos/${todo?.id}/edit`, { state: { todo } });
+            }}
+            className="text-zinc-400"
+          >
+            <PencilLine className="h-6 w-6 transition-colors hover:text-black" />
+          </button>
+        )}
+      </div>
 
-          <div className="flex flex-col gap-8 pt-[52px]">
-            <DetailRow
-              label="마감일"
-              value={todo ? formatDueDateLabel(todo.dueAt) : '-'}
-            />
+      {/* 스크롤 영역 */}
+      <div className="min-h-0 flex-1 gap-8 overflow-y-auto p-5">
+        <div className="flex flex-col gap-6">
+          <DetailRow
+            label="마감일"
+            value={todo ? formatDueDateLabel(todo.dueAt) : '-'}
+          />
 
-            <DetailRow
-              label="담당자"
-              value={
-                <span className="inline-flex items-center gap-1">
-                  <UserAvatar
-                    size="sm"
-                    src={assigneeImage}
-                    alt={assigneeName}
-                  />
-                  <span>{assigneeName ?? '-'}</span>
-                </span>
-              }
-            />
+          <DetailRow
+            label="담당자"
+            value={
+              <span className="inline-flex items-center gap-1">
+                <UserAvatar size="sm" src={assigneeImage} alt={assigneeName} />
+                <span>{assigneeName ?? '-'}</span>
+              </span>
+            }
+          />
 
-            <DetailRow label="반복" value="반복 없음" />
+          <DetailRow label="반복" value="반복 없음" />
 
-            <DetailRow
-              label="메모"
-              value={
-                todo?.memo ? (
-                  <span className="break-keep">{todo.memo}</span>
-                ) : (
-                  '-'
-                )
-              }
-              alignTop
-            />
+          <DetailRow
+            label="메모"
+            value={
+              todo?.memo ? <span className="break-keep">{todo.memo}</span> : '-'
+            }
+            alignTop
+          />
 
-            <DetailRow
-              label="상태"
-              value={
-                <div className="flex flex-col items-end gap-1">
-                  <span>
-                    {todo ? getTodoStatusLabel(todo, MOCK_TODAY) : '-'}
+          <DetailRow
+            label="상태"
+            value={
+              <div className="flex flex-col items-end gap-1">
+                <span>{todo ? getTodoStatusLabel(todo, MOCK_TODAY) : '-'}</span>
+
+                {todo && (
+                  <span className="text-zinc-300">
+                    {getTodoStatusSubLabel(todo, MOCK_TODAY)}
                   </span>
+                )}
+              </div>
+            }
+            alignTop
+          />
 
-                  {todo && (
-                    <span className="text-[#ACACAC]">
-                      {getTodoStatusSubLabel(todo, MOCK_TODAY)}
-                    </span>
-                  )}
-                </div>
-              }
-              alignTop
-            />
-
-            {/* 인증 사진 */}
-            {viewState?.isCompleted && todo?.proofImageUrl && (
-              <div className="bg-accent h-[180px] w-full rounded-xl" />
-            )}
-          </div>
-
-          {/* 하단 버튼 */}
-          <div className="flex items-center justify-between gap-1 pt-[26px]">
-            {viewState?.canDelete && (
-              <button
-                type="button"
-                className="flex h-12 w-12 items-center justify-center rounded-[10px] bg-[#D9D9D9] text-[#737373]"
-              >
-                <Trash2 className="h-5 w-5" />
-              </button>
-            )}
-
-            <div className="flex flex-1 items-center gap-1">
-              {!viewState?.isCompleted && (
-                <>
-                  {viewState?.canConfirmComplete && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="border-primary h-12 flex-1 rounded-[10px] px-4 text-sm"
-                    >
-                      확인으로 완료
-                    </Button>
-                  )}
-
-                  {viewState?.canPhotoComplete && (
-                    <Button
-                      type="button"
-                      className="h-12 flex-1 rounded-[10px] px-4 text-sm"
-                    >
-                      사진인증해서 완료
-                    </Button>
-                  )}
-                </>
-              )}
-
-              {viewState?.isCompleted && (
-                <>
-                  {viewState?.canRevertToInProgress && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="border-primary h-12 flex-1 rounded-[10px] px-4 text-sm"
-                    >
-                      진행중으로 변경
-                    </Button>
-                  )}
-
-                  {viewState?.canAddProofImage && (
-                    <Button
-                      type="button"
-                      className="h-12 flex-1 rounded-[10px] px-4 text-sm"
-                    >
-                      인증 사진 추가하기
-                    </Button>
-                  )}
-                </>
-              )}
+          {/* 인증 사진 */}
+          {viewState?.isCompleted && todo?.proofImageUrl && (
+            <div className="flex justify-end">
+              <div className="h-37.5 w-50 rounded-[20px] bg-zinc-200" />
             </div>
-          </div>
+          )}
         </div>
       </div>
+
+      {/* 하단 버튼 */}
+      {viewState?.isMine && (
+        <div className="flex items-center justify-between gap-1 p-5">
+          <div className="flex flex-1 items-center gap-1">
+            {!viewState.isCompleted && viewState.canConfirmComplete && (
+              <AppButton className="flex-1 bg-black text-white">
+                완료하기
+              </AppButton>
+            )}
+
+            {viewState.isCompleted && viewState.canRevertToInProgress && (
+              <AppButton
+                className={`flex-1 ${
+                  viewState.hasProofImage
+                    ? 'bg-black text-white'
+                    : 'border border-zinc-400'
+                }`}
+              >
+                진행 중으로 변경
+              </AppButton>
+            )}
+
+            {viewState.isCompleted &&
+              !viewState.hasProofImage &&
+              viewState.canAddProofImage && (
+                <AppButton className="flex-1 bg-black text-white">
+                  인증 사진 추가
+                </AppButton>
+              )}
+          </div>
+        </div>
+      )}
     </BottomSheet>
   );
 };
