@@ -6,7 +6,12 @@ export type MyTodosCursorParams = {
   upcomingCursor?: string;
 };
 
-export interface MyTodoListItem {
+export type TodoPageParams = {
+  cursor?: string;
+  size?: number;
+};
+
+export type MyTodoListItem = {
   instanceId: number;
   title: string;
   memo: string | null;
@@ -18,7 +23,7 @@ export interface MyTodoListItem {
   delayDays: number;
   imageUrl: string | null;
   completedAt: string | null; // yyyy.MM.dd
-}
+};
 
 export type CursorSection<T> = {
   content: T[];
@@ -26,8 +31,19 @@ export type CursorSection<T> = {
   nextCursor: string | null;
 };
 
+export type TodoCursorPageResponse = CursorSection<MyTodoListItem>;
+
 export type GetMyTodosAllResponse = {
   missedTodos: CursorSection<MyTodoListItem>;
   todayTodos: CursorSection<MyTodoListItem>;
   upcomingTodos: CursorSection<MyTodoListItem>;
 };
+
+export type GetMyTodayTodosParams = TodoPageParams;
+export type GetMyTodayTodosResponse = TodoCursorPageResponse;
+
+export type GetMyMissedTodosParams = TodoPageParams;
+export type GetMyMissedTodosResponse = TodoCursorPageResponse;
+
+export type GetMyUpcomingTodosParams = TodoPageParams;
+export type GetMyUpcomingTodosResponse = TodoCursorPageResponse;

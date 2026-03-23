@@ -1,13 +1,42 @@
-import type { MyTodosCursorParams } from './todo.types';
-import { getMyTodosAll } from './todo.api';
+import {
+  getMyMissedTodos,
+  getMyTodayTodos,
+  getMyTodosAll,
+  getMyUpcomingTodos,
+} from '@/api/todo/todo.api';
+
+import type { MyTodosCursorParams } from '@/api/todo/todo.types';
 import { queryKeys } from '@/lib/queryKeys';
 import { useQuery } from '@tanstack/react-query';
 
-// 첫 페이지(커서 없음) 또는 특정 커서 상태 조회
+const TODO_QUERY_STALE_TIME = 1000 * 60 * 3;
+
+// 나의 할 일 통합 조회 (첫 진입용)
 export const useMyTodosAllQuery = (params?: MyTodosCursorParams) => {
   return useQuery({
-    queryKey: queryKeys.todo.my.all(params),
+    queryKey: queryKeys.todo.myAll(params),
     queryFn: () => getMyTodosAll(params),
-    staleTime: 1000 * 60 * 3,
+    staleTime: TODO_QUERY_STALE_TIME,
   });
 };
+
+export const useMyTodayTodosQuery = () =>
+  useQuery({
+    queryKey: queryKeys.todo.today(),
+    queryFn: () => getMyTodayTodos(),
+    staleTime: TODO_QUERY_STALE_TIME,
+  });
+
+export const useMyMissedTodosQuery = () =>
+  useQuery({
+    queryKey: queryKeys.todo.missed(),
+    queryFn: () => getMyMissedTodos(),
+    staleTime: TODO_QUERY_STALE_TIME,
+  });
+
+export const useMyUpcomingTodosQuery = () =>
+  useQuery({
+    queryKey: queryKeys.todo.upcoming(),
+    queryFn: () => getMyUpcomingTodos(),
+    staleTime: TODO_QUERY_STALE_TIME,
+  });

@@ -1,7 +1,12 @@
+import type {
+  GetMyTodayTodosParams,
+  MyTodosCursorParams,
+  TodoPageParams,
+} from '@/api/todo/todo.types';
 import type { GetRulesParams, RuleId } from '@/api/rule/rule.types';
 
 import { DEFAULT_RULE_LIST_SIZE } from '@/constants/rule';
-import type { MyTodosCursorParams } from '@/api/todo/todo.types';
+import { DEFAULT_TODO_PAGE_SIZE } from '@/constants/todos';
 
 // 동일한 요청이 같은 queryKey를 쓰도록 size 기본값을 포함해 params를 정규화
 const normalizeRuleListParams = (params?: GetRulesParams) => {
@@ -11,14 +16,16 @@ const normalizeRuleListParams = (params?: GetRulesParams) => {
   };
 };
 
-// 동일한 요청이 같은 queryKey를 쓰도록 cursor 파라미터를 정규화
-const normalizeMyTodosCursorParams = (params?: MyTodosCursorParams) => {
-  return {
-    missedCursor: params?.missedCursor ?? null,
-    todayCursor: params?.todayCursor ?? null,
-    upcomingCursor: params?.upcomingCursor ?? null,
-  };
-};
+const normalizeTodoPageParams = (params?: TodoPageParams) => ({
+  cursor: params?.cursor ?? null,
+  size: params?.size ?? DEFAULT_TODO_PAGE_SIZE,
+});
+
+const normalizeMyTodosCursorParams = (params?: MyTodosCursorParams) => ({
+  missedCursor: params?.missedCursor ?? null,
+  todayCursor: params?.todayCursor ?? null,
+  upcomingCursor: params?.upcomingCursor ?? null,
+});
 
 export const queryKeys = {
   auth: {
@@ -38,14 +45,29 @@ export const queryKeys = {
   },
   todo: {
     all: ['todo'] as const,
-    my: {
-      all: (params?: MyTodosCursorParams) =>
-        [
-          ...queryKeys.todo.all,
-          'my',
-          'all',
-          normalizeMyTodosCursorParams(params),
-        ] as const,
-    },
+    my: ['todo', 'my'] as const,
+    myAll: (params?: MyTodosCursorParams) =>
+      [
+        ...queryKeys.todo.my,
+        'all',
+        normalizeMyTodosCursorParams(params),
+      ] as const,
+
+    today: (params?: GetMyTodayTodosParams) =>
+      [...queryKeys.todo.my, 'today', normalizeTodoPageParams(params)] as const,
+
+    missed: (params?: TodoPageParams) =>
+      [
+        ...queryKeys.todo.my,
+        'missed',
+        normalizeTodoPageParams(params),
+      ] as const,
+
+    upcoming: (params?: TodoPageParams) =>
+      [
+        ...queryKeys.todo.my,
+        'upcoming',
+        normalizeTodoPageParams(params),
+      ] as const,
   },
 };

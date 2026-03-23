@@ -1,5 +1,11 @@
 import type {
+  GetMyMissedTodosParams,
+  GetMyMissedTodosResponse,
+  GetMyTodayTodosParams,
+  GetMyTodayTodosResponse,
   GetMyTodosAllResponse,
+  GetMyUpcomingTodosParams,
+  GetMyUpcomingTodosResponse,
   MyTodosCursorParams,
 } from '@/api/todo/todo.types';
 
@@ -11,6 +17,37 @@ export const getMyTodosAll = async (
 ): Promise<GetMyTodosAllResponse> => {
   const { data } = await apiClient.get<GetMyTodosAllResponse>(
     '/api/todos/me/all',
+    { params }
+  );
+  return data;
+};
+
+// 오늘 할 일 페이징 조회
+export const getMyTodayTodos = async (
+  params?: GetMyTodayTodosParams
+): Promise<GetMyTodayTodosResponse> => {
+  const { data } = await apiClient.get<GetMyTodayTodosResponse>(
+    '/api/todos/me/today',
+    { params }
+  );
+  return data;
+};
+
+// 놓친 할 일 페이징 조회
+export const getMyMissedTodos = async (
+  params?: GetMyMissedTodosParams
+): Promise<GetMyMissedTodosResponse> => {
+  const { data } = await apiClient.get<GetMyMissedTodosResponse>(
+    '/api/todos/me/missed',
+    { params }
+  );
+  return data;
+};
+
+// 예정된 할 일 페이징 조회
+export const getMyUpcomingTodos = async (params?: GetMyUpcomingTodosParams) => {
+  const { data } = await apiClient.get<GetMyUpcomingTodosResponse>(
+    '/api/todos/me/upcoming',
     { params }
   );
   return data;

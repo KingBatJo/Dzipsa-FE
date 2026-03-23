@@ -1,3 +1,5 @@
+export const DEFAULT_TODO_PAGE_SIZE = 10;
+
 export const TODO_TABS = {
   MY: 'my',
   HOUSE: 'house',
