@@ -6,6 +6,7 @@ import {
   TODO_MEMO_MAX_LENGTH,
   TODO_TITLE_MAX_LENGTH,
 } from '@/schemas/todoCreateSchema';
+import { useEffect, useState } from 'react';
 
 import AppButton from '@/components/common/AppButton';
 import AppDialog from '@/components/common/AppDialog';
@@ -17,7 +18,9 @@ import type { TodoFormValues } from '@/types/todo';
 import { cn } from '@/lib/utils';
 import { formatDate } from '@/utils/date';
 import { mockMembers } from '@/mocks/mockData';
-import { useState } from 'react';
+import randomComplete from '@/assets/random/random-complete.png';
+import randomCompleteBackground from '@/assets/random/random-complete-background.png';
+import randomLoading from '@/assets/random/random-loading.png';
 import { useTodoFormModel } from '@/pages/todos/hooks/useTodoFormModel';
 
 type TodoFormMode = 'create' | 'edit';
@@ -29,6 +32,12 @@ type TodoFormProps = {
   onDelete?: () => void;
 };
 
+const RANDOM_ASSIGN_ASSETS = [
+  randomLoading,
+  randomComplete,
+  randomCompleteBackground,
+] as const;
+
 const TodoForm = ({
   mode,
   initialValues,
@@ -37,6 +46,15 @@ const TodoForm = ({
 }: TodoFormProps) => {
   const model = useTodoFormModel({ initialValues, onSubmit });
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
+  // 이미지 preload
+  useEffect(() => {
+    RANDOM_ASSIGN_ASSETS.forEach((assetSrc) => {
+      const preloadedImage = new Image();
+      preloadedImage.decoding = 'async';
+      preloadedImage.src = assetSrc;
+    });
+  }, []);
 
   return (
     <FormPageLayout

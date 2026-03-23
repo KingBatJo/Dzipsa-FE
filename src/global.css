@@ -153,3 +153,16 @@
     transform: translateX(-50%) !important;
   }
 }
+
+@keyframes wiggle-soft {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-2deg);
+  }
+  75% {
+    transform: rotate(2deg);
+  }
+}
