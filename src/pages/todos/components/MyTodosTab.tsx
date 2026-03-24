@@ -69,7 +69,7 @@ const TodoCompleteButton = ({
 
 const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
   const navigate = useNavigate();
-  const { data } = useMyTodosAllQuery();
+  const { data, isPending } = useMyTodosAllQuery();
 
   const missedTodos = data?.missedTodos.content ?? [];
   const todayTodos = data?.todayTodos.content ?? [];
@@ -79,6 +79,14 @@ const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
   const visibleTodayTodos = todayTodos.filter(
     (todo) => todo.status !== 'COMPLETED'
   );
+
+  if (isPending) {
+    return (
+      <div className="flex min-h-[240px] animate-pulse items-center justify-center text-sm font-medium text-zinc-400">
+        Loading...
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-7">
