@@ -4,13 +4,13 @@ import {
   useInfiniteMyUpcomingTodosQuery,
 } from '@/api/todo/todo.query';
 
-import AppButton from '@/components/common/AppButton';
 import { Button } from '@/components/ui/button';
 import EmptyState from '@/components/common/EmptyState';
 import ListItemCard from '@/components/common/ListItemCard';
 import ListSection from '@/components/common/ListSection';
 import type { TodoInstanceId } from '@/api/todo/todo.types';
-import { cn } from '@/lib/utils';
+import SectionActionButtons from '@/pages/todos/components/SectionActionButtons';
+import TodoCompleteButton from '@/pages/todos/components/TodoCompleteButton';
 import dzipsaCharacter from '@/assets/dzipsa.svg';
 import { formatDueDateLabel } from '@/utils/date';
 import { useNavigate } from 'react-router-dom';
@@ -20,110 +20,9 @@ type MyTodosTabProps = {
   onTodoClick?: (instanceId: TodoInstanceId) => void;
 };
 
-type TodoCompleteButtonProps = {
-  isDelayed?: boolean;
-  onClick?: () => void;
-};
-
 type SectionKey = 'missed' | 'today' | 'upcoming';
 
 const SECTION_PAGE_SIZE = 10;
-
-const TODO_COMPLETE_BUTTON_COLORS = {
-  normal: {
-    base: '#E4E4E7CC',
-    hover: '#8F8F8FCC',
-    active: '#565656CC',
-  },
-  delayed: {
-    base: '#A68F8FCC',
-    hover: '#8F8F8FCC',
-    active: '#565656CC',
-  },
-} as const;
-
-const TodoCompleteButton = ({
-  isDelayed = false,
-  onClick,
-}: TodoCompleteButtonProps) => {
-  const colors = isDelayed
-    ? TODO_COMPLETE_BUTTON_COLORS.delayed
-    : TODO_COMPLETE_BUTTON_COLORS.normal;
-
-  return (
-    <button
-      type="button"
-      aria-label="할일 완료"
-      onClick={onClick}
-      className="group flex h-6 w-6 items-center justify-center"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-      >
-        <path
-          d="M12 3C19.2 3 21 4.8 21 12C21 19.2 19.2 21 12 21C4.8 21 3 19.2 3 12C3 4.8 4.8 3 12 3Z"
-          className={cn(
-            'transition-colors duration-150',
-            `fill-[${colors.base}]`,
-            `group-hover:fill-[${colors.hover}]`,
-            `group-active:fill-[${colors.active}]`
-          )}
-        />
-      </svg>
-    </button>
-  );
-};
-
-type SectionActionButtonsProps = {
-  hasNextPage?: boolean;
-  isFetchingNextPage: boolean;
-  onLoadMore: () => void;
-  isCollapsed: boolean;
-  canToggleCollapse: boolean;
-  onToggleCollapse: () => void;
-};
-
-const SectionActionButtons = ({
-  hasNextPage,
-  isFetchingNextPage,
-  onLoadMore,
-  isCollapsed,
-  canToggleCollapse,
-  onToggleCollapse,
-}: SectionActionButtonsProps) => {
-  const showLoadMore =
-    isCollapsed || Boolean(hasNextPage) || isFetchingNextPage;
-  const showCollapse = canToggleCollapse && !isCollapsed;
-
-  if (!showLoadMore && !showCollapse) return null;
-
-  return (
-    <div className="mt-1 flex items-center justify-end gap-2">
-      {showLoadMore && (
-        <AppButton
-          className="h-10 rounded-[10px] border border-zinc-200 bg-white px-4 hover:border-zinc-300 hover:bg-zinc-200 active:border-zinc-400 active:bg-zinc-300"
-          onClick={onLoadMore}
-          disabled={isFetchingNextPage}
-        >
-          {isFetchingNextPage ? '불러오는 중...' : '더보기'}
-        </AppButton>
-      )}
-
-      {showCollapse && (
-        <AppButton
-          className="h-10 rounded-[10px] border border-zinc-200 bg-white px-4 hover:border-zinc-300 hover:bg-zinc-200 active:border-zinc-400 active:bg-zinc-300"
-          onClick={onToggleCollapse}
-        >
-          접기
-        </AppButton>
-      )}
-    </div>
-  );
-};
 
 const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
   const navigate = useNavigate();
