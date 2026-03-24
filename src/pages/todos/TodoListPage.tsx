@@ -6,6 +6,7 @@ import {
   isTodoDelayed,
   sortByDueAtThenCreatedAtAsc,
 } from '@/utils/todos';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import EmptyState from '@/components/common/EmptyState';
@@ -18,7 +19,6 @@ import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import dzipsaDefault from '@/assets/dzipsa/dzipsa-default.svg';
 import { formatDueDateLabel } from '@/utils/date';
-import { useEffect, useState } from 'react';
 
 type TodoListCategory = 'today' | 'missed' | 'all';
 
@@ -50,7 +50,7 @@ const TodoListPage = () => {
       const member = mockMembers.find((item) => item.id === assigneeId);
 
       return {
-        title: member ? `${member.name}ÀÇ ÇÒ ÀÏ` : '±¸¼º¿ø ÇÒ ÀÏ',
+        title: member ? `${member.name}ë‹˜ì˜ í•  ì¼` : 'êµ¬ì„±ì› í•  ì¼',
         filteredTodos: activeTodos.filter(
           (todo) => todo.assigneeId === assigneeId
         ),
@@ -59,12 +59,12 @@ const TodoListPage = () => {
 
     switch (type as TodoListCategory) {
       case 'today':
-        return { title: '¿À´Ã ÇÒ ÀÏ', filteredTodos: todayActiveTodos };
+        return { title: 'ì˜¤ëŠ˜ í•  ì¼', filteredTodos: todayActiveTodos };
       case 'missed':
-        return { title: 'Áö¿¬µÈ ÇÒ ÀÏ', filteredTodos: missedTodos };
+        return { title: 'ë†“ì¹œ í•  ì¼', filteredTodos: missedTodos };
       case 'all':
       default:
-        return { title: '¸ğµç ÇÒ ÀÏ', filteredTodos: activeTodos };
+        return { title: 'ëª¨ë“  í•  ì¼', filteredTodos: activeTodos };
     }
   };
 
@@ -94,7 +94,7 @@ const TodoListPage = () => {
           type="button"
           onClick={() => navigate(-1)}
           className="absolute right-4"
-          aria-label="´İ±â"
+          aria-label="ë‹«ê¸°"
         >
           <X className="h-6 w-6" />
         </button>
@@ -107,12 +107,12 @@ const TodoListPage = () => {
             image={
               <img
                 src={dzipsaDefault}
-                alt="Áı»ç Ä³¸¯ÅÍ"
+                alt="ë””ì§‘ì‚¬ ìºë¦­í„°"
                 className="h-26 w-26 object-contain"
               />
             }
-            title="¿ì¸® Áı ÇÒ ÀÏÀÌ ¾ÆÁ÷ ¾ø¾î¿ä !"
-            description="ÇÔ²² ÇÒ ÀÏÀ» ÇÏ³ª ¸¸µé¾îº¸¼¼¿ä."
+            title="ìš°ë¦¬ì§‘ í•  ì¼ì´ ì•„ì§ ì—†ì–´ìš” !"
+            description="í•¨ê»˜ í•  ì¼ì„ í•˜ë‚˜ ë§Œë“¤ì–´ë³´ì„¸ìš”."
           />
         ) : (
           filteredTodos.map((todo) => {
