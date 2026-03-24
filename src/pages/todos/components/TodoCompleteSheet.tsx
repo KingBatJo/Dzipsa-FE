@@ -8,6 +8,7 @@ type TodoCompleteSheetProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onConfirmComplete?: (proofImageFile?: File) => void;
+  isSubmitting?: boolean;
 };
 
 const IMAGE_ACCEPT = 'image/jpeg,image/png,image/webp';
@@ -17,6 +18,7 @@ const TodoCompleteSheet = ({
   open,
   onOpenChange,
   onConfirmComplete,
+  isSubmitting,
 }: TodoCompleteSheetProps) => {
   const cameraInputRef = useRef<HTMLInputElement | null>(null);
   const galleryInputRef = useRef<HTMLInputElement | null>(null);
@@ -151,6 +153,7 @@ const TodoCompleteSheet = ({
         <AppButton
           className="bg-black text-white"
           onClick={() => onConfirmComplete?.(selectedFile)}
+          disabled={isSubmitting}
         >
           {selectedFile ? '등록 하기' : '완료 하기'}
         </AppButton>

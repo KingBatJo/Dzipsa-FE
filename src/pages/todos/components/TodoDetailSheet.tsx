@@ -1,16 +1,18 @@
 import {
   useCompleteTodoMutation,
+  useResetTodoStatusMutation,
   useTodoDetailQuery,
 } from '@/api/todo/todo.query';
-import { getProfileOptionById } from '@/api/room/room.utils';
 
 import AppButton from '@/components/common/AppButton';
 import BottomSheet from '@/components/common/BottomSheet';
 import { PencilLine } from 'lucide-react';
 import type { ReactNode } from 'react';
 import TodoCompleteSheet from '@/pages/todos/components/TodoCompleteSheet';
+import type { TodoInstanceId } from '@/api/todo/todo.types';
 import UserAvatar from '@/components/common/UserAvatar';
 import { formatDueDateLabel } from '@/utils/date';
+import { getProfileOptionById } from '@/api/room/room.utils';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
@@ -46,32 +48,47 @@ const TodoDetailSheet = ({
 }: TodoDetailSheetProps) => {
   const navigate = useNavigate();
   const [completeSheetOpen, setCompleteSheetOpen] = useState(false);
+  const [completeTargetInstanceId, setCompleteTargetInstanceId] =
+    useState<TodoInstanceId | null>(null);
 
   const { data: todoDetail } = useTodoDetailQuery(instanceId);
   const { mutate: completeTodo, isPending: isCompleting } =
     useCompleteTodoMutation();
+  const { mutate: resetTodoStatus, isPending: isResetting } =
+    useResetTodoStatusMutation();
+
   const assigneeProfile = getProfileOptionById(todoDetail?.profileImageUrl);
 
   const isCompleted = todoDetail?.status.includes('완료') ?? false;
   const hasProofImage = Boolean(todoDetail?.imageUrl);
 
   const handleOpenCompleteSheet = () => {
-    setCompleteSheetOpen(true);
+    if (instanceId == null) return;
+
+    setCompleteTargetInstanceId(instanceId);
     onOpenChange(false);
+    setCompleteSheetOpen(true);
   };
 
   const handleConfirmComplete = (proofImageFile?: File) => {
-    if (instanceId == null) return;
+    if (completeTargetInstanceId == null) return;
 
     completeTodo(
-      { instanceId, image: proofImageFile ?? null },
+      { instanceId: completeTargetInstanceId, image: proofImageFile ?? null },
       {
         onSuccess: () => {
           setCompleteSheetOpen(false);
-          onOpenChange(true);
+          setCompleteTargetInstanceId(null);
         },
       }
     );
+  };
+
+  const handleResetStatus = () => {
+    if (instanceId == null) return;
+
+    resetTodoStatus({ instanceId });
+    onOpenChange(false);
   };
 
   return (
@@ -193,7 +210,11 @@ const TodoDetailSheet = ({
               )}
 
               {isCompleted && (
-                <AppButton className="flex-1 border border-zinc-400" disabled>
+                <AppButton
+                  className="flex-1 border border-zinc-400"
+                  onClick={handleResetStatus}
+                  disabled={isResetting}
+                >
                   진행 중으로 변경
                 </AppButton>
               )}
@@ -216,6 +237,7 @@ const TodoDetailSheet = ({
         open={completeSheetOpen}
         onOpenChange={setCompleteSheetOpen}
         onConfirmComplete={handleConfirmComplete}
+        isSubmitting={isCompleting}
       />
     </>
   );

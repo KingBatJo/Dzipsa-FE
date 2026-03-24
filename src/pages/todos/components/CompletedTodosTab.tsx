@@ -20,7 +20,7 @@ type CompletedTodoFeedCardProps = {
   todoTitle: string;
   completedDate: string;
   proofImageUrl?: string | null;
-  statusLabel: '완료' | '지연 완료';
+  statusLabel: '기간 후 완료' | '기간 내 완료';
   onClick?: () => void;
 };
 
@@ -62,7 +62,7 @@ const CompletedTodoFeedCard = ({
             </div>
           </div>
 
-          {statusLabel === '지연 완료' && (
+          {statusLabel === '기간 후 완료' && (
             <RoundedBadge className="w-fit bg-red-400 font-bold text-red-50">
               기한 후 완료
             </RoundedBadge>
@@ -74,7 +74,7 @@ const CompletedTodoFeedCard = ({
             // 임시 (추후 img로 교체)
             <div className="bg-accent h-25 w-25 rounded-xl"></div>
           ) : (
-            statusLabel === '완료' && (
+            statusLabel === '기간 내 완료' && (
               <RoundedBadge className="bg-neutral-400 font-bold text-neutral-200">
                 기한 내 완료
               </RoundedBadge>
@@ -140,7 +140,8 @@ const CompletedTodosTab = ({ onTodoClick }: CompletedTodosTabProps) => {
       ) : (
         <div className="flex flex-col">
           {completedTodos.map((todo) => {
-            const statusLabel = todo.delayDays > 0 ? '지연 완료' : '완료';
+            const statusLabel =
+              todo.delayDays > 0 ? '기간 후 완료' : '기간 내 완료';
             const assigneeProfile = getProfileOptionById(todo.profileImageUrl);
 
             return (
@@ -166,11 +167,7 @@ const CompletedTodosTab = ({ onTodoClick }: CompletedTodosTabProps) => {
                 <div className="py-3 text-center text-sm text-zinc-500">
                   집사가 더 가져오고 있어요...
                 </div>
-              ) : hasNextPage ? null : (
-                <div className="py-3 text-center text-sm text-zinc-500">
-                  집사가 다 찾아왔어요!
-                </div>
-              )}
+              ) : null}
             </div>
           )}
         </div>
