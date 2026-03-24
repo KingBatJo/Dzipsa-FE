@@ -71,8 +71,11 @@ const CompletedTodoFeedCard = ({
 
         <div>
           {proofImageUrl ? (
-            // 임시 (추후 img로 교체)
-            <div className="bg-accent h-25 w-25 rounded-xl"></div>
+            <img
+              src={proofImageUrl}
+              alt="인증 사진"
+              className="h-25 w-25 rounded-xl object-cover"
+            />
           ) : (
             statusLabel === '기간 내 완료' && (
               <RoundedBadge className="bg-neutral-400 font-bold text-neutral-200">
