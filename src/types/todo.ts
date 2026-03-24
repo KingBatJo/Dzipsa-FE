@@ -41,6 +41,7 @@ export type RepeatValue = {
   enabled: boolean;
   type: RepeatType;
   days: WeekDay[];
+  monthlyDay: number;
   startDate: Date;
   endDate: Date | null;
 };

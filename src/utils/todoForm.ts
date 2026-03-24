@@ -20,6 +20,7 @@ export const createDefaultRepeatValue = (): RepeatValue => ({
   enabled: false,
   type: WEEKLY_REPEAT_TYPE,
   days: [DEFAULT_WEEK_DAY],
+  monthlyDay: 1,
   startDate: new Date(),
   endDate: null,
 });
@@ -71,7 +72,7 @@ export const toCreateTodoPayload = (
     ? null
     : recurringType === 'WEEKLY'
       ? toRepeatDays(values.repeatValue.days)
-      : `${values.repeatValue.startDate.getDate()}`;
+      : `${values.repeatValue.monthlyDay}`;
 
   return {
     title: values.title,
@@ -119,15 +120,23 @@ export const toPrefilledRepeatValue = ({
       enabled: true,
       type: WEEKLY_REPEAT_TYPE,
       days: parsedDays.length > 0 ? parsedDays : [DEFAULT_WEEK_DAY],
+      monthlyDay: 1,
       startDate: resolvedStartDate,
       endDate: resolvedEndDate,
     };
   }
 
+  const parsedMonthlyDay = repeatDays ? Number.parseInt(repeatDays, 10) : NaN;
+  const monthlyDay =
+    Number.isFinite(parsedMonthlyDay) && parsedMonthlyDay >= 1 && parsedMonthlyDay <= 31
+      ? parsedMonthlyDay
+      : 1;
+
   return {
     enabled: true,
     type: MONTHLY_REPEAT_TYPE,
     days: [DEFAULT_WEEK_DAY],
+    monthlyDay,
     startDate: resolvedStartDate,
     endDate: resolvedEndDate,
   };

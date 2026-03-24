@@ -32,6 +32,7 @@ export const useTodoFormModel = ({
     enabled: value.enabled,
     type: value.type,
     days: value.days,
+    monthlyDay: value.monthlyDay,
     startDate: toDateString(value.startDate),
     endDate: toDateString(value.endDate),
   });
@@ -124,6 +125,7 @@ export const useTodoFormModel = ({
       initial.repeatValue.enabled !== repeatValue.enabled ||
       (repeatValue.enabled &&
         (initial.repeatValue.type !== repeatValue.type ||
+          initial.repeatValue.monthlyDay !== repeatValue.monthlyDay ||
           normalizeDays(initial.repeatValue.days) !==
             normalizeDays(repeatValue.days) ||
           initial.repeatValue.startDate !== currentStartDate ||
