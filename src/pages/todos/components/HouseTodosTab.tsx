@@ -24,7 +24,10 @@ type HouseTodosSummaryProps = {
 
 type HouseTodosTabProps = {
   onCategoryClick?: (type: HouseTodoListCategory) => void;
-  onMemberClick?: (memberId: number, memberState: HouseMemberRouteState) => void;
+  onMemberClick?: (
+    memberId: number,
+    memberState: HouseMemberRouteState
+  ) => void;
 };
 
 type CountIndicatorProps = {

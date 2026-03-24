@@ -37,25 +37,40 @@ export const useMyTodosAllQuery = (params?: MyTodosCursorParams) => {
   });
 };
 
-export const useMyTodayTodosQuery = () =>
-  useQuery({
-    queryKey: queryKeys.todo.today(),
-    queryFn: () => getMyTodayTodos(),
-    staleTime: TODO_QUERY_STALE_TIME,
-  });
-
-export const useMyMissedTodosQuery = () =>
-  useQuery({
+// 놓친 할 일 페이징 조회
+export const useInfiniteMyMissedTodosQuery = (enabled = true) =>
+  useInfiniteQuery({
     queryKey: queryKeys.todo.missed(),
-    queryFn: () => getMyMissedTodos(),
+    queryFn: ({ pageParam }) => getMyMissedTodos({ cursor: pageParam }),
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (lastPage) =>
+      lastPage.hasNext ? (lastPage.nextCursor ?? undefined) : undefined,
     staleTime: TODO_QUERY_STALE_TIME,
+    enabled,
   });
 
-export const useMyUpcomingTodosQuery = () =>
-  useQuery({
-    queryKey: queryKeys.todo.upcoming(),
-    queryFn: () => getMyUpcomingTodos(),
+// 오늘 할 일 페이징 조회
+export const useInfiniteMyTodayTodosQuery = (enabled = true) =>
+  useInfiniteQuery({
+    queryKey: queryKeys.todo.today(),
+    queryFn: ({ pageParam }) => getMyTodayTodos({ cursor: pageParam }),
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (lastPage) =>
+      lastPage.hasNext ? (lastPage.nextCursor ?? undefined) : undefined,
     staleTime: TODO_QUERY_STALE_TIME,
+    enabled,
+  });
+
+// 예정된 할 일 페이징 조회
+export const useInfiniteMyUpcomingTodosQuery = (enabled = true) =>
+  useInfiniteQuery({
+    queryKey: queryKeys.todo.upcoming(),
+    queryFn: ({ pageParam }) => getMyUpcomingTodos({ cursor: pageParam }),
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (lastPage) =>
+      lastPage.hasNext ? (lastPage.nextCursor ?? undefined) : undefined,
+    staleTime: TODO_QUERY_STALE_TIME,
+    enabled,
   });
 
 // 우리집 할 일 - 넛지 및 통계 조회
