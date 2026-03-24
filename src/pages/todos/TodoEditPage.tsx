@@ -1,11 +1,17 @@
 ﻿import { toCreateTodoPayload, toPrefilledRepeatValue } from '@/utils/todoForm';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import TodoForm from '@/pages/todos/components/TodoForm';
 import type { TodoFormValues } from '@/types/todo';
-import type { TodoRecurringType } from '@/api/todo/todo.types';
+import type {
+  DeleteRecurringTodoScope,
+  TodoRecurringType,
+} from '@/api/todo/todo.types';
 import { toast } from 'sonner';
-import { useUpdateTodoMutation } from '@/api/todo/todo.query';
+import {
+  useDeleteRecurringTodoMutation,
+  useUpdateTodoMutation,
+} from '@/api/todo/todo.query';
 
 type EditTodoLocationState = {
   todoId: number;
@@ -23,10 +29,14 @@ type EditTodoLocationState = {
 const TodoEditPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { todoId: instanceIdParam } = useParams();
 
   const { mutateAsync: updateTodo, isPending } = useUpdateTodoMutation();
+  const { mutate: deleteRecurringTodo, isPending: isDeleting } =
+    useDeleteRecurringTodoMutation();
 
   const todo = location.state as EditTodoLocationState | undefined;
+  const instanceId = Number(instanceIdParam);
 
   if (!todo) {
     return (
@@ -66,9 +76,24 @@ const TodoEditPage = () => {
     }
   };
 
-  const handleDelete = () => {
-    // TODO: delete mutation 연결
-    navigate(-1);
+  const handleDelete = (scope: DeleteRecurringTodoScope = 'ONLY_THIS') => {
+    if (!Number.isFinite(instanceId) || instanceId <= 0) {
+      toast('삭제할 할 일 정보를 확인할 수 없어요.');
+      return;
+    }
+
+    deleteRecurringTodo(
+      { instanceId, scope },
+      {
+        onSuccess: () => {
+          toast('할 일이 삭제되었어요.');
+          navigate('/todos');
+        },
+        onError: () => {
+          toast('할 일 삭제에 실패했어요. 다시 시도해주세요.');
+        },
+      }
+    );
   };
 
   return (
@@ -77,7 +102,8 @@ const TodoEditPage = () => {
       initialValues={initialValues}
       onSubmit={handleEdit}
       onDelete={handleDelete}
-      isSubmitting={isPending}
+      isRecurringTodo={todo.recurringType !== 'NONE'}
+      isSubmitting={isPending || isDeleting}
     />
   );
 };

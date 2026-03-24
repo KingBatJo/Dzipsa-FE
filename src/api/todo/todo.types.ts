@@ -151,6 +151,19 @@ export type ResetTodoStatusParams = {
 
 export type ResetTodoStatusResponse = void;
 
+// 할 일 삭제 (반복 범위 선택)
+export type DeleteRecurringTodoScope =
+  | 'ONLY_THIS'
+  | 'SINCE_THIS'
+  | 'ALL_RECURRING';
+
+export type DeleteRecurringTodoParams = {
+  instanceId: TodoInstanceId;
+  scope: DeleteRecurringTodoScope;
+};
+
+export type DeleteRecurringTodoResponse = void;
+
 // 우리집 할 일 - 넛지 및 통계 조회
 export type HouseTodoMemberStat = {
   userId: number;

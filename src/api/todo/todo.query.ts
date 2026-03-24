@@ -5,6 +5,7 @@ import type {
 import {
   completeTodo,
   createTodo,
+  deleteRecurringTodo,
   deleteTodoImage,
   getCompletedTodos,
   getHouseAllTodos,
@@ -201,6 +202,16 @@ export const useDeleteTodoImageMutation = () => {
 };
 
 // 할 일 상태 초기화 (완료 취소)
+export const useDeleteRecurringTodoMutation = () => {
+  return useMutation({
+    mutationFn: deleteRecurringTodo,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.todo.all });
+    },
+  });
+};
+
+// 할 일 삭제 (반복 범위 선택)
 export const useResetTodoStatusMutation = () => {
   return useMutation({
     mutationFn: resetTodoStatus,

@@ -11,9 +11,11 @@ import { useEffect, useState } from 'react';
 import AppButton from '@/components/common/AppButton';
 import AppDialog from '@/components/common/AppDialog';
 import DateWheelDialog from '@/pages/todos/components/DateWheelDialog';
+import type { DeleteRecurringTodoScope } from '@/api/todo/todo.types';
 import FormPageLayout from '@/components/form/FormPageLayout';
 import RandomAssignOverlay from '@/pages/todos/components/RandomAssignOverlay';
 import RepeatSection from '@/pages/todos/components/RepeatSection';
+import TodoDeleteScopeSheet from '@/pages/todos/components/TodoDeleteScopeSheet';
 import type { TodoFormValues } from '@/types/todo';
 import { cn } from '@/lib/utils';
 import { formatDate } from '@/utils/date';
@@ -29,7 +31,8 @@ type TodoFormProps = {
   mode: TodoFormMode;
   initialValues?: Partial<TodoFormValues>;
   onSubmit: (values: TodoFormValues) => void;
-  onDelete?: () => void;
+  onDelete?: (scope?: DeleteRecurringTodoScope) => void;
+  isRecurringTodo?: boolean;
   isSubmitting?: boolean;
 };
 
@@ -44,6 +47,7 @@ const TodoForm = ({
   initialValues,
   onSubmit,
   onDelete,
+  isRecurringTodo = false,
   isSubmitting,
 }: TodoFormProps) => {
   const { data: roomMembers = [] } = useRoomMembersQuery();
@@ -54,6 +58,18 @@ const TodoForm = ({
   }));
   const model = useTodoFormModel({ initialValues, onSubmit, members });
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isDeleteScopeSheetOpen, setIsDeleteScopeSheetOpen] = useState(false);
+
+  const handleClickDelete = () => {
+    if (mode !== 'edit') return;
+
+    if (isRecurringTodo) {
+      setIsDeleteScopeSheetOpen(true);
+      return;
+    }
+
+    setIsDeleteDialogOpen(true);
+  };
 
   // 이미지 preload
   useEffect(() => {
@@ -198,8 +214,8 @@ const TodoForm = ({
 
           {mode === 'edit' && (
             <AppButton
-              onClick={() => setIsDeleteDialogOpen(true)}
-              className="bg-red-500 text-base font-semibold text-white"
+              onClick={handleClickDelete}
+              className="bg-red-500 text-base font-semibold text-white hover:bg-red-600 active:bg-red-700"
             >
               할 일 삭제
             </AppButton>
@@ -248,7 +264,7 @@ const TodoForm = ({
             <AppButton
               onClick={() => {
                 setIsDeleteDialogOpen(false);
-                onDelete?.();
+                onDelete?.('ONLY_THIS');
               }}
               className="w-32 bg-zinc-800 text-zinc-100"
             >
@@ -257,6 +273,12 @@ const TodoForm = ({
           </div>
         </div>
       </AppDialog>
+
+      <TodoDeleteScopeSheet
+        open={isDeleteScopeSheetOpen}
+        onOpenChange={setIsDeleteScopeSheetOpen}
+        onSelectScope={(scope) => onDelete?.(scope)}
+      />
     </FormPageLayout>
   );
 };

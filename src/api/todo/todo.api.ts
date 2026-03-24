@@ -3,6 +3,8 @@ import type {
   CompleteTodoResponse,
   CreateTodoRequest,
   CreateTodoResponse,
+  DeleteRecurringTodoParams,
+  DeleteRecurringTodoResponse,
   DeleteTodoImageParams,
   DeleteTodoImageResponse,
   GetCompletedTodosParams,
@@ -132,6 +134,16 @@ export const deleteTodoImage = async ({
   instanceId,
 }: DeleteTodoImageParams): Promise<DeleteTodoImageResponse> => {
   await apiClient.delete(`/api/todos/instances/${instanceId}/image`);
+};
+
+// 할 일 삭제 (반복 범위 선택)
+export const deleteRecurringTodo = async ({
+  instanceId,
+  scope,
+}: DeleteRecurringTodoParams): Promise<DeleteRecurringTodoResponse> => {
+  await apiClient.delete(`/api/todos/recurring/${instanceId}`, {
+    data: { scope },
+  });
 };
 
 // 완료된 할 일 리스트 조회
