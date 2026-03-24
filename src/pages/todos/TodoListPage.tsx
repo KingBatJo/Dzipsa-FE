@@ -5,24 +5,31 @@ import {
   useInfiniteHouseMemberTodosQuery,
   useInfiniteHouseTodayTodosQuery,
 } from '@/api/todo/todo.query';
+import { getTodoSubtitleInfo } from '@/api/todo/todo.utils';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { X } from 'lucide-react';
 
 import EmptyState from '@/components/common/EmptyState';
 import ListItemCard from '@/components/common/ListItemCard';
 import { MOBILE_MAX_WIDTH } from '@/constants/layout';
 import TodoDetailSheet from '@/pages/todos/components/TodoDetailSheet';
+import TodoSubtitle from '@/pages/todos/components/TodoSubtitle';
 import UserAvatar from '@/components/common/UserAvatar';
-import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import dzipsaDefault from '@/assets/dzipsa/dzipsa-default.svg';
-import { formatDueDateLabel } from '@/utils/date';
 import { getProfileOptionById } from '@/api/room/room.utils';
 import { useInfiniteScrollObserver } from '@/hooks/useInfiniteScrollObserver';
 import { useMeQuery } from '@/api/auth/auth.query';
 import { useRoomMembersQuery } from '@/api/room/room.query';
+import type { MyTodoListItem } from '@/api/todo/todo.types';
 import type { HouseMemberRouteState } from './components/HouseTodosTab';
 
 export type TodoListCategory = 'today' | 'delayed' | 'all';
+
+const renderTodoSubtitle = (todo: MyTodoListItem) => {
+  const { dueDateLabel, repeatLabel } = getTodoSubtitleInfo(todo);
+  return <TodoSubtitle dueDateLabel={dueDateLabel} repeatLabel={repeatLabel} />;
+};
 
 const TodoListPage = () => {
   const navigate = useNavigate();
@@ -153,7 +160,7 @@ const TodoListPage = () => {
               <ListItemCard
                 key={todo.instanceId}
                 title={todo.title}
-                subtitle={formatDueDateLabel(todo.targetDate)}
+                subtitle={renderTodoSubtitle(todo)}
                 right={
                   <UserAvatar
                     src={getProfileOptionById(todo.profileImageUrl).imageUrl}

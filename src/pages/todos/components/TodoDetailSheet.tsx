@@ -181,7 +181,7 @@ const TodoDetailSheet = ({
               label="메모"
               value={
                 todoDetail?.memo ? (
-                  <span className="break-keep">{todoDetail.memo}</span>
+                  todoDetail.memo
                 ) : (
                   <span className="text-zinc-400">작성된 메모가 없습니다</span>
                 )

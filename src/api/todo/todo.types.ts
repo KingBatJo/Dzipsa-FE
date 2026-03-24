@@ -10,6 +10,9 @@ export type CursorParams = {
   cursor?: string;
 };
 
+// 할 일 등록/수정 공통
+export type TodoRecurringType = 'NONE' | 'WEEKLY' | 'MONTHLY';
+
 export type BaseTodoListItem = {
   instanceId: number;
   title: string;
@@ -21,6 +24,8 @@ export type BaseTodoListItem = {
   targetDate: string;
   delayDays: number;
   imageUrl: string | null;
+  recurringType?: TodoRecurringType;
+  repeatDays?: string | null;
 };
 
 export type MyTodoListItem = BaseTodoListItem & {
@@ -52,9 +57,6 @@ export type GetMyUpcomingTodosResponse = TodoCursorPageResponse;
 
 // 할 일 상세 조회
 export type TodoInstanceId = number;
-
-// 할 일 등록/수정 공통
-export type TodoRecurringType = 'NONE' | 'WEEKLY' | 'MONTHLY';
 
 export type TodoDetailResponse = {
   todoId: number;

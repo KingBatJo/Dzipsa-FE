@@ -4,18 +4,19 @@ import {
   useInfiniteMyTodayTodosQuery,
   useInfiniteMyUpcomingTodosQuery,
 } from '@/api/todo/todo.query';
+import { getTodoSubtitleInfo } from '@/api/todo/todo.utils';
 
 import { Button } from '@/components/ui/button';
-import { TODO_STATUS } from '@/constants/todos';
 import EmptyState from '@/components/common/EmptyState';
 import ListItemCard from '@/components/common/ListItemCard';
 import ListSection from '@/components/common/ListSection';
-import type { TodoInstanceId } from '@/api/todo/todo.types';
 import SectionActionButtons from '@/pages/todos/components/SectionActionButtons';
-import TodoCompleteSheet from '@/pages/todos/components/TodoCompleteSheet';
+import { TODO_STATUS } from '@/constants/todos';
 import TodoCompleteButton from '@/pages/todos/components/TodoCompleteButton';
+import TodoCompleteSheet from '@/pages/todos/components/TodoCompleteSheet';
+import TodoSubtitle from '@/pages/todos/components/TodoSubtitle';
+import type { MyTodoListItem, TodoInstanceId } from '@/api/todo/todo.types';
 import dzipsaCharacter from '@/assets/dzipsa.svg';
-import { formatDueDateLabel } from '@/utils/date';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
@@ -26,6 +27,11 @@ type MyTodosTabProps = {
 type SectionKey = 'missed' | 'today' | 'upcoming';
 
 const SECTION_PAGE_SIZE = 10;
+
+const renderTodoSubtitle = (todo: MyTodoListItem) => {
+  const { dueDateLabel, repeatLabel } = getTodoSubtitleInfo(todo);
+  return <TodoSubtitle dueDateLabel={dueDateLabel} repeatLabel={repeatLabel} />;
+};
 
 const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
   const navigate = useNavigate();
@@ -121,7 +127,7 @@ const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
             <ListItemCard
               key={todo.instanceId}
               title={todo.title}
-              subtitle={formatDueDateLabel(todo.targetDate)}
+              subtitle={renderTodoSubtitle(todo)}
               right={
                 <TodoCompleteButton
                   isDelayed={todo.delayDays > 0}
@@ -180,7 +186,7 @@ const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
               <ListItemCard
                 key={todo.instanceId}
                 title={todo.title}
-                subtitle={formatDueDateLabel(todo.targetDate)}
+                subtitle={renderTodoSubtitle(todo)}
                 right={
                   <TodoCompleteButton
                     onClick={() => handleOpenCompleteSheet(todo.instanceId)}
@@ -216,7 +222,7 @@ const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
             <ListItemCard
               key={todo.instanceId}
               title={todo.title}
-              subtitle={formatDueDateLabel(todo.targetDate)}
+              subtitle={renderTodoSubtitle(todo)}
               right={
                 <TodoCompleteButton
                   onClick={() => handleOpenCompleteSheet(todo.instanceId)}
