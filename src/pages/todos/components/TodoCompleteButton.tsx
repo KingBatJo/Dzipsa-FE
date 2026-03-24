@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils';
+import type { CSSProperties } from 'react';
 
 type TodoCompleteButtonProps = {
   isDelayed?: boolean;
@@ -28,11 +29,20 @@ const TodoCompleteButton = ({
     ? TODO_COMPLETE_BUTTON_COLORS.delayed
     : TODO_COMPLETE_BUTTON_COLORS.normal;
 
+  const colorVars = {
+    '--todo-fill-base': colors.base,
+    '--todo-fill-hover': colors.hover,
+    '--todo-fill-active': colors.active,
+  } as CSSProperties;
+
   return (
     <button
       type="button"
       aria-label={ariaLabel}
-      onClick={onClick}
+      onClick={(event) => {
+        event.stopPropagation();
+        onClick?.();
+      }}
       className="group flex h-6 w-6 items-center justify-center"
     >
       <svg
@@ -44,11 +54,12 @@ const TodoCompleteButton = ({
       >
         <path
           d="M12 3C19.2 3 21 4.8 21 12C21 19.2 19.2 21 12 21C4.8 21 3 19.2 3 12C3 4.8 4.8 3 12 3Z"
+          style={colorVars}
           className={cn(
             'transition-colors duration-150',
-            `fill-[${colors.base}]`,
-            `group-hover:fill-[${colors.hover}]`,
-            `group-active:fill-[${colors.active}]`
+            'fill-[var(--todo-fill-base)]',
+            'group-hover:fill-[var(--todo-fill-hover)]',
+            'group-active:fill-[var(--todo-fill-active)]'
           )}
         />
       </svg>

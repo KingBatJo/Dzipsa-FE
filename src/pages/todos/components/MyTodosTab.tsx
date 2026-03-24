@@ -1,4 +1,5 @@
 import {
+  useCompleteTodoMutation,
   useInfiniteMyMissedTodosQuery,
   useInfiniteMyTodayTodosQuery,
   useInfiniteMyUpcomingTodosQuery,
@@ -10,6 +11,7 @@ import ListItemCard from '@/components/common/ListItemCard';
 import ListSection from '@/components/common/ListSection';
 import type { TodoInstanceId } from '@/api/todo/todo.types';
 import SectionActionButtons from '@/pages/todos/components/SectionActionButtons';
+import TodoCompleteSheet from '@/pages/todos/components/TodoCompleteSheet';
 import TodoCompleteButton from '@/pages/todos/components/TodoCompleteButton';
 import dzipsaCharacter from '@/assets/dzipsa.svg';
 import { formatDueDateLabel } from '@/utils/date';
@@ -31,6 +33,12 @@ const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
     today: false,
     upcoming: false,
   });
+  const [completeSheetOpen, setCompleteSheetOpen] = useState(false);
+  const [completeTargetInstanceId, setCompleteTargetInstanceId] =
+    useState<TodoInstanceId | null>(null);
+
+  const { mutate: completeTodo, isPending: isCompleting } =
+    useCompleteTodoMutation();
 
   const {
     data: missedData,
@@ -77,6 +85,25 @@ const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
 
   const isPending = isMissedPending || isTodayPending || isUpcomingPending;
 
+  const handleOpenCompleteSheet = (instanceId: TodoInstanceId) => {
+    setCompleteTargetInstanceId(instanceId);
+    setCompleteSheetOpen(true);
+  };
+
+  const handleConfirmComplete = (proofImageFile?: File) => {
+    if (completeTargetInstanceId == null) return;
+
+    completeTodo(
+      { instanceId: completeTargetInstanceId, image: proofImageFile ?? null },
+      {
+        onSuccess: () => {
+          setCompleteSheetOpen(false);
+          setCompleteTargetInstanceId(null);
+        },
+      }
+    );
+  };
+
   if (isPending) {
     return (
       <div className="flex min-h-[240px] animate-pulse items-center justify-center text-sm font-medium text-zinc-400">
@@ -94,7 +121,12 @@ const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
               key={todo.instanceId}
               title={todo.title}
               subtitle={formatDueDateLabel(todo.targetDate)}
-              right={<TodoCompleteButton isDelayed={todo.delayDays > 0} />}
+              right={
+                <TodoCompleteButton
+                  isDelayed={todo.delayDays > 0}
+                  onClick={() => handleOpenCompleteSheet(todo.instanceId)}
+                />
+              }
               onClick={() => onTodoClick?.(todo.instanceId)}
               isDelayed={todo.delayDays > 0}
               badge={todo.delayDays > 0 ? `D+${todo.delayDays}` : undefined}
@@ -148,7 +180,11 @@ const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
                 key={todo.instanceId}
                 title={todo.title}
                 subtitle={formatDueDateLabel(todo.targetDate)}
-                right={<TodoCompleteButton />}
+                right={
+                  <TodoCompleteButton
+                    onClick={() => handleOpenCompleteSheet(todo.instanceId)}
+                  />
+                }
                 onClick={() => onTodoClick?.(todo.instanceId)}
               />
             ))}
@@ -180,7 +216,11 @@ const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
               key={todo.instanceId}
               title={todo.title}
               subtitle={formatDueDateLabel(todo.targetDate)}
-              right={<TodoCompleteButton />}
+              right={
+                <TodoCompleteButton
+                  onClick={() => handleOpenCompleteSheet(todo.instanceId)}
+                />
+              }
               onClick={() => onTodoClick?.(todo.instanceId)}
             />
           ))}
@@ -203,6 +243,16 @@ const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
           />
         </ListSection>
       )}
+
+      <TodoCompleteSheet
+        open={completeSheetOpen}
+        onOpenChange={(open) => {
+          setCompleteSheetOpen(open);
+          if (!open) setCompleteTargetInstanceId(null);
+        }}
+        onConfirmComplete={handleConfirmComplete}
+        isSubmitting={isCompleting}
+      />
     </div>
   );
 };
