@@ -43,7 +43,7 @@ const HomePage = () => {
   }, [isError, error]);
 
   return (
-    <div className="space-y-4 p-4">
+    <div className="pb-[15px]">
       <MottoSection
         motto={room?.motto ?? '우리 집 가훈을 다같이 정해볼까요?'}
       />
