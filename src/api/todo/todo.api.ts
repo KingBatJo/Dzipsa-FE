@@ -15,6 +15,8 @@ import type {
   GetMyUpcomingTodosParams,
   GetMyUpcomingTodosResponse,
   MyTodosCursorParams,
+  ResetTodoStatusParams,
+  ResetTodoStatusResponse,
   TodoDetailResponse,
   TodoInstanceId,
   UpdateTodoParams,
@@ -132,4 +134,11 @@ export const getCompletedTodos = async (
     { params }
   );
   return data;
+};
+
+// 할 일 상태 초기화 (완료 취소)
+export const resetTodoStatus = async ({
+  instanceId,
+}: ResetTodoStatusParams): Promise<ResetTodoStatusResponse> => {
+  await apiClient.patch(`/api/todos/instances/${instanceId}/reset`);
 };

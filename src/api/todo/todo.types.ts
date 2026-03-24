@@ -134,3 +134,10 @@ export type CompletedTodoListItem = BaseTodoListItem & {
 };
 
 export type GetCompletedTodosResponse = CursorSection<CompletedTodoListItem>;
+
+// 할 일 상태 초기화 (완료 취소)
+export type ResetTodoStatusParams = {
+  instanceId: TodoInstanceId;
+};
+
+export type ResetTodoStatusResponse = void;

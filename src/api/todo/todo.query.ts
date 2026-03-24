@@ -12,6 +12,7 @@ import {
   getMyTodosAll,
   getMyUpcomingTodos,
   getTodoDetail,
+  resetTodoStatus,
   updateTodo,
 } from '@/api/todo/todo.api';
 import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
@@ -112,6 +113,19 @@ export const useCompleteTodoMutation = () => {
 export const useDeleteTodoImageMutation = () => {
   return useMutation({
     mutationFn: deleteTodoImage,
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.todo.all });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.todo.detail(variables.instanceId),
+      });
+    },
+  });
+};
+
+// 할 일 상태 초기화 (완료 취소)
+export const useResetTodoStatusMutation = () => {
+  return useMutation({
+    mutationFn: resetTodoStatus,
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.todo.all });
       queryClient.invalidateQueries({
