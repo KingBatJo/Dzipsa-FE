@@ -50,6 +50,7 @@ export type TodoFormValues = {
   memo: string;
   dueDate: Date | null;
   assigneeId: number;
+  isRandom: boolean;
   repeatValue: RepeatValue;
 };
 

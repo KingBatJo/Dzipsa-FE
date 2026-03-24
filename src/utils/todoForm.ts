@@ -11,9 +11,10 @@ import { formatDate, toDateString } from '@/utils/date';
 
 import { DEFAULT_WEEK_DAY } from '@/constants/weekdays';
 import { REPEAT_TYPE_OPTIONS } from '@/constants/todos';
-import { toRepeatDays } from '@/utils/ruleForm';
+import { parseRepeatDays, toRepeatDays } from '@/utils/ruleForm';
 
 const WEEKLY_REPEAT_TYPE = REPEAT_TYPE_OPTIONS[0];
+const MONTHLY_REPEAT_TYPE = REPEAT_TYPE_OPTIONS[1];
 
 export const createDefaultRepeatValue = (): RepeatValue => ({
   enabled: false,
@@ -84,7 +85,50 @@ export const toCreateTodoPayload = (
       ? toDateString(values.repeatValue.endDate)
       : null,
     assigneeId: values.assigneeId,
-    isRandom: false,
+    isRandom: values.isRandom,
     memo: values.memo || null,
+  };
+};
+
+type RepeatPrefillSource = {
+  recurringType: TodoRecurringType;
+  repeatDays: string | null;
+  startDate: string | null;
+  endDate: string | null;
+};
+
+export const toPrefilledRepeatValue = ({
+  recurringType,
+  repeatDays,
+  startDate,
+  endDate,
+}: RepeatPrefillSource): RepeatValue => {
+  const defaultValue = createDefaultRepeatValue();
+
+  if (recurringType === 'NONE') {
+    return defaultValue;
+  }
+
+  const resolvedStartDate = startDate ? new Date(startDate) : new Date();
+  const resolvedEndDate = endDate ? new Date(endDate) : null;
+
+  if (recurringType === 'WEEKLY') {
+    const parsedDays = repeatDays ? parseRepeatDays(repeatDays) : [];
+
+    return {
+      enabled: true,
+      type: WEEKLY_REPEAT_TYPE,
+      days: parsedDays.length > 0 ? parsedDays : [DEFAULT_WEEK_DAY],
+      startDate: resolvedStartDate,
+      endDate: resolvedEndDate,
+    };
+  }
+
+  return {
+    enabled: true,
+    type: MONTHLY_REPEAT_TYPE,
+    days: [DEFAULT_WEEK_DAY],
+    startDate: resolvedStartDate,
+    endDate: resolvedEndDate,
   };
 };

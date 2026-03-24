@@ -128,6 +128,11 @@ const TodoDetailSheet = ({
                     memo: todoDetail.memo,
                     targetDate: todoDetail.targetDate,
                     assigneeId: todoDetail.assigneeId,
+                    isRandom: todoDetail.isRandom,
+                    recurringType: todoDetail.recurringType,
+                    repeatDays: todoDetail.repeatDays,
+                    startDate: todoDetail.startDate,
+                    endDate: todoDetail.endDate,
                   },
                 });
               }}

@@ -69,6 +69,7 @@ export type TodoDetailResponse = {
   repeatDays: string | null;
   startDate: string; // yyyy-MM-dd
   endDate: string | null; // yyyy-MM-dd
+
   isRandom: boolean;
   status: TodoStatus;
   completedAt: string | null; // ISO 8601

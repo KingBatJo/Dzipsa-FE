@@ -1,11 +1,9 @@
-﻿import {
-  createDefaultRepeatValue,
-  toCreateTodoPayload,
-} from '@/utils/todoForm';
+﻿import { toCreateTodoPayload, toPrefilledRepeatValue } from '@/utils/todoForm';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import TodoForm from '@/pages/todos/components/TodoForm';
 import type { TodoFormValues } from '@/types/todo';
+import type { TodoRecurringType } from '@/api/todo/todo.types';
 import { toast } from 'sonner';
 import { useUpdateTodoMutation } from '@/api/todo/todo.query';
 
@@ -15,6 +13,11 @@ type EditTodoLocationState = {
   memo: string | null;
   targetDate: string | null;
   assigneeId: number;
+  isRandom: boolean;
+  recurringType: TodoRecurringType;
+  repeatDays: string | null;
+  startDate: string;
+  endDate: string | null;
 };
 
 const TodoEditPage = () => {
@@ -38,7 +41,13 @@ const TodoEditPage = () => {
     memo: todo.memo ?? '',
     dueDate: todo.targetDate ? new Date(todo.targetDate) : null,
     assigneeId: todo.assigneeId,
-    repeatValue: createDefaultRepeatValue(),
+    isRandom: todo.isRandom,
+    repeatValue: toPrefilledRepeatValue({
+      recurringType: todo.recurringType,
+      repeatDays: todo.repeatDays,
+      startDate: todo.startDate,
+      endDate: todo.endDate,
+    }),
   };
 
   const handleEdit = async (values: TodoFormValues) => {

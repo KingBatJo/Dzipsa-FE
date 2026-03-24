@@ -68,7 +68,11 @@ const TodoForm = ({
     <FormPageLayout
       title={mode === 'create' ? '할 일 등록' : '할 일 편집'}
       onSubmit={model.form.submitForm}
-      submitDisabled={!model.form.isValid || isSubmitting}
+      submitDisabled={
+        !model.form.isValid ||
+        isSubmitting ||
+        (mode === 'edit' && !model.form.hasChanges)
+      }
     >
       <div className="bg-zinc-100 pb-6">
         <div className="bg-white/60 px-[15px] pt-[15px] pb-[30px] backdrop-blur-xl">
