@@ -1,10 +1,10 @@
+import type { MyTodoListItem, TodoInstanceId } from '@/api/todo/todo.types';
 import {
   useCompleteTodoMutation,
   useInfiniteMyMissedTodosQuery,
   useInfiniteMyTodayTodosQuery,
   useInfiniteMyUpcomingTodosQuery,
 } from '@/api/todo/todo.query';
-import { getTodoSubtitleInfo } from '@/api/todo/todo.utils';
 
 import { Button } from '@/components/ui/button';
 import EmptyState from '@/components/common/EmptyState';
@@ -15,8 +15,8 @@ import { TODO_STATUS } from '@/constants/todos';
 import TodoCompleteButton from '@/pages/todos/components/TodoCompleteButton';
 import TodoCompleteSheet from '@/pages/todos/components/TodoCompleteSheet';
 import TodoSubtitle from '@/pages/todos/components/TodoSubtitle';
-import type { MyTodoListItem, TodoInstanceId } from '@/api/todo/todo.types';
 import dzipsaCharacter from '@/assets/dzipsa.svg';
+import { getTodoSubtitleInfo } from '@/api/todo/todo.utils';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
@@ -26,7 +26,7 @@ type MyTodosTabProps = {
 
 type SectionKey = 'missed' | 'today' | 'upcoming';
 
-const SECTION_PAGE_SIZE = 10;
+const SECTION_PAGE_SIZE = 5;
 
 const renderTodoSubtitle = (todo: MyTodoListItem) => {
   const { dueDateLabel, repeatLabel } = getTodoSubtitleInfo(todo);
