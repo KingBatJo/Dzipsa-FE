@@ -6,6 +6,7 @@ import {
 } from '@/api/todo/todo.query';
 
 import { Button } from '@/components/ui/button';
+import { TODO_STATUS } from '@/constants/todos';
 import EmptyState from '@/components/common/EmptyState';
 import ListItemCard from '@/components/common/ListItemCard';
 import ListSection from '@/components/common/ListSection';
@@ -70,7 +71,7 @@ const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
     upcomingData?.pages.flatMap((page) => page.content) ?? [];
 
   const visibleTodayTodos = todayTodos.filter(
-    (todo) => todo.status !== 'COMPLETED'
+    (todo) => todo.status !== TODO_STATUS.COMPLETED
   );
 
   const displayedMissedTodos = collapsed.missed

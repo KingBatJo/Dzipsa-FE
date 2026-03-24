@@ -53,26 +53,32 @@ export type GetMyUpcomingTodosResponse = TodoCursorPageResponse;
 // 할 일 상세 조회
 export type TodoInstanceId = number;
 
-export type TodoDetailStatus = '진행' | '지연' | '완료' | '지연완료';
+// 할 일 등록/수정 공통
+export type TodoRecurringType = 'NONE' | 'WEEKLY' | 'MONTHLY';
 
 export type TodoDetailResponse = {
+  todoId: number;
   instanceId: TodoInstanceId;
   title: string;
-  targetDate: string; // yyyy-MM-dd
   memo: string | null;
   assigneeId: number;
   assigneeNickname: string;
-  profileImageUrl: string;
-  recurringInfo: string;
-  status: TodoDetailStatus;
-  statusDetail: string;
+  profileImageUrl: string | null;
+  targetDate: string; // yyyy-MM-dd
+  recurringType: TodoRecurringType;
+  repeatDays: string | null;
+  startDate: string; // yyyy-MM-dd
+  endDate: string | null; // yyyy-MM-dd
+  isRandom: boolean;
+  status: TodoStatus;
+  completedAt: string | null; // ISO 8601
+  delayDays: number;
   imageUrl: string | null;
   owner: boolean;
+  writer: boolean;
 };
 
 // 할 일 등록
-export type TodoRecurringType = 'NONE' | 'WEEKLY' | 'MONTHLY';
-
 export type CreateTodoRequest = {
   title: string;
   targetDate: string | null; // yyyy-MM-dd

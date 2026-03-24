@@ -1,4 +1,8 @@
 import {
+  getTodoRecurringInfoText,
+  getTodoStatusTexts,
+} from '@/api/todo/todo.utils';
+import {
   useCompleteTodoMutation,
   useResetTodoStatusMutation,
   useTodoDetailQuery,
@@ -6,11 +10,12 @@ import {
 
 import AppButton from '@/components/common/AppButton';
 import BottomSheet from '@/components/common/BottomSheet';
-import { PencilLine } from 'lucide-react';
 import type { ReactNode } from 'react';
+import { TODO_STATUS } from '@/constants/todos';
 import TodoCompleteSheet from '@/pages/todos/components/TodoCompleteSheet';
 import type { TodoInstanceId } from '@/api/todo/todo.types';
 import UserAvatar from '@/components/common/UserAvatar';
+import editIcon from '@/assets/icon/edit.svg';
 import { formatDueDateLabel } from '@/utils/date';
 import { getProfileOptionById } from '@/api/room/room.utils';
 import { useNavigate } from 'react-router-dom';
@@ -59,8 +64,20 @@ const TodoDetailSheet = ({
 
   const assigneeProfile = getProfileOptionById(todoDetail?.profileImageUrl);
 
-  const isCompleted = todoDetail?.status.includes('완료') ?? false;
+  const isCompleted = todoDetail?.status === TODO_STATUS.COMPLETED;
   const hasProofImage = Boolean(todoDetail?.imageUrl);
+  const statusTexts = getTodoStatusTexts(
+    todoDetail?.status,
+    todoDetail?.delayDays ?? 0,
+    todoDetail?.completedAt
+  );
+  const recurringInfoText = getTodoRecurringInfoText(
+    todoDetail?.recurringType,
+    todoDetail?.repeatDays
+  );
+  const isRecurringUnset = recurringInfoText === '설정 안 함';
+
+  const isOwner = todoDetail?.owner;
 
   const handleOpenCompleteSheet = () => {
     if (instanceId == null) return;
@@ -99,30 +116,24 @@ const TodoDetailSheet = ({
             {todoDetail?.title ?? '-'}
           </h2>
 
-          {todoDetail?.owner && (
+          {isOwner && (
             <button
               type="button"
               onClick={() => {
                 if (!todoDetail) return;
                 navigate(`/todos/${todoDetail.instanceId}/edit`, {
                   state: {
-                    todo: {
-                      id: todoDetail.instanceId,
-                      title: todoDetail.title,
-                      dueAt: `${todoDetail.targetDate}T00:00:00`,
-                      createdAt: `${todoDetail.targetDate}T00:00:00`,
-                      assigneeId: todoDetail.assigneeId,
-                      memo: todoDetail.memo ?? undefined,
-                      completed: isCompleted,
-                      proofImageUrl: todoDetail.imageUrl ?? undefined,
-                      local: { dueDate: todoDetail.targetDate },
-                    },
+                    todoId: todoDetail.todoId,
+                    title: todoDetail.title,
+                    memo: todoDetail.memo,
+                    targetDate: todoDetail.targetDate,
+                    assigneeId: todoDetail.assigneeId,
                   },
                 });
               }}
-              className="text-zinc-400"
+              className="shrink-0"
             >
-              <PencilLine className="h-6 w-6 transition-colors hover:text-black" />
+              <img src={editIcon} alt="편집" className="h-6 w-6" />
             </button>
           )}
         </div>
@@ -152,7 +163,13 @@ const TodoDetailSheet = ({
 
             <DetailRow
               label="반복"
-              value={todoDetail?.recurringInfo ?? '반복 없음'}
+              value={
+                <span
+                  className={isRecurringUnset ? 'text-zinc-400' : undefined}
+                >
+                  {recurringInfoText}
+                </span>
+              }
             />
 
             <DetailRow
@@ -161,7 +178,7 @@ const TodoDetailSheet = ({
                 todoDetail?.memo ? (
                   <span className="break-keep">{todoDetail.memo}</span>
                 ) : (
-                  '-'
+                  <span className="text-zinc-400">작성된 메모가 없습니다</span>
                 )
               }
               alignTop
@@ -171,18 +188,13 @@ const TodoDetailSheet = ({
               label="상태"
               value={
                 <div className="flex flex-col items-end gap-1">
-                  <span>{todoDetail?.status === '진행' ? '진행중' : '-'}</span>
-                  <span className="text-zinc-300">
-                    {todoDetail?.status === '진행'
-                      ? ''
-                      : (todoDetail?.statusDetail ?? '')}
-                  </span>
+                  <span>{statusTexts.label}</span>
+                  <span className="text-zinc-400">{statusTexts.detail}</span>
                 </div>
               }
               alignTop
             />
 
-            {/* 인증 사진 */}
             {hasProofImage && (
               <div className="flex justify-end">
                 <img
@@ -195,8 +207,7 @@ const TodoDetailSheet = ({
           </div>
         </div>
 
-        {/* 하단 버튼 */}
-        {todoDetail?.owner && (
+        {isOwner && (
           <div className="flex items-center justify-between gap-1 p-5">
             <div className="flex flex-1 items-center gap-1">
               {!isCompleted && (
