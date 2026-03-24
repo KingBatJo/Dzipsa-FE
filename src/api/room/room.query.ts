@@ -9,8 +9,8 @@ import {
 } from '@/api/room/room.api';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-import type { MeResponse } from '@/api/auth/auth.types';
 import type { GetRoomMembersParams } from '@/api/room/room.types';
+import type { MeResponse } from '@/api/auth/auth.types';
 import { queryClient } from '@/lib/queryClient';
 import { queryKeys } from '@/lib/queryKeys';
 
@@ -77,8 +77,11 @@ export const useLeaveRoomMutation = () => {
         (prev: MeResponse | undefined) =>
           prev ? { ...prev, hasRoom: false } : prev
       );
+
       queryClient.removeQueries({ queryKey: queryKeys.room.myRoom });
       queryClient.removeQueries({ queryKey: queryKeys.room.invitationCode });
+      queryClient.removeQueries({ queryKey: queryKeys.rule.all });
+      queryClient.removeQueries({ queryKey: queryKeys.todo.all });
     },
   });
 };
