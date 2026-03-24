@@ -6,12 +6,11 @@ export type MyTodosCursorParams = {
   upcomingCursor?: string;
 };
 
-export type TodoPageParams = {
+export type CursorParams = {
   cursor?: string;
-  size?: number;
 };
 
-export type MyTodoListItem = {
+export type BaseTodoListItem = {
   instanceId: number;
   title: string;
   memo: string | null;
@@ -19,10 +18,13 @@ export type MyTodoListItem = {
   assigneeNickname: string;
   profileImageUrl: string | null;
   status: TodoStatus;
-  targetDate: string; // yyyy-MM-dd
+  targetDate: string;
   delayDays: number;
   imageUrl: string | null;
-  completedAt: string | null; // yyyy.MM.dd
+};
+
+export type MyTodoListItem = BaseTodoListItem & {
+  completedAt: string | null;
 };
 
 export type CursorSection<T> = {
@@ -39,13 +41,13 @@ export type GetMyTodosAllResponse = {
   upcomingTodos: CursorSection<MyTodoListItem>;
 };
 
-export type GetMyTodayTodosParams = TodoPageParams;
+export type GetMyTodayTodosParams = CursorParams;
 export type GetMyTodayTodosResponse = TodoCursorPageResponse;
 
-export type GetMyMissedTodosParams = TodoPageParams;
+export type GetMyMissedTodosParams = CursorParams;
 export type GetMyMissedTodosResponse = TodoCursorPageResponse;
 
-export type GetMyUpcomingTodosParams = TodoPageParams;
+export type GetMyUpcomingTodosParams = CursorParams;
 export type GetMyUpcomingTodosResponse = TodoCursorPageResponse;
 
 // 할 일 상세 조회
@@ -123,3 +125,12 @@ export type DeleteTodoImageParams = {
 };
 
 export type DeleteTodoImageResponse = void;
+
+// 완료된 할 일 리스트 조회
+export type GetCompletedTodosParams = CursorParams;
+
+export type CompletedTodoListItem = BaseTodoListItem & {
+  completedAt: string; // 완료 리스트에서는 null 아님
+};
+
+export type GetCompletedTodosResponse = CursorSection<CompletedTodoListItem>;

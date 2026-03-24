@@ -1,13 +1,12 @@
 import type {
+  CursorParams,
   GetMyTodayTodosParams,
   MyTodosCursorParams,
-  TodoPageParams,
 } from '@/api/todo/todo.types';
 import type { GetRulesParams, RuleId } from '@/api/rule/rule.types';
-import type { GetRoomMembersParams } from '@/api/room/room.types';
 
 import { DEFAULT_RULE_LIST_SIZE } from '@/constants/rule';
-import { DEFAULT_TODO_PAGE_SIZE } from '@/constants/todos';
+import type { GetRoomMembersParams } from '@/api/room/room.types';
 
 // 동일한 요청이 같은 queryKey를 쓰도록 size 기본값을 포함해 params를 정규화
 const normalizeRuleListParams = (params?: GetRulesParams) => {
@@ -17,9 +16,8 @@ const normalizeRuleListParams = (params?: GetRulesParams) => {
   };
 };
 
-const normalizeTodoPageParams = (params?: TodoPageParams) => ({
+const normalizeTodoPageParams = (params?: CursorParams) => ({
   cursor: params?.cursor ?? null,
-  size: params?.size ?? DEFAULT_TODO_PAGE_SIZE,
 });
 
 const normalizeMyTodosCursorParams = (params?: MyTodosCursorParams) => ({
@@ -62,20 +60,26 @@ export const queryKeys = {
 
     today: (params?: GetMyTodayTodosParams) =>
       [...queryKeys.todo.my, 'today', normalizeTodoPageParams(params)] as const,
-
-    missed: (params?: TodoPageParams) =>
+    missed: (params?: CursorParams) =>
       [
         ...queryKeys.todo.my,
         'missed',
         normalizeTodoPageParams(params),
       ] as const,
-
-    upcoming: (params?: TodoPageParams) =>
+    upcoming: (params?: CursorParams) =>
       [
         ...queryKeys.todo.my,
         'upcoming',
         normalizeTodoPageParams(params),
       ] as const,
+
+    completed: (params?: CursorParams) =>
+      [
+        ...queryKeys.todo.my,
+        'completed',
+        normalizeTodoPageParams(params),
+      ] as const,
+
     detail: (instanceId: number) =>
       [...queryKeys.todo.all, 'detail', instanceId] as const,
   },

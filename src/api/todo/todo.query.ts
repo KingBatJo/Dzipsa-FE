@@ -6,6 +6,7 @@ import {
   completeTodo,
   createTodo,
   deleteTodoImage,
+  getCompletedTodos,
   getMyMissedTodos,
   getMyTodayTodos,
   getMyTodosAll,
@@ -13,7 +14,7 @@ import {
   getTodoDetail,
   updateTodo,
 } from '@/api/todo/todo.api';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
 
 import { queryClient } from '@/lib/queryClient';
 import { queryKeys } from '@/lib/queryKeys';
@@ -50,6 +51,18 @@ export const useMyUpcomingTodosQuery = () =>
     queryFn: () => getMyUpcomingTodos(),
     staleTime: TODO_QUERY_STALE_TIME,
   });
+
+// 완료된 할 일 리스트 조회
+export const useInfiniteCompletedTodosQuery = () => {
+  return useInfiniteQuery({
+    queryKey: queryKeys.todo.completed(),
+    queryFn: ({ pageParam }) => getCompletedTodos({ cursor: pageParam }),
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (lastPage) =>
+      lastPage.hasNext ? (lastPage.nextCursor ?? undefined) : undefined,
+    staleTime: TODO_QUERY_STALE_TIME,
+  });
+};
 
 // 할 일 상세 조회
 export const useTodoDetailQuery = (instanceId: TodoInstanceId | null) => {

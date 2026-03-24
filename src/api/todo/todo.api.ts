@@ -5,6 +5,8 @@ import type {
   CreateTodoResponse,
   DeleteTodoImageParams,
   DeleteTodoImageResponse,
+  GetCompletedTodosParams,
+  GetCompletedTodosResponse,
   GetMyMissedTodosParams,
   GetMyMissedTodosResponse,
   GetMyTodayTodosParams,
@@ -119,4 +121,15 @@ export const deleteTodoImage = async ({
   instanceId,
 }: DeleteTodoImageParams): Promise<DeleteTodoImageResponse> => {
   await apiClient.delete(`/api/todos/instances/${instanceId}/image`);
+};
+
+// 완료된 할 일 리스트 조회
+export const getCompletedTodos = async (
+  params?: GetCompletedTodosParams
+): Promise<GetCompletedTodosResponse> => {
+  const { data } = await apiClient.get<GetCompletedTodosResponse>(
+    '/api/todos/completed',
+    { params }
+  );
+  return data;
 };
