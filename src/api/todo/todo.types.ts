@@ -161,3 +161,19 @@ export type GetHouseTodoStatsResponse = {
 
   memberStats: HouseTodoMemberStat[];
 };
+
+// 우리집 할 일 - 오늘/지연/모든 할 일 조회
+export type GetHouseTodayTodosParams = CursorParams;
+export type GetHouseTodayTodosResponse = TodoCursorPageResponse;
+
+export type GetHouseDelayedTodosParams = CursorParams;
+export type GetHouseDelayedTodosResponse = TodoCursorPageResponse;
+
+export type GetHouseAllTodosParams = CursorParams;
+export type GetHouseAllTodosResponse = TodoCursorPageResponse;
+
+// 우리집 할 일 - 구성원별 할 일 조회
+export type GetHouseMemberTodosParams = CursorParams & {
+  memberId: number;
+};
+export type GetHouseMemberTodosResponse = TodoCursorPageResponse;

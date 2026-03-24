@@ -73,7 +73,13 @@ export const queryKeys = {
         normalizeTodoPageParams(params),
       ] as const,
 
-    houseStats: () => [...queryKeys.todo.all, 'houseStats'] as const,
+    house: ['todo', 'house'] as const,
+    houseStats: () => [...queryKeys.todo.house, 'stats'] as const,
+    houseToday: () => [...queryKeys.todo.house, 'today'] as const,
+    houseDelayed: () => [...queryKeys.todo.house, 'delayed'] as const,
+    houseAll: () => [...queryKeys.todo.house, 'all'] as const,
+    houseMember: (memberId: number) =>
+      [...queryKeys.todo.house, 'member', memberId] as const,
 
     completed: (params?: CursorParams) =>
       [

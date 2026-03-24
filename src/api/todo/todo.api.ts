@@ -7,6 +7,14 @@ import type {
   DeleteTodoImageResponse,
   GetCompletedTodosParams,
   GetCompletedTodosResponse,
+  GetHouseAllTodosParams,
+  GetHouseAllTodosResponse,
+  GetHouseDelayedTodosParams,
+  GetHouseDelayedTodosResponse,
+  GetHouseMemberTodosParams,
+  GetHouseMemberTodosResponse,
+  GetHouseTodayTodosParams,
+  GetHouseTodayTodosResponse,
   GetHouseTodoStatsResponse,
   GetMyMissedTodosParams,
   GetMyMissedTodosResponse,
@@ -153,3 +161,46 @@ export const getHouseTodoStats =
 
     return data;
   };
+
+// 우리집 할 일 - 오늘/지연/전체 조회
+export const getHouseTodayTodos = async (
+  params?: GetHouseTodayTodosParams
+): Promise<GetHouseTodayTodosResponse> => {
+  const { data } = await apiClient.get<GetHouseTodayTodosResponse>(
+    '/api/todos/room/today',
+    { params }
+  );
+  return data;
+};
+
+export const getHouseDelayedTodos = async (
+  params?: GetHouseDelayedTodosParams
+): Promise<GetHouseDelayedTodosResponse> => {
+  const { data } = await apiClient.get<GetHouseDelayedTodosResponse>(
+    '/api/todos/room/delayed',
+    { params }
+  );
+  return data;
+};
+
+export const getHouseAllTodos = async (
+  params?: GetHouseAllTodosParams
+): Promise<GetHouseAllTodosResponse> => {
+  const { data } = await apiClient.get<GetHouseAllTodosResponse>(
+    '/api/todos/room/all',
+    { params }
+  );
+  return data;
+};
+
+// 우리집 할 일 - 구성원별 할 일 조회
+export const getHouseMemberTodos = async ({
+  memberId,
+  cursor,
+}: GetHouseMemberTodosParams): Promise<GetHouseMemberTodosResponse> => {
+  const { data } = await apiClient.get<GetHouseMemberTodosResponse>(
+    `/api/todos/room/members/${memberId}`,
+    { params: { cursor } }
+  );
+  return data;
+};

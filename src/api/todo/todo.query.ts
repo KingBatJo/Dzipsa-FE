@@ -7,6 +7,10 @@ import {
   createTodo,
   deleteTodoImage,
   getCompletedTodos,
+  getHouseAllTodos,
+  getHouseDelayedTodos,
+  getHouseMemberTodos,
+  getHouseTodayTodos,
   getHouseTodoStats,
   getMyMissedTodos,
   getMyTodayTodos,
@@ -60,6 +64,50 @@ export const useHouseTodoStatsQuery = () =>
     queryKey: queryKeys.todo.houseStats(),
     queryFn: getHouseTodoStats,
     staleTime: TODO_QUERY_STALE_TIME,
+  });
+
+// 우리집 할 일 - 오늘/지연/전체 조회
+export const useInfiniteHouseTodayTodosQuery = () =>
+  useInfiniteQuery({
+    queryKey: queryKeys.todo.houseToday(),
+    queryFn: ({ pageParam }) => getHouseTodayTodos({ cursor: pageParam }),
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (lastPage) =>
+      lastPage.hasNext ? (lastPage.nextCursor ?? undefined) : undefined,
+    staleTime: TODO_QUERY_STALE_TIME,
+  });
+
+export const useInfiniteHouseDelayedTodosQuery = () =>
+  useInfiniteQuery({
+    queryKey: queryKeys.todo.houseDelayed(),
+    queryFn: ({ pageParam }) => getHouseDelayedTodos({ cursor: pageParam }),
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (lastPage) =>
+      lastPage.hasNext ? (lastPage.nextCursor ?? undefined) : undefined,
+    staleTime: TODO_QUERY_STALE_TIME,
+  });
+
+export const useInfiniteHouseAllTodosQuery = () =>
+  useInfiniteQuery({
+    queryKey: queryKeys.todo.houseAll(),
+    queryFn: ({ pageParam }) => getHouseAllTodos({ cursor: pageParam }),
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (lastPage) =>
+      lastPage.hasNext ? (lastPage.nextCursor ?? undefined) : undefined,
+    staleTime: TODO_QUERY_STALE_TIME,
+  });
+
+// 우리집 할 일 - 구성원별 할 일 조회
+export const useInfiniteHouseMemberTodosQuery = (memberId: number) =>
+  useInfiniteQuery({
+    queryKey: queryKeys.todo.houseMember(memberId),
+    queryFn: ({ pageParam }) =>
+      getHouseMemberTodos({ memberId, cursor: pageParam }),
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (lastPage) =>
+      lastPage.hasNext ? (lastPage.nextCursor ?? undefined) : undefined,
+    staleTime: TODO_QUERY_STALE_TIME,
+    enabled: Number.isFinite(memberId) && memberId > 0,
   });
 
 // 완료된 할 일 리스트 조회
