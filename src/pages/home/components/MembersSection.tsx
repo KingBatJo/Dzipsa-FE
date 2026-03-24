@@ -13,33 +13,36 @@ const MembersSection = ({ members }: MembersSectionProps) => {
   const canAdd = members.length < MAX_MEMBERS;
 
   return (
-    <section
-      aria-label="멤버 목록"
-      className="scrollbar-hide mx-1 flex snap-x snap-mandatory gap-2 overflow-x-auto py-1"
-    >
-      {members.map((member) => {
-        const profile = getProfileOptionById(member.profileImageUrl);
+    <section aria-label="멤버 목록" className="scrollbar-hide overflow-x-auto">
+      <div className="flex w-max snap-x snap-mandatory gap-1.5 px-[15px]">
+        {members.map((member) => {
+          const profile = getProfileOptionById(member.profileImageUrl);
 
-        return (
-          <div key={member.id} className="shrink-0 snap-start">
-            <UserAvatar
-              size="lg"
-              src={profile.imageUrl}
-              alt={`${member.nickname} 프로필`}
-            />
-          </div>
-        );
-      })}
+          return (
+            <div className="flex shrink-0 snap-start items-center gap-1 rounded-[33px] bg-white py-1 pr-2 pl-1">
+              <UserAvatar
+                size="sm"
+                src={profile.imageUrl}
+                alt={`${member.nickname} 프로필`}
+              />
 
-      {canAdd && (
-        <Link
-          to="/mypage/invitation"
-          aria-label="멤버 추가"
-          className="shrink-0 snap-start"
-        >
-          <UserAvatar size="lg" variant="add" className="hover:bg-muted" />
-        </Link>
-      )}
+              <p className="max-w-14 truncate text-xs font-semibold text-zinc-400">
+                {member.nickname}님
+              </p>
+            </div>
+          );
+        })}
+
+        {canAdd && (
+          <Link
+            to="/mypage/invitation"
+            aria-label="멤버 추가"
+            className="shrink-0 snap-start"
+          >
+            <UserAvatar size="md" variant="add" className="hover:bg-muted" />
+          </Link>
+        )}
+      </div>
     </section>
   );
 };
