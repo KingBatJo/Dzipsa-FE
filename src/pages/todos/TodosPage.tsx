@@ -1,5 +1,4 @@
 import { HEADER_HEIGHT, MOBILE_MAX_WIDTH } from '@/constants/layout';
-import type { TodoInstanceId } from '@/api/todo/todo.types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -10,6 +9,7 @@ import HouseTodosTab from '@/pages/todos/components/HouseTodosTab';
 import MyTodosTab from '@/pages/todos/components/MyTodosTab';
 import { TODO_TABS } from '@/constants/todos';
 import TodoDetailSheet from '@/pages/todos/components/TodoDetailSheet';
+import type { TodoInstanceId } from '@/api/todo/todo.types';
 import { cn } from '@/lib/utils';
 
 const TABS = [
@@ -28,11 +28,8 @@ const TodosPage = () => {
     useState<TodoInstanceId | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
 
-  const handleTodoClick = (todo: { id?: number; instanceId?: number }) => {
-    const id = todo.instanceId ?? todo.id;
-    if (id == null) return;
-
-    setSelectedInstanceId(id);
+  const handleTodoClick = (instanceId: TodoInstanceId) => {
+    setSelectedInstanceId(instanceId);
     setDetailOpen(true);
   };
 

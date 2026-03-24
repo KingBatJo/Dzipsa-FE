@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import EmptyState from '@/components/common/EmptyState';
 import ListItemCard from '@/components/common/ListItemCard';
 import ListSection from '@/components/common/ListSection';
-import type { MyTodoListItem } from '@/api/todo/todo.types';
+import type { TodoInstanceId } from '@/api/todo/todo.types';
 import { cn } from '@/lib/utils';
 import dzipsaCharacter from '@/assets/dzipsa.svg';
 import { formatDueDateLabel } from '@/utils/date';
@@ -10,7 +10,7 @@ import { useMyTodosAllQuery } from '@/api/todo/todo.query';
 import { useNavigate } from 'react-router-dom';
 
 type MyTodosTabProps = {
-  onTodoClick?: (todo: MyTodoListItem) => void;
+  onTodoClick?: (instanceId: TodoInstanceId) => void;
 };
 
 type TodoCompleteButtonProps = {
@@ -90,7 +90,7 @@ const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
               title={todo.title}
               subtitle={formatDueDateLabel(todo.targetDate)}
               right={<TodoCompleteButton isDelayed={todo.delayDays > 0} />}
-              onClick={() => onTodoClick?.(todo)}
+              onClick={() => onTodoClick?.(todo.instanceId)}
               isDelayed={todo.delayDays > 0}
               badge={todo.delayDays > 0 ? `D+${todo.delayDays}` : undefined}
             />
@@ -126,7 +126,7 @@ const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
               title={todo.title}
               subtitle={formatDueDateLabel(todo.targetDate)}
               right={<TodoCompleteButton />}
-              onClick={() => onTodoClick?.(todo)}
+              onClick={() => onTodoClick?.(todo.instanceId)}
             />
           ))
         )}
@@ -140,7 +140,7 @@ const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
               title={todo.title}
               subtitle={formatDueDateLabel(todo.targetDate)}
               right={<TodoCompleteButton />}
-              onClick={() => onTodoClick?.(todo)}
+              onClick={() => onTodoClick?.(todo.instanceId)}
             />
           ))}
         </ListSection>

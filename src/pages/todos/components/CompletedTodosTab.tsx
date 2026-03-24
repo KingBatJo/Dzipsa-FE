@@ -1,29 +1,25 @@
-import { MOCK_TODAY, mockMembers, mockTodoList } from '@/mocks/mockData';
-import {
-  addLocalToTodos,
-  getTodoSections,
-  getTodoStatusLabel,
-} from '@/utils/todos';
-
 import { Card } from '@/components/ui/card';
 import EmptyState from '@/components/common/EmptyState';
 import ListSection from '@/components/common/ListSection';
 import RoundedBadge from '@/components/common/RoundedBadge';
-import type { TodoWithLocal } from '@/types/todo';
+import type { TodoInstanceId } from '@/api/todo/todo.types';
 import UserAvatar from '@/components/common/UserAvatar';
 import { cn } from '@/lib/utils';
 import dzipsaDefault from '@/assets/dzipsa/dzipsa-default.svg';
 import { formatStatusDateLabel } from '@/utils/date';
+import { getProfileOptionById } from '@/api/room/room.utils';
+import { useInfiniteCompletedTodosQuery } from '@/api/todo/todo.query';
+import { useInfiniteScrollObserver } from '@/hooks/useInfiniteScrollObserver';
 
 type CompletedTodosTabProps = {
-  onTodoClick?: (todo: TodoWithLocal) => void;
+  onTodoClick?: (instanceId: TodoInstanceId) => void;
 };
 
 type CompletedTodoFeedCardProps = {
   userName: string;
   todoTitle: string;
   completedDate: string;
-  proofImageUrl?: string;
+  proofImageUrl?: string | null;
   statusLabel: '완료' | '지연 완료';
   onClick?: () => void;
 };
@@ -114,9 +110,17 @@ const CompletedTodoFeedItem = ({
 };
 
 const CompletedTodosTab = ({ onTodoClick }: CompletedTodosTabProps) => {
-  const todosWithLocal = addLocalToTodos(mockTodoList);
+  const { data, isPending, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteCompletedTodosQuery();
+  const completedTodos = data?.pages.flatMap((page) => page.content) ?? [];
 
-  const { completedTodos } = getTodoSections(todosWithLocal, MOCK_TODAY);
+  const loadMoreRef = useInfiniteScrollObserver<HTMLDivElement>({
+    hasNextPage,
+    isFetching: isFetchingNextPage || isPending,
+    onLoadMore: fetchNextPage,
+    rootMargin: '0px 0px 40px 0px',
+    threshold: 0,
+  });
 
   return (
     <ListSection title="TimeLine">
@@ -136,29 +140,39 @@ const CompletedTodosTab = ({ onTodoClick }: CompletedTodosTabProps) => {
       ) : (
         <div className="flex flex-col">
           {completedTodos.map((todo) => {
-            const member = mockMembers.find((m) => m.id === todo.assigneeId);
-            const statusLabel = getTodoStatusLabel(todo, MOCK_TODAY);
-            const completedDateLabel = todo.completedAt
-              ? formatStatusDateLabel(todo.completedAt)
-              : '';
-
-            if (statusLabel !== '완료' && statusLabel !== '지연 완료') {
-              return null;
-            }
+            const statusLabel = todo.delayDays > 0 ? '지연 완료' : '완료';
+            const assigneeProfile = getProfileOptionById(todo.profileImageUrl);
 
             return (
               <CompletedTodoFeedItem
-                key={todo.id}
-                onClick={() => onTodoClick?.(todo)}
-                userName={member?.name ?? '알 수 없음'}
-                profileImage={member?.profileImage}
+                key={todo.instanceId}
+                onClick={() => onTodoClick?.(todo.instanceId)}
+                userName={todo.assigneeNickname}
+                profileImage={assigneeProfile.imageUrl}
                 todoTitle={todo.title}
-                completedDate={completedDateLabel}
+                completedDate={formatStatusDateLabel(todo.completedAt)}
                 statusLabel={statusLabel}
-                proofImageUrl={todo.proofImageUrl}
+                proofImageUrl={todo.imageUrl}
               />
             );
           })}
+
+          {completedTodos.length > 0 && (
+            <div
+              ref={loadMoreRef}
+              className="flex h-12 items-center justify-center"
+            >
+              {isFetchingNextPage ? (
+                <div className="py-3 text-center text-sm text-zinc-500">
+                  집사가 더 가져오고 있어요...
+                </div>
+              ) : hasNextPage ? null : (
+                <div className="py-3 text-center text-sm text-zinc-500">
+                  집사가 다 찾아왔어요!
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
     </ListSection>
