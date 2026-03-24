@@ -6,6 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import CompletedTodosTab from '@/pages/todos/components/CompletedTodosTab';
 import HouseTodosTab from '@/pages/todos/components/HouseTodosTab';
+import type { HouseMemberRouteState } from '@/pages/todos/components/HouseTodosTab';
 import MyTodosTab from '@/pages/todos/components/MyTodosTab';
 import { TODO_TABS } from '@/constants/todos';
 import TodoDetailSheet from '@/pages/todos/components/TodoDetailSheet';
@@ -80,8 +81,10 @@ const TodosPage = () => {
               onCategoryClick={(type) =>
                 navigate(`/todos/list/category/${type}`)
               }
-              onMemberClick={(memberId) =>
-                navigate(`/todos/list/member/${memberId}`)
+              onMemberClick={(memberId, memberState: HouseMemberRouteState) =>
+                navigate(`/todos/list/member/${memberId}`, {
+                  state: { member: memberState },
+                })
               }
             />
           </TabsContent>

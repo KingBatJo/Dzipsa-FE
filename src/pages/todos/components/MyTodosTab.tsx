@@ -83,7 +83,7 @@ const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
   if (isPending) {
     return (
       <div className="flex min-h-[240px] animate-pulse items-center justify-center text-sm font-medium text-zinc-400">
-        Loading...
+        할 일을 불러오고 있어요
       </div>
     );
   }

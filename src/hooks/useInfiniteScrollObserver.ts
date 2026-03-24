@@ -7,6 +7,7 @@ type UseInfiniteScrollObserverParams = {
   root?: Element | null;
   rootMargin?: string;
   threshold?: number;
+  enabled?: boolean;
 };
 
 export const useInfiniteScrollObserver = <
@@ -21,11 +22,14 @@ export const useInfiniteScrollObserver = <
     root = null,
     rootMargin = '0px',
     threshold = 0,
+    enabled = true,
   } = params;
 
   const targetRef = useRef<T | null>(null);
 
   useEffect(() => {
+    if (!enabled) return;
+
     const target = targetRef.current;
     if (!target) return;
 
@@ -46,7 +50,15 @@ export const useInfiniteScrollObserver = <
     observer.observe(target);
 
     return () => observer.disconnect();
-  }, [hasNextPage, isFetching, onLoadMore, root, rootMargin, threshold]);
+  }, [
+    enabled,
+    hasNextPage,
+    isFetching,
+    onLoadMore,
+    root,
+    rootMargin,
+    threshold,
+  ]);
 
   return targetRef;
 };

@@ -197,7 +197,7 @@ const RulesPage = () => {
                 >
                   {isFetchingNextPage ? (
                     <div className="py-3 text-center text-sm text-zinc-500">
-                      집사가 더 가져오고 있어요...
+                      디집사가 더 가져오고 있어요...
                     </div>
                   ) : null}
                 </div>

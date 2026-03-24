@@ -8,6 +8,13 @@ import { getProfileOptionById } from '@/api/room/room.utils';
 import { useHouseTodoStatsQuery } from '@/api/todo/todo.query';
 import { useMeQuery } from '@/api/auth/auth.query';
 
+export type HouseTodoListCategory = 'today' | 'delayed' | 'all';
+
+export type HouseMemberRouteState = {
+  nickname: string;
+  profileImageUrl: string;
+};
+
 type HouseTodosSummaryProps = {
   total: number;
   completed: number;
@@ -16,8 +23,8 @@ type HouseTodosSummaryProps = {
 };
 
 type HouseTodosTabProps = {
-  onCategoryClick?: (type: 'today' | 'missed' | 'all') => void;
-  onMemberClick?: (memberId: number) => void;
+  onCategoryClick?: (type: HouseTodoListCategory) => void;
+  onMemberClick?: (memberId: number, memberState: HouseMemberRouteState) => void;
 };
 
 type CountIndicatorProps = {
@@ -110,17 +117,17 @@ const HouseTodosTab = ({
 
   const categoryCards: Array<{
     title: string;
-    type: 'today' | 'missed' | 'all';
+    type: HouseTodoListCategory;
     count: number;
   }> = [
     {
-      title: '오늘 할 일',
+      title: '오늘까지 할 일',
       type: 'today',
       count: houseStats?.todayTotalCount ?? 0,
     },
     {
-      title: '지연된 할 일',
-      type: 'missed',
+      title: '놓친 할 일',
+      type: 'delayed',
       count: houseStats?.delayedTotalCount ?? 0,
     },
     { title: '모든 할 일', type: 'all', count: houseStats?.allTotalCount ?? 0 },
@@ -128,8 +135,8 @@ const HouseTodosTab = ({
 
   if (isPending) {
     return (
-      <div className="flex min-h-[240px] items-center justify-center text-sm font-medium text-zinc-400">
-        Loading...
+      <div className="flex min-h-[240px] animate-pulse items-center justify-center text-sm font-medium text-zinc-400">
+        할 일을 불러오고 있어요
       </div>
     );
   }
@@ -166,7 +173,12 @@ const HouseTodosTab = ({
                 src={getProfileOptionById(member.profileImageUrl).imageUrl}
               />
             }
-            onClick={() => onMemberClick?.(member.userId)}
+            onClick={() =>
+              onMemberClick?.(member.userId, {
+                nickname: member.nickname,
+                profileImageUrl: member.profileImageUrl,
+              })
+            }
           />
         ))}
       </ListSection>
