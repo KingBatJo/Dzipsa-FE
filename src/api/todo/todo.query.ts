@@ -7,6 +7,7 @@ import {
   createTodo,
   deleteTodoImage,
   getCompletedTodos,
+  getHouseTodoStats,
   getMyMissedTodos,
   getMyTodayTodos,
   getMyTodosAll,
@@ -50,6 +51,14 @@ export const useMyUpcomingTodosQuery = () =>
   useQuery({
     queryKey: queryKeys.todo.upcoming(),
     queryFn: () => getMyUpcomingTodos(),
+    staleTime: TODO_QUERY_STALE_TIME,
+  });
+
+// 우리집 할 일 - 넛지 및 통계 조회
+export const useHouseTodoStatsQuery = () =>
+  useQuery({
+    queryKey: queryKeys.todo.houseStats(),
+    queryFn: getHouseTodoStats,
     staleTime: TODO_QUERY_STALE_TIME,
   });
 

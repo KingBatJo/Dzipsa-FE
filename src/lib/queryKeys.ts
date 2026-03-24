@@ -73,6 +73,8 @@ export const queryKeys = {
         normalizeTodoPageParams(params),
       ] as const,
 
+    houseStats: () => [...queryKeys.todo.all, 'houseStats'] as const,
+
     completed: (params?: CursorParams) =>
       [
         ...queryKeys.todo.my,

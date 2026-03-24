@@ -7,6 +7,7 @@ import type {
   DeleteTodoImageResponse,
   GetCompletedTodosParams,
   GetCompletedTodosResponse,
+  GetHouseTodoStatsResponse,
   GetMyMissedTodosParams,
   GetMyMissedTodosResponse,
   GetMyTodayTodosParams,
@@ -142,3 +143,13 @@ export const resetTodoStatus = async ({
 }: ResetTodoStatusParams): Promise<ResetTodoStatusResponse> => {
   await apiClient.patch(`/api/todos/instances/${instanceId}/reset`);
 };
+
+// 우리집 할 일 - 넛지 및 통계 조회
+export const getHouseTodoStats =
+  async (): Promise<GetHouseTodoStatsResponse> => {
+    const { data } = await apiClient.get<GetHouseTodoStatsResponse>(
+      `/api/todos/room/stats`
+    );
+
+    return data;
+  };

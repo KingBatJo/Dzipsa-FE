@@ -62,7 +62,7 @@ export type TodoDetailResponse = {
   memo: string | null;
   assigneeId: number;
   assigneeNickname: string;
-  profileImageUrl: string | null;
+  profileImageUrl: string;
   recurringInfo: string;
   status: TodoDetailStatus;
   statusDetail: string;
@@ -141,3 +141,23 @@ export type ResetTodoStatusParams = {
 };
 
 export type ResetTodoStatusResponse = void;
+
+// 우리집 할 일 - 넛지 및 통계 조회
+export type HouseTodoMemberStat = {
+  userId: number;
+  nickname: string;
+  profileImageUrl: string;
+  remainingCount: number;
+};
+
+export type GetHouseTodoStatsResponse = {
+  totalRoomTodoCount: number;
+  completedRoomTodoCount: number;
+  myRemainingTodoCount: number;
+
+  todayTotalCount: number;
+  delayedTotalCount: number;
+  allTotalCount: number;
+
+  memberStats: HouseTodoMemberStat[];
+};
