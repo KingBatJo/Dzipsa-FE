@@ -31,12 +31,12 @@ const Header = ({
         <h1 className="text-[28px] font-semibold text-zinc-900">{title}</h1>
 
         {showActions && (
-          <div className="flex items-center gap-[9px]">
+          <div className="flex items-center gap-3">
             <Link to="/notifications" aria-label="알림">
               <img
                 src={NotiDefault}
                 alt="알림"
-                className="h-8 w-8 transition-all hover:scale-105"
+                className="h-[28px] w-[28px] transition-all hover:scale-105"
               />
             </Link>
 
@@ -44,7 +44,7 @@ const Header = ({
               <img
                 src={Mypage}
                 alt="마이페이지"
-                className="h-8 w-8 transition-all hover:scale-105"
+                className="h-[28px] w-[28px] transition-all hover:scale-105"
               />
             </Link>
           </div>
