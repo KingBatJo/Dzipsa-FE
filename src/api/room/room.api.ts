@@ -69,6 +69,11 @@ export const leaveRoom = async (): Promise<void> => {
   await apiClient.delete('/api/rooms/leave');
 };
 
+// 구성원 내보내기
+export const kickRoomMember = async (memberUserId: number): Promise<void> => {
+  await apiClient.delete(`/api/rooms/members/${memberUserId}`);
+};
+
 // 초대 코드 조회
 export const getInvitationCode = async (): Promise<InvitationCodeResponse> => {
   const { data } = await apiClient.get<InvitationCodeResponse>(
@@ -78,9 +83,10 @@ export const getInvitationCode = async (): Promise<InvitationCodeResponse> => {
 };
 
 // 초대 코드 재발급
-export const reissueInvitationCode = async (): Promise<InvitationCodeResponse> => {
-  const { data } = await apiClient.post<InvitationCodeResponse>(
-    '/api/rooms/invitation-code/reissue'
-  );
-  return data;
-};
+export const reissueInvitationCode =
+  async (): Promise<InvitationCodeResponse> => {
+    const { data } = await apiClient.post<InvitationCodeResponse>(
+      '/api/rooms/invitation-code/reissue'
+    );
+    return data;
+  };
