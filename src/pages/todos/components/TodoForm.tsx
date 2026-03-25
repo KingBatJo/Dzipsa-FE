@@ -116,7 +116,7 @@ const TodoForm = ({
                       if (model.state.repeatValue.enabled) return;
                       model.actions.setIsDueDateDialogOpen(true);
                     }}
-                    className="border border-zinc-200 bg-zinc-100 text-lg font-semibold text-zinc-300"
+                    className="border border-zinc-200 bg-zinc-100 text-lg font-semibold text-black disabled:text-zinc-300"
                   >
                     {model.state.dueDate
                       ? `${formatDate(model.state.dueDate)} 까지`
@@ -133,7 +133,7 @@ const TodoForm = ({
                 <p className="text-base font-semibold">담당자</p>
 
                 <div className="flex flex-col gap-[10px]">
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="flex flex-wrap gap-2">
                     {members.map((member) => {
                       const isSelected =
                         model.state.selectedAssigneeId === member.id;
@@ -149,7 +149,7 @@ const TodoForm = ({
                           }
                           title={member.name}
                           className={cn(
-                            'h-10 min-w-0 rounded-[12px] border px-3 py-2 text-sm font-semibold transition-colors',
+                            'h-10 max-w-21 min-w-0 truncate rounded-[12px] border px-4 py-2 text-sm font-semibold transition-colors',
                             isSelected && isRandomAssigned
                               ? 'from-primary border-none bg-gradient-to-r to-zinc-500 text-white'
                               : isSelected
@@ -167,7 +167,9 @@ const TodoForm = ({
 
                   <AppButton
                     onClick={model.actions.handleRandomAssign}
-                    disabled={model.state.isRandomAssigneeLocked}
+                    disabled={
+                      model.state.isRandomAssigneeLocked || members.length === 1
+                    }
                     className="from-primary bg-gradient-to-r to-zinc-500 text-sm font-medium text-white"
                   >
                     운명에 맡기기
