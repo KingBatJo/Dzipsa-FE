@@ -1,4 +1,4 @@
-﻿import type {
+import type {
   DeleteRecurringTodoScope,
   TodoRecurringType,
 } from '@/api/todo/todo.types';
@@ -11,6 +11,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import TodoForm from '@/pages/todos/components/TodoForm';
 import type { TodoFormValues } from '@/types/todo';
+import { getApiErrorMessage } from '@/api/error';
 import { toast } from 'sonner';
 
 type EditTodoLocationState = {
@@ -74,8 +75,11 @@ const TodoEditPage = () => {
         title ? `[${title}] 할 일이 수정되었어요.` : '할 일이 수정되었어요.'
       );
       navigate(-1);
-    } catch {
-      toast('할 일 수정에 실패했어요. 다시 시도해주세요.');
+    } catch (error) {
+      toast(
+        getApiErrorMessage(error) ??
+          '할 일 수정에 실패했어요. 다시 시도해주세요.'
+      );
     }
   };
 

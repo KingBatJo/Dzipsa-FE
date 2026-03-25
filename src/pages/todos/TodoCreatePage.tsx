@@ -1,5 +1,6 @@
 import TodoForm from '@/pages/todos/components/TodoForm';
 import type { TodoFormValues } from '@/types/todo';
+import { getApiErrorMessage } from '@/api/error';
 import { toCreateTodoPayload } from '@/utils/todoForm';
 import { toast } from 'sonner';
 import { useCreateTodoMutation } from '@/api/todo/todo.query';
@@ -22,8 +23,11 @@ const TodoCreatePage = () => {
         );
         navigate('/todos/my');
       },
-      onError: () => {
-        toast('할 일 등록에 실패했어요. 다시 시도해주세요.');
+      onError: (error) => {
+        toast(
+          getApiErrorMessage(error) ??
+            '할 일 등록에 실패했어요. 다시 시도해주세요.'
+        );
       },
     });
   };
