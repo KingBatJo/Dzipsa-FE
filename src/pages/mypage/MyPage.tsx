@@ -139,7 +139,8 @@ const MyPage = () => {
                 {me?.nickname ?? '-'}
               </p>
 
-              <img src={editIcon} alt="" className="h-[17px] w-[17px]" />
+              {/* 추후 내 정보 수정 연동 시에 활성화 */}
+              {/* <img src={editIcon} alt="" className="h-[17px] w-[17px]" /> */}
             </div>
 
             <p className="text-center text-sm text-zinc-400">
