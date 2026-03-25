@@ -53,7 +53,7 @@ const TodosPage = () => {
 
       <Tabs value={tab} onValueChange={(value) => navigate(`/todos/${value}`)}>
         <TabsList
-          className="sticky z-10 flex h-10 w-full justify-between rounded-none border-b border-b-zinc-200 bg-transparent p-0 px-[15px] pt-[5px]"
+          className="sticky z-10 mx-auto flex h-10 w-full justify-between rounded-none border-b border-b-zinc-200 bg-transparent p-0 px-[15px] pt-[5px]"
           style={{ top: HEADER_HEIGHT }}
         >
           {TABS.map((item) => (
@@ -61,7 +61,7 @@ const TodosPage = () => {
               key={item.value}
               value={item.value}
               className={cn(
-                'h-[35px] w-25 rounded-none rounded-t-md px-2.5 py-2 text-base leading-[19px] font-semibold text-zinc-400',
+                'h-[35px] flex-1 rounded-none rounded-t-md px-2.5 py-2 text-base leading-[19px] font-semibold text-zinc-400',
                 'hover:text-zinc-500 active:text-zinc-600',
                 'data-[state=active]:bg-transparent data-[state=active]:text-zinc-600 data-[state=active]:shadow-[inset_0_-2px_0_0_rgb(82_82_91)]'
               )}

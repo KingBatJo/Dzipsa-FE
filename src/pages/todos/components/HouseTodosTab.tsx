@@ -102,7 +102,7 @@ const HouseTodosSummary = ({
     : homeTodoOffImage;
 
   return (
-    <div className="flex justify-between">
+    <div className="flex gap-3">
       <img src={summaryImage} className="h-18 w-18" />
 
       <ReportBubble showPointer>
