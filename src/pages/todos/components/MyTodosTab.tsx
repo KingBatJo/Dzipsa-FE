@@ -15,9 +15,9 @@ import { TODO_STATUS } from '@/constants/todos';
 import TodoCompleteButton from '@/pages/todos/components/TodoCompleteButton';
 import TodoCompleteSheet from '@/pages/todos/components/TodoCompleteSheet';
 import TodoSubtitle from '@/pages/todos/components/TodoSubtitle';
-import dzipsaCharacter from '@/assets/dzipsa.svg';
 import { getTodoSubtitleInfo } from '@/api/todo/todo.utils';
 import { toast } from 'sonner';
+import todoEmptyImage from '@/assets/image/todo/todo-empty.png';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
@@ -180,7 +180,7 @@ const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
         {visibleTodayTodos.length === 0 ? (
           <EmptyState>
             <img
-              src={dzipsaCharacter}
+              src={todoEmptyImage}
               alt="디집사 캐릭터"
               className="h-[74px] w-20"
             />
@@ -194,7 +194,7 @@ const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
               onClick={() => navigate('/todos/new')}
               className="h-12 w-full rounded-[10px] bg-zinc-800"
             >
-              첫 할 일 만들기
+              첫 할 일 만들기{' '}
             </Button>
           </EmptyState>
         ) : (

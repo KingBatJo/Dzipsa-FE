@@ -17,9 +17,9 @@ import TodoSubtitle from '@/pages/todos/components/TodoSubtitle';
 import UserAvatar from '@/components/common/UserAvatar';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import dzipsaDefault from '@/assets/dzipsa/dzipsa-default.svg';
 import { getProfileOptionById } from '@/api/room/room.utils';
 import { getTodoSubtitleInfo } from '@/api/todo/todo.utils';
+import homeTodoEmptyImage from '@/assets/image/todo/home-todo-empty.png';
 import { useInfiniteScrollObserver } from '@/hooks/useInfiniteScrollObserver';
 import { useMeQuery } from '@/api/auth/auth.query';
 import { useRoomMembersQuery } from '@/api/room/room.query';
@@ -142,9 +142,9 @@ const TodoListPage = () => {
             variant="minimal"
             image={
               <img
-                src={dzipsaDefault}
-                alt="디집사 캐릭터"
-                className="h-26 w-26 object-contain"
+                src={homeTodoEmptyImage}
+                alt="우리집 할 일 없음"
+                className="h-47.5 w-47.5 object-contain"
               />
             }
             title="우리집 할 일이 아직 없어요 !"

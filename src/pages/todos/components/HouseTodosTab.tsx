@@ -5,8 +5,9 @@ import ListItemCard from '@/components/common/ListItemCard';
 import ListSection from '@/components/common/ListSection';
 import ReportBubble from '@/components/common/ReportBubble';
 import UserAvatar from '@/components/common/UserAvatar';
-import dzipsaCharacter from '@/assets/dzipsa.svg';
 import { getProfileOptionById } from '@/api/room/room.utils';
+import homeTodoOffImage from '@/assets/image/todo/home-todo-off.png';
+import homeTodoOnImage from '@/assets/image/todo/home-todo-on.png';
 import { useHouseTodoStatsQuery } from '@/api/todo/todo.query';
 import { useMeQuery } from '@/api/auth/auth.query';
 import { useNavigate } from 'react-router-dom';
@@ -40,6 +41,7 @@ type CountIndicatorProps = {
 type SummaryMessage = {
   title: string;
   description: string;
+  isFocusOnMe: boolean;
 };
 
 // 오늘 할 일 상태에 따른 요약 메시지 생성
@@ -55,6 +57,7 @@ const getSummaryMessage = ({
     return {
       title: '오늘 우리집은 할 일이 없네요!',
       description: `${userName}님, 여유로운 하루를 보내보세요 ☕`,
+      isFocusOnMe: false,
     };
   }
 
@@ -62,6 +65,7 @@ const getSummaryMessage = ({
     return {
       title: '오늘 우리집 할 일 모두 완료!',
       description: `${userName}님, 오늘은 푹 쉬셔도 좋겠어요.`,
+      isFocusOnMe: false,
     };
   }
 
@@ -69,12 +73,14 @@ const getSummaryMessage = ({
     return {
       title: `${userName}님은 오늘 할 일을 다 하셨네요!`,
       description: `우리집의 남은 ${remaining}개 할 일도 확인해 보세요`,
+      isFocusOnMe: false,
     };
   }
 
   return {
     title: `우리집 할 일 총 ${total}개 중 ${completed}개 완료! ✅`,
     description: `${userName}님의 남은 ${myRemaining}개의 할 일도 확인해 볼까요?`,
+    isFocusOnMe: true,
   };
 };
 
@@ -91,10 +97,13 @@ const HouseTodosSummary = ({
     userName,
     myRemaining,
   });
+  const summaryImage = summaryCopy.isFocusOnMe
+    ? homeTodoOnImage
+    : homeTodoOffImage;
 
   return (
-    <div className="flex">
-      <img src={dzipsaCharacter} className="h-15 w-15" />
+    <div className="flex justify-between">
+      <img src={summaryImage} className="h-18 w-18" />
 
       <ReportBubble showPointer>
         <p>{summaryCopy.title}</p>

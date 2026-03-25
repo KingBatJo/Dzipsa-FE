@@ -4,8 +4,8 @@ import ListSection from '@/components/common/ListSection';
 import RoundedBadge from '@/components/common/RoundedBadge';
 import type { TodoInstanceId } from '@/api/todo/todo.types';
 import UserAvatar from '@/components/common/UserAvatar';
+import checkedTodoEmptyImage from '@/assets/image/todo/checked-todo-empty.png';
 import { cn } from '@/lib/utils';
-import dzipsaDefault from '@/assets/dzipsa/dzipsa-default.svg';
 import { formatKoreanDateLabel } from '@/utils/date';
 import { getProfileOptionById } from '@/api/room/room.utils';
 import { useInfiniteCompletedTodosQuery } from '@/api/todo/todo.query';
@@ -59,7 +59,7 @@ const CompletedTodoFeedCard = ({
         proofImageUrl ? 'py-2 pr-2 pl-6' : 'px-6 py-4'
       )}
     >
-      <div className="flex items-start justify-between">
+      <div className="flex items-center justify-between">
         <div className="min-w-0 flex-1">
           <div className="flex flex-col gap-3">
             <div className="flex flex-col gap-2">
@@ -142,13 +142,19 @@ const CompletedTodosTab = ({ onTodoClick }: CompletedTodosTabProps) => {
           variant="minimal"
           image={
             <img
-              src={dzipsaDefault}
-              alt="집사 캐릭터"
-              className="h-26 w-26 object-contain"
+              src={checkedTodoEmptyImage}
+              alt="완료된 할 일 없음"
+              className="h-47.5 w-47.5 object-contain"
             />
           }
-          title="완료된 할 일이 없어요!"
-          description="하나만 해내도 정리 기록이 쌓이기 시작해요."
+          title="완료된 할 일이 없어요 !"
+          description={
+            <span>
+              하나만 끝내도 우리집 기록이
+              <br />
+              쌓이기 시작해요.
+            </span>
+          }
         />
       ) : (
         <div className="flex flex-col">
