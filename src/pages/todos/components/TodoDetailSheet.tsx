@@ -7,6 +7,7 @@ import {
   useResetTodoStatusMutation,
   useTodoDetailQuery,
 } from '@/api/todo/todo.query';
+import { useEffect, useState } from 'react';
 
 import AppButton from '@/components/common/AppButton';
 import BottomSheet from '@/components/common/BottomSheet';
@@ -20,7 +21,6 @@ import { formatDueDateLabel } from '@/utils/date';
 import { getProfileOptionById } from '@/api/room/room.utils';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
 
 type TodoDetailSheetProps = {
   open: boolean;
@@ -56,6 +56,7 @@ const TodoDetailSheet = ({
   const [completeSheetOpen, setCompleteSheetOpen] = useState(false);
   const [completeTargetInstanceId, setCompleteTargetInstanceId] =
     useState<TodoInstanceId | null>(null);
+  const [isPortraitProofImage, setIsPortraitProofImage] = useState(false);
 
   const { data: todoDetail } = useTodoDetailQuery(instanceId);
   const { mutate: completeTodo, isPending: isCompleting } =
@@ -79,6 +80,10 @@ const TodoDetailSheet = ({
   const isRecurringUnset = recurringInfoText === '설정 안 함';
 
   const isOwner = todoDetail?.owner;
+
+  useEffect(() => {
+    setIsPortraitProofImage(false);
+  }, [todoDetail?.imageUrl]);
 
   const handleOpenCompleteSheet = () => {
     if (instanceId == null) return;
@@ -209,12 +214,18 @@ const TodoDetailSheet = ({
               alignTop
             />
 
-            {hasProofImage && (
+            {hasProofImage && todoDetail?.status === 'COMPLETED' && (
               <div className="flex justify-end">
                 <img
                   src={todoDetail?.imageUrl ?? undefined}
                   alt="인증 사진"
-                  className="h-37.5 w-50 rounded-[20px] object-cover"
+                  onLoad={(event) => {
+                    const { naturalWidth, naturalHeight } = event.currentTarget;
+                    setIsPortraitProofImage(naturalHeight > naturalWidth);
+                  }}
+                  className={`rounded-[20px] object-cover ${
+                    isPortraitProofImage ? 'h-50 w-37.5' : 'h-37.5 w-50'
+                  }`}
                 />
               </div>
             )}

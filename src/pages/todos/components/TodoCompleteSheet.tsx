@@ -1,5 +1,6 @@
 import { Camera, ImagePlus, Images, Minus } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import imageCompression from 'browser-image-compression';
 
 import AppButton from '@/components/common/AppButton';
 import BottomSheet from '@/components/common/BottomSheet';
@@ -13,6 +14,7 @@ type TodoCompleteSheetProps = {
 
 const IMAGE_ACCEPT = 'image/jpeg,image/png,image/webp';
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
+const COMPRESSED_MAX_SIZE_MB = 1;
 
 const TodoCompleteSheet = ({
   open,
@@ -34,17 +36,39 @@ const TodoCompleteSheet = ({
     );
 
     if (!isValidType) {
+      setSelectedFile(undefined);
       setErrorMessage('JPG, PNG, webp 파일만 첨부할 수 있어요.');
       return;
     }
 
     if (file.size > MAX_FILE_SIZE) {
+      setSelectedFile(undefined);
       setErrorMessage('이미지 용량은 최대 10MB까지 첨부할 수 있어요.');
       return;
     }
 
     setErrorMessage('');
     setSelectedFile(file);
+  };
+
+  const handleConfirm = async () => {
+    if (!selectedFile) {
+      onConfirmComplete?.(undefined);
+      return;
+    }
+
+    try {
+      const compressedFile = await imageCompression(selectedFile, {
+        maxSizeMB: COMPRESSED_MAX_SIZE_MB,
+        maxWidthOrHeight: 1920,
+        useWebWorker: true,
+        fileType: selectedFile.type,
+      });
+
+      onConfirmComplete?.(compressedFile);
+    } catch {
+      setErrorMessage('이미지 압축 중 오류가 발생했어요.');
+    }
   };
 
   useEffect(() => {
@@ -72,14 +96,14 @@ const TodoCompleteSheet = ({
       open={open}
       onOpenChange={onOpenChange}
       title="할 일 완료하기"
-      description="사진 첨부 후 할 일을 완료할 수 있는 바텀시트"
+      description="사진 첨부 또는 바로 완료할 수 있는 바텀시트"
     >
       <div className="px-5 pt-8 pb-[15px]">
         <h2 className="text-lg leading-[1.3] font-semibold text-black">
-          완료방법을 선택해주세요 !
+          완료 방법을 선택해 주세요 !
         </h2>
         <p className="mt-[5px] text-xs leading-[1.3] font-semibold text-zinc-400">
-          사진을 등록하지않으면 바로 완료됩니다 .
+          사진을 등록하지 않으면 바로 완료됩니다.
         </p>
       </div>
 
@@ -95,10 +119,10 @@ const TodoCompleteSheet = ({
             <div className="flex flex-col items-center">
               <ImagePlus className="h-10 w-10 text-zinc-300" />
               <p className="mt-2 text-center text-xs leading-[1.3] font-semibold text-zinc-600">
-                인증샷 한 장으로 완벽하게 마무리해보세요.
+                인증샷을 찍으면 더 깔끔하게 마무리돼요
               </p>
               <p className="mt-1 text-center text-[10px] leading-[1.3] font-medium text-zinc-500">
-                JPG((jpeg)), PNG, webp 파일만 가능 (최대 10MB)
+                JPG(jpeg), PNG, webp 파일만 가능 (최대 10MB)
               </p>
             </div>
           )}
@@ -152,7 +176,9 @@ const TodoCompleteSheet = ({
       <div className="p-5">
         <AppButton
           className="bg-black text-white"
-          onClick={() => onConfirmComplete?.(selectedFile)}
+          onClick={() => {
+            void handleConfirm();
+          }}
           disabled={isSubmitting}
         >
           {selectedFile ? '등록 하기' : '완료 하기'}
@@ -165,7 +191,10 @@ const TodoCompleteSheet = ({
         accept={IMAGE_ACCEPT}
         capture="environment"
         className="hidden"
-        onChange={(event) => handleSelectImage(event.target.files?.[0])}
+        onChange={(event) => {
+          handleSelectImage(event.target.files?.[0]);
+          event.currentTarget.value = '';
+        }}
       />
 
       <input
@@ -173,7 +202,10 @@ const TodoCompleteSheet = ({
         type="file"
         accept={IMAGE_ACCEPT}
         className="hidden"
-        onChange={(event) => handleSelectImage(event.target.files?.[0])}
+        onChange={(event) => {
+          handleSelectImage(event.target.files?.[0]);
+          event.currentTarget.value = '';
+        }}
       />
     </BottomSheet>
   );
