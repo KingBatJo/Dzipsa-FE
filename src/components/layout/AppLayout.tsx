@@ -37,7 +37,7 @@ const AppLayout = () => {
       <main
         className={`relative min-h-dvh`}
         style={{
-          paddingBottom: BOTTOM_NAV_HEIGHT + 16,
+          paddingBottom: BOTTOM_NAV_HEIGHT + 33,
           paddingTop: HEADER_HEIGHT,
         }}
       >
