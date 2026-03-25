@@ -6,7 +6,7 @@ import {
   TODO_MEMO_MAX_LENGTH,
   TODO_TITLE_MAX_LENGTH,
 } from '@/schemas/todoCreateSchema';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import AppButton from '@/components/common/AppButton';
 import AppDialog from '@/components/common/AppDialog';
@@ -22,6 +22,7 @@ import { formatDate } from '@/utils/date';
 import randomComplete from '@/assets/random/random-complete.png';
 import randomCompleteBackground from '@/assets/random/random-complete-background.png';
 import randomLoading from '@/assets/random/random-loading.png';
+import { useMeQuery } from '@/api/auth/auth.query';
 import { useRoomMembersQuery } from '@/api/room/room.query';
 import { useTodoFormModel } from '@/pages/todos/hooks/useTodoFormModel';
 
@@ -50,12 +51,24 @@ const TodoForm = ({
   isRecurringTodo = false,
   isSubmitting,
 }: TodoFormProps) => {
+  const { data: me } = useMeQuery();
   const { data: roomMembers = [] } = useRoomMembersQuery();
-  const members = roomMembers.map((member) => ({
-    id: member.id,
-    name: member.nickname,
-    profileImageUrl: member.profileImageUrl,
-  }));
+  const members = useMemo(() => {
+    const mapped = roomMembers.map((member) => ({
+      id: member.id,
+      name: member.nickname,
+      profileImageUrl: member.profileImageUrl,
+    }));
+
+    if (!me) return mapped;
+
+    const myIndex = mapped.findIndex((member) => member.id === me.id);
+    if (myIndex <= 0) return mapped;
+
+    const [meMember] = mapped.splice(myIndex, 1);
+    return [meMember, ...mapped];
+  }, [roomMembers, me]);
+
   const model = useTodoFormModel({ initialValues, onSubmit, members });
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeleteScopeSheetOpen, setIsDeleteScopeSheetOpen] = useState(false);
