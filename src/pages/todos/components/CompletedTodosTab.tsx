@@ -6,7 +6,7 @@ import type { TodoInstanceId } from '@/api/todo/todo.types';
 import UserAvatar from '@/components/common/UserAvatar';
 import { cn } from '@/lib/utils';
 import dzipsaDefault from '@/assets/dzipsa/dzipsa-default.svg';
-import { formatStatusDateLabel } from '@/utils/date';
+import { formatKoreanDateLabel } from '@/utils/date';
 import { getProfileOptionById } from '@/api/room/room.utils';
 import { useInfiniteCompletedTodosQuery } from '@/api/todo/todo.query';
 import { useInfiniteScrollObserver } from '@/hooks/useInfiniteScrollObserver';
@@ -20,7 +20,8 @@ type CompletedTodoFeedCardProps = {
   todoTitle: string;
   completedDate: string;
   proofImageUrl?: string | null;
-  statusLabel: '기간 후 완료' | '기간 내 완료';
+  statusLabel: string;
+  isDelayed: boolean;
   onClick?: () => void;
 };
 
@@ -33,8 +34,20 @@ const CompletedTodoFeedCard = ({
   completedDate,
   proofImageUrl,
   statusLabel,
+  isDelayed,
   onClick,
 }: CompletedTodoFeedCardProps) => {
+  const statusBadge = (
+    <RoundedBadge
+      className={cn(
+        'w-fit font-bold',
+        isDelayed ? 'bg-red-400 text-red-50' : 'bg-neutral-400 text-neutral-200'
+      )}
+    >
+      {statusLabel}
+    </RoundedBadge>
+  );
+
   return (
     <Card
       role={onClick ? 'button' : undefined}
@@ -53,7 +66,6 @@ const CompletedTodoFeedCard = ({
               {todoTitle}
             </p>
 
-            {/* 완료된 날짜 */}
             <div className="flex gap-1">
               <div className="w-0.5 bg-zinc-400" />
               <p className="text-xs font-medium text-zinc-400">
@@ -62,11 +74,7 @@ const CompletedTodoFeedCard = ({
             </div>
           </div>
 
-          {statusLabel === '기간 후 완료' && (
-            <RoundedBadge className="w-fit bg-red-400 font-bold text-red-50">
-              기한 후 완료
-            </RoundedBadge>
-          )}
+          {proofImageUrl && statusBadge}
         </div>
 
         <div>
@@ -77,11 +85,7 @@ const CompletedTodoFeedCard = ({
               className="h-25 w-25 rounded-xl object-cover"
             />
           ) : (
-            statusLabel === '기간 내 완료' && (
-              <RoundedBadge className="bg-neutral-400 font-bold text-neutral-200">
-                기한 내 완료
-              </RoundedBadge>
-            )
+            statusBadge
           )}
         </div>
       </div>
@@ -99,7 +103,7 @@ const CompletedTodoFeedItem = ({
         <UserAvatar src={profileImage} />
 
         <p className="text-primary text-sm font-semibold">
-          {props.userName}님이 할 일을 완료하였어요 !
+          {props.userName}님이 할 일을 완료하셨어요 !
         </p>
       </div>
 
@@ -127,7 +131,11 @@ const CompletedTodosTab = ({ onTodoClick }: CompletedTodosTabProps) => {
 
   return (
     <ListSection title="TimeLine">
-      {completedTodos.length === 0 ? (
+      {isPending && completedTodos.length === 0 ? (
+        <div className="flex min-h-[240px] animate-pulse items-center justify-center text-sm font-medium text-zinc-400">
+          할 일을 불러오고 있어요
+        </div>
+      ) : completedTodos.length === 0 ? (
         <EmptyState
           variant="minimal"
           image={
@@ -137,14 +145,14 @@ const CompletedTodosTab = ({ onTodoClick }: CompletedTodosTabProps) => {
               className="h-26 w-26 object-contain"
             />
           }
-          title="완료된 할 일이 없어요 !"
-          description="하나만 끝내도 우리집 기록이 쌓이기 시작해요."
+          title="완료된 할 일이 없어요!"
+          description="하나만 해내도 정리 기록이 쌓이기 시작해요."
         />
       ) : (
         <div className="flex flex-col">
           {completedTodos.map((todo) => {
-            const statusLabel =
-              todo.delayDays > 0 ? '기간 후 완료' : '기간 내 완료';
+            const isDelayed = todo.delayDays > 0;
+            const statusLabel = isDelayed ? '기한 후 완료' : '기한 내 완료';
             const assigneeProfile = getProfileOptionById(todo.profileImageUrl);
 
             return (
@@ -154,8 +162,9 @@ const CompletedTodosTab = ({ onTodoClick }: CompletedTodosTabProps) => {
                 userName={todo.assigneeNickname}
                 profileImage={assigneeProfile.imageUrl}
                 todoTitle={todo.title}
-                completedDate={formatStatusDateLabel(todo.completedAt)}
+                completedDate={formatKoreanDateLabel(todo.completedAt)}
                 statusLabel={statusLabel}
+                isDelayed={isDelayed}
                 proofImageUrl={todo.imageUrl}
               />
             );

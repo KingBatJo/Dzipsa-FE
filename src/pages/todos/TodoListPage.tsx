@@ -5,24 +5,24 @@ import {
   useInfiniteHouseMemberTodosQuery,
   useInfiniteHouseTodayTodosQuery,
 } from '@/api/todo/todo.query';
-import { getTodoSubtitleInfo } from '@/api/todo/todo.utils';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { X } from 'lucide-react';
 
 import EmptyState from '@/components/common/EmptyState';
+import type { HouseMemberRouteState } from './components/HouseTodosTab';
 import ListItemCard from '@/components/common/ListItemCard';
 import { MOBILE_MAX_WIDTH } from '@/constants/layout';
+import type { MyTodoListItem } from '@/api/todo/todo.types';
 import TodoDetailSheet from '@/pages/todos/components/TodoDetailSheet';
 import TodoSubtitle from '@/pages/todos/components/TodoSubtitle';
 import UserAvatar from '@/components/common/UserAvatar';
+import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import dzipsaDefault from '@/assets/dzipsa/dzipsa-default.svg';
 import { getProfileOptionById } from '@/api/room/room.utils';
+import { getTodoSubtitleInfo } from '@/api/todo/todo.utils';
 import { useInfiniteScrollObserver } from '@/hooks/useInfiniteScrollObserver';
 import { useMeQuery } from '@/api/auth/auth.query';
 import { useRoomMembersQuery } from '@/api/room/room.query';
-import type { MyTodoListItem } from '@/api/todo/todo.types';
-import type { HouseMemberRouteState } from './components/HouseTodosTab';
 
 export type TodoListCategory = 'today' | 'delayed' | 'all';
 
@@ -112,14 +112,6 @@ const TodoListPage = () => {
     if (!open) setSelectedInstanceId(null);
   };
 
-  if (activeQuery.isPending) {
-    return (
-      <div className="flex min-h-[240px] animate-pulse items-center justify-center text-sm font-medium text-zinc-400">
-        할 일을 불러오고 있어요
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-dvh bg-zinc-100">
       <header
@@ -141,7 +133,11 @@ const TodoListPage = () => {
       </header>
 
       <div className="flex flex-col gap-2 px-[15px] pt-[65px] pb-[15px]">
-        {filteredTodos.length === 0 ? (
+        {activeQuery.isPending ? (
+          <div className="flex min-h-[240px] animate-pulse items-center justify-center text-sm font-medium text-zinc-400">
+            할 일을 불러오고 있어요
+          </div>
+        ) : filteredTodos.length === 0 ? (
           <EmptyState
             variant="minimal"
             image={

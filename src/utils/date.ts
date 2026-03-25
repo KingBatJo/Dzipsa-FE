@@ -39,6 +39,12 @@ export const formatStatusDateLabel = (dateString: string) => {
   return `${year}.${month}.${day} (${WEEKDAY_LABELS_SUN_FIRST[date.getDay()]})`;
 };
 
+export const formatKoreanDateLabel = (dateString: string) => {
+  const date = new Date(dateString);
+
+  return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
+};
+
 // ISO datetime -> 오늘 오전 9:00
 export const formatDueAt = (dueAt: string) => {
   const today = new Date();

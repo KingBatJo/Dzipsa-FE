@@ -65,7 +65,7 @@ const getSummaryMessage = ({
   if (myRemaining === 0) {
     return {
       title: `${userName}님은 오늘 할 일을 다 하셨네요!`,
-      description: `구성원분들의 남은 ${remaining}개 할 일도 확인해 보세요`,
+      description: `우리집의 남은 ${remaining}개 할 일도 확인해 보세요`,
     };
   }
 
