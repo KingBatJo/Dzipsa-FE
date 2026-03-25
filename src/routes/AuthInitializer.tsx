@@ -2,6 +2,7 @@
 import { getMe, refresh } from '@/api/auth/auth.api';
 import { useEffect, useRef, useState } from 'react';
 
+import loading from '@/assets/image/loading.png';
 import { queryClient } from '@/lib/queryClient';
 import { queryKeys } from '@/lib/queryKeys';
 import { useAuthStore } from '@/stores/auth.store';
@@ -50,7 +51,16 @@ const AuthInitializer = () => {
   if (isInitializing) {
     return (
       <div className="flex min-h-dvh items-center justify-center">
-        <p className="text-base font-medium">불러오는 중...</p>
+        <div className="flex flex-col gap-[24px] px-[15px]">
+          <img src={loading} alt="" className="h-[215px] w-[250px]" />
+
+          <div className="flex flex-col items-center gap-1">
+            <p className="text-xl font-semibold">디집사가 치우는 중...</p>
+            <p className="text-sm font-semibold text-[#BCBCBC]">
+              잠시만 기다려주세요.
+            </p>
+          </div>
+        </div>
       </div>
     );
   }
