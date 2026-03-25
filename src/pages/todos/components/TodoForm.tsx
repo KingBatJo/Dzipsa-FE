@@ -6,21 +6,24 @@ import {
   TODO_MEMO_MAX_LENGTH,
   TODO_TITLE_MAX_LENGTH,
 } from '@/schemas/todoCreateSchema';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import AppButton from '@/components/common/AppButton';
 import AppDialog from '@/components/common/AppDialog';
 import DateWheelDialog from '@/pages/todos/components/DateWheelDialog';
+import type { DeleteRecurringTodoScope } from '@/api/todo/todo.types';
 import FormPageLayout from '@/components/form/FormPageLayout';
 import RandomAssignOverlay from '@/pages/todos/components/RandomAssignOverlay';
 import RepeatSection from '@/pages/todos/components/RepeatSection';
+import TodoDeleteScopeSheet from '@/pages/todos/components/TodoDeleteScopeSheet';
 import type { TodoFormValues } from '@/types/todo';
 import { cn } from '@/lib/utils';
 import { formatDate } from '@/utils/date';
-import { mockMembers } from '@/mocks/mockData';
 import randomComplete from '@/assets/random/random-complete.png';
 import randomCompleteBackground from '@/assets/random/random-complete-background.png';
 import randomLoading from '@/assets/random/random-loading.png';
+import { useMeQuery } from '@/api/auth/auth.query';
+import { useRoomMembersQuery } from '@/api/room/room.query';
 import { useTodoFormModel } from '@/pages/todos/hooks/useTodoFormModel';
 
 type TodoFormMode = 'create' | 'edit';
@@ -29,7 +32,9 @@ type TodoFormProps = {
   mode: TodoFormMode;
   initialValues?: Partial<TodoFormValues>;
   onSubmit: (values: TodoFormValues) => void;
-  onDelete?: () => void;
+  onDelete?: (scope?: DeleteRecurringTodoScope) => void;
+  isRecurringTodo?: boolean;
+  isSubmitting?: boolean;
 };
 
 const RANDOM_ASSIGN_ASSETS = [
@@ -43,9 +48,41 @@ const TodoForm = ({
   initialValues,
   onSubmit,
   onDelete,
+  isRecurringTodo = false,
+  isSubmitting,
 }: TodoFormProps) => {
-  const model = useTodoFormModel({ initialValues, onSubmit });
+  const { data: me } = useMeQuery();
+  const { data: roomMembers = [] } = useRoomMembersQuery();
+  const members = useMemo(() => {
+    const mapped = roomMembers.map((member) => ({
+      id: member.id,
+      name: member.nickname,
+      profileImageUrl: member.profileImageUrl,
+    }));
+
+    if (!me) return mapped;
+
+    const myIndex = mapped.findIndex((member) => member.id === me.id);
+    if (myIndex <= 0) return mapped;
+
+    const [meMember] = mapped.splice(myIndex, 1);
+    return [meMember, ...mapped];
+  }, [roomMembers, me]);
+
+  const model = useTodoFormModel({ initialValues, onSubmit, members });
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isDeleteScopeSheetOpen, setIsDeleteScopeSheetOpen] = useState(false);
+
+  const handleClickDelete = () => {
+    if (mode !== 'edit') return;
+
+    if (isRecurringTodo) {
+      setIsDeleteScopeSheetOpen(true);
+      return;
+    }
+
+    setIsDeleteDialogOpen(true);
+  };
 
   // 이미지 preload
   useEffect(() => {
@@ -60,7 +97,11 @@ const TodoForm = ({
     <FormPageLayout
       title={mode === 'create' ? '할 일 등록' : '할 일 편집'}
       onSubmit={model.form.submitForm}
-      submitDisabled={!model.form.isValid}
+      submitDisabled={
+        !model.form.isValid ||
+        isSubmitting ||
+        (mode === 'edit' && !model.form.hasChanges)
+      }
     >
       <div className="bg-zinc-100 pb-6">
         <div className="bg-white/60 px-[15px] pt-[15px] pb-[30px] backdrop-blur-xl">
@@ -88,7 +129,7 @@ const TodoForm = ({
                       if (model.state.repeatValue.enabled) return;
                       model.actions.setIsDueDateDialogOpen(true);
                     }}
-                    className="border border-zinc-200 bg-zinc-100 text-lg font-semibold text-zinc-300"
+                    className="border border-zinc-200 bg-zinc-100 text-lg font-semibold text-black disabled:text-zinc-300"
                   >
                     {model.state.dueDate
                       ? `${formatDate(model.state.dueDate)} 까지`
@@ -105,8 +146,8 @@ const TodoForm = ({
                 <p className="text-base font-semibold">담당자</p>
 
                 <div className="flex flex-col gap-[10px]">
-                  <div className="grid grid-cols-3 gap-2">
-                    {mockMembers.map((member) => {
+                  <div className="flex flex-wrap gap-2">
+                    {members.map((member) => {
                       const isSelected =
                         model.state.selectedAssigneeId === member.id;
                       const isRandomAssigned =
@@ -121,7 +162,7 @@ const TodoForm = ({
                           }
                           title={member.name}
                           className={cn(
-                            'h-10 min-w-0 rounded-[12px] border px-3 py-2 text-sm font-semibold transition-colors',
+                            'h-10 max-w-21 min-w-0 truncate rounded-[12px] border px-4 py-2 text-sm font-semibold transition-colors',
                             isSelected && isRandomAssigned
                               ? 'from-primary border-none bg-gradient-to-r to-zinc-500 text-white'
                               : isSelected
@@ -139,7 +180,9 @@ const TodoForm = ({
 
                   <AppButton
                     onClick={model.actions.handleRandomAssign}
-                    disabled={model.state.isRandomAssigneeLocked}
+                    disabled={
+                      model.state.isRandomAssigneeLocked || members.length === 1
+                    }
                     className="from-primary bg-gradient-to-r to-zinc-500 text-sm font-medium text-white"
                   >
                     운명에 맡기기
@@ -186,8 +229,8 @@ const TodoForm = ({
 
           {mode === 'edit' && (
             <AppButton
-              onClick={() => setIsDeleteDialogOpen(true)}
-              className="bg-red-500 text-base font-semibold text-white"
+              onClick={handleClickDelete}
+              className="bg-red-500 text-base font-semibold text-white hover:bg-red-600 active:bg-red-700"
             >
               할 일 삭제
             </AppButton>
@@ -236,7 +279,7 @@ const TodoForm = ({
             <AppButton
               onClick={() => {
                 setIsDeleteDialogOpen(false);
-                onDelete?.();
+                onDelete?.('ONLY_THIS');
               }}
               className="w-32 bg-zinc-800 text-zinc-100"
             >
@@ -245,6 +288,12 @@ const TodoForm = ({
           </div>
         </div>
       </AppDialog>
+
+      <TodoDeleteScopeSheet
+        open={isDeleteScopeSheetOpen}
+        onOpenChange={setIsDeleteScopeSheetOpen}
+        onSelectScope={(scope) => onDelete?.(scope)}
+      />
     </FormPageLayout>
   );
 };

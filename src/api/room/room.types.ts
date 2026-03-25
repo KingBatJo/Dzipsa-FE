@@ -59,3 +59,7 @@ export type InvitationCodeResponse = {
   invitationCode: string;
   reissueAvailableAt: string;
 };
+
+export type UseRoomMembersQueryOptions = {
+  enabled?: boolean;
+};

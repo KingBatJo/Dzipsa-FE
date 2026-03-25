@@ -115,9 +115,9 @@ const DateWheelDialog = ({
       open={open}
       onOpenChange={onOpenChange}
       title="날짜 선택"
-      contentClassName="w-[293px] overflow-hidden"
+      contentClassName="w-[300px] overflow-hidden"
     >
-      <div className="flex flex-col justify-between pt-4">
+      <div className="flex flex-col justify-between pt-2">
         <div className="px-4">
           <Picker
             value={pickerValue}

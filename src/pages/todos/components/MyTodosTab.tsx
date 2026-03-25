@@ -1,119 +1,178 @@
-import { MOCK_MY_ID, MOCK_TODAY, mockTodoList } from '@/mocks/mockData';
+import type { MyTodoListItem, TodoInstanceId } from '@/api/todo/todo.types';
 import {
-  addLocalToTodos,
-  getDateDiffDays,
-  getTodoSections,
-  isTodoDelayed,
-} from '@/utils/todos';
+  useCompleteTodoMutation,
+  useInfiniteMyMissedTodosQuery,
+  useInfiniteMyTodayTodosQuery,
+  useInfiniteMyUpcomingTodosQuery,
+} from '@/api/todo/todo.query';
 
 import { Button } from '@/components/ui/button';
 import EmptyState from '@/components/common/EmptyState';
 import ListItemCard from '@/components/common/ListItemCard';
 import ListSection from '@/components/common/ListSection';
-import type { TodoWithLocal } from '@/types/todo';
-import { cn } from '@/lib/utils';
-import dzipsaCharacter from '@/assets/dzipsa.svg';
-import { formatDueDateLabel } from '@/utils/date';
+import SectionActionButtons from '@/pages/todos/components/SectionActionButtons';
+import { TODO_STATUS } from '@/constants/todos';
+import TodoCompleteButton from '@/pages/todos/components/TodoCompleteButton';
+import TodoCompleteSheet from '@/pages/todos/components/TodoCompleteSheet';
+import TodoSubtitle from '@/pages/todos/components/TodoSubtitle';
+import { getTodoSubtitleInfo } from '@/api/todo/todo.utils';
+import { toast } from 'sonner';
+import todoEmptyImage from '@/assets/image/todo/todo-empty.png';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
 type MyTodosTabProps = {
-  onTodoClick?: (todo: TodoWithLocal) => void;
+  onTodoClick?: (instanceId: TodoInstanceId) => void;
 };
 
-type TodoCompleteButtonProps = {
-  isDelayed?: boolean;
-  onClick?: () => void;
-};
+type SectionKey = 'missed' | 'today' | 'upcoming';
 
-const TODO_COMPLETE_BUTTON_COLORS = {
-  normal: {
-    base: '#E4E4E7CC',
-    hover: '#8F8F8FCC',
-    active: '#565656CC',
-  },
-  delayed: {
-    base: '#A68F8FCC',
-    hover: '#8F8F8FCC', // 임시. delayed 전용 hover 색으로 변경
-    active: '#565656CC', // 임시. delayed 전용 active 색으로 변경
-  },
-} as const;
+const SECTION_PAGE_SIZE = 5;
 
-const TodoCompleteButton = ({
-  isDelayed = false,
-  onClick,
-}: TodoCompleteButtonProps) => {
-  const colors = isDelayed
-    ? TODO_COMPLETE_BUTTON_COLORS.delayed
-    : TODO_COMPLETE_BUTTON_COLORS.normal;
-
-  return (
-    <button
-      type="button"
-      aria-label="할일 완료"
-      onClick={onClick}
-      className="group flex h-6 w-6 items-center justify-center"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-      >
-        <path
-          d="M12 3C19.2 3 21 4.8 21 12C21 19.2 19.2 21 12 21C4.8 21 3 19.2 3 12C3 4.8 4.8 3 12 3Z"
-          className={cn(
-            'transition-colors duration-150',
-            `fill-[${colors.base}]`,
-            `group-hover:fill-[${colors.hover}]`,
-            `group-active:fill-[${colors.active}]`
-          )}
-        />
-      </svg>
-    </button>
-  );
+const renderTodoSubtitle = (todo: MyTodoListItem) => {
+  const { dueDateLabel, repeatLabel } = getTodoSubtitleInfo(todo);
+  return <TodoSubtitle dueDateLabel={dueDateLabel} repeatLabel={repeatLabel} />;
 };
 
 const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
   const navigate = useNavigate();
+  const [collapsed, setCollapsed] = useState<Record<SectionKey, boolean>>({
+    missed: false,
+    today: false,
+    upcoming: false,
+  });
+  const [completeSheetOpen, setCompleteSheetOpen] = useState(false);
+  const [completeTargetInstanceId, setCompleteTargetInstanceId] =
+    useState<TodoInstanceId | null>(null);
+  const [completeTargetTitle, setCompleteTargetTitle] = useState<string>('');
 
-  // 임시
-  const myId = MOCK_MY_ID;
-  const today = MOCK_TODAY;
+  const { mutate: completeTodo, isPending: isCompleting } =
+    useCompleteTodoMutation();
 
-  const todos = addLocalToTodos(mockTodoList);
+  const {
+    data: missedData,
+    isPending: isMissedPending,
+    fetchNextPage: fetchNextMissed,
+    hasNextPage: hasNextMissed,
+    isFetchingNextPage: isFetchingNextMissed,
+  } = useInfiniteMyMissedTodosQuery();
 
-  // 내 할 일만
-  const myTodos = todos.filter((todo) => todo.assigneeId === myId);
+  const {
+    data: todayData,
+    isPending: isTodayPending,
+    fetchNextPage: fetchNextToday,
+    hasNextPage: hasNextToday,
+    isFetchingNextPage: isFetchingNextToday,
+  } = useInfiniteMyTodayTodosQuery();
 
-  // 할 일 섹션 분류
-  const { todayTodos, missedTodos, upcomingTodos } = getTodoSections(
-    myTodos,
-    today
+  const {
+    data: upcomingData,
+    isPending: isUpcomingPending,
+    fetchNextPage: fetchNextUpcoming,
+    hasNextPage: hasNextUpcoming,
+    isFetchingNextPage: isFetchingNextUpcoming,
+  } = useInfiniteMyUpcomingTodosQuery();
+
+  const missedTodos = missedData?.pages.flatMap((page) => page.content) ?? [];
+  const todayTodos = todayData?.pages.flatMap((page) => page.content) ?? [];
+  const upcomingTodos =
+    upcomingData?.pages.flatMap((page) => page.content) ?? [];
+
+  const visibleTodayTodos = todayTodos.filter(
+    (todo) => todo.status !== TODO_STATUS.COMPLETED
   );
 
-  // 놓친 할 일 (미완료만 - 렌더링용)
-  const visibleTodayTodos = todayTodos.filter((todo) => !todo.completed);
+  const displayedMissedTodos = collapsed.missed
+    ? missedTodos.slice(0, SECTION_PAGE_SIZE)
+    : missedTodos;
+  const displayedTodayTodos = collapsed.today
+    ? visibleTodayTodos.slice(0, SECTION_PAGE_SIZE)
+    : visibleTodayTodos;
+  const displayedUpcomingTodos = collapsed.upcoming
+    ? upcomingTodos.slice(0, SECTION_PAGE_SIZE)
+    : upcomingTodos;
+
+  const isPending = isMissedPending || isTodayPending || isUpcomingPending;
+
+  const handleOpenCompleteSheet = (
+    instanceId: TodoInstanceId,
+    title: string
+  ) => {
+    setCompleteTargetInstanceId(instanceId);
+    setCompleteTargetTitle(title);
+    setCompleteSheetOpen(true);
+  };
+
+  const handleConfirmComplete = (proofImageFile?: File) => {
+    if (completeTargetInstanceId == null) return;
+
+    completeTodo(
+      { instanceId: completeTargetInstanceId, image: proofImageFile ?? null },
+      {
+        onSuccess: () => {
+          const title = completeTargetTitle.trim();
+
+          toast(
+            title
+              ? `[${title}]이 완료되었습니다 ! 수고하셨어요 !`
+              : '할 일이 완료되었습니다 ! 수고하셨어요 !'
+          );
+
+          setCompleteSheetOpen(false);
+          setCompleteTargetInstanceId(null);
+          setCompleteTargetTitle('');
+        },
+      }
+    );
+  };
+
+  if (isPending) {
+    return (
+      <div className="flex min-h-[240px] animate-pulse items-center justify-center text-sm font-medium text-zinc-400">
+        할 일을 불러오고 있어요
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-7">
       {missedTodos.length > 0 && (
         <ListSection title="놓친 할 일이 있어요 !">
-          {missedTodos.map((todo) => {
-            const isDelayed = isTodoDelayed(todo, today);
+          {displayedMissedTodos.map((todo) => (
+            <ListItemCard
+              key={todo.instanceId}
+              title={todo.title}
+              subtitle={renderTodoSubtitle(todo)}
+              right={
+                <TodoCompleteButton
+                  isDelayed={todo.delayDays > 0}
+                  onClick={() =>
+                    handleOpenCompleteSheet(todo.instanceId, todo.title)
+                  }
+                />
+              }
+              onClick={() => onTodoClick?.(todo.instanceId)}
+              isDelayed={todo.delayDays > 0}
+              badge={todo.delayDays > 0 ? `D+${todo.delayDays}` : undefined}
+            />
+          ))}
 
-            return (
-              <ListItemCard
-                key={todo.id}
-                title={todo.title}
-                subtitle={formatDueDateLabel(todo.dueAt)}
-                right={<TodoCompleteButton isDelayed={isDelayed} />}
-                onClick={() => onTodoClick?.(todo)}
-                isDelayed={isDelayed}
-                badge={`D+${getDateDiffDays(todo.dueAt, today)}`}
-              />
-            );
-          })}
+          <SectionActionButtons
+            hasNextPage={hasNextMissed}
+            isFetchingNextPage={isFetchingNextMissed}
+            onLoadMore={() => {
+              if (collapsed.missed) {
+                setCollapsed((prev) => ({ ...prev, missed: false }));
+                return;
+              }
+              void fetchNextMissed();
+            }}
+            isCollapsed={collapsed.missed}
+            canToggleCollapse={missedTodos.length > SECTION_PAGE_SIZE}
+            onToggleCollapse={() =>
+              setCollapsed((prev) => ({ ...prev, missed: !prev.missed }))
+            }
+          />
         </ListSection>
       )}
 
@@ -121,7 +180,7 @@ const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
         {visibleTodayTodos.length === 0 ? (
           <EmptyState>
             <img
-              src={dzipsaCharacter}
+              src={todoEmptyImage}
               alt="디집사 캐릭터"
               className="h-[74px] w-20"
             />
@@ -135,35 +194,93 @@ const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
               onClick={() => navigate('/todos/new')}
               className="h-12 w-full rounded-[10px] bg-zinc-800"
             >
-              첫 규칙 만들기
+              첫 할 일 만들기{' '}
             </Button>
           </EmptyState>
         ) : (
-          visibleTodayTodos.map((todo) => (
-            <ListItemCard
-              key={todo.id}
-              title={todo.title}
-              subtitle={formatDueDateLabel(todo.dueAt)}
-              right={<TodoCompleteButton />}
-              onClick={() => onTodoClick?.(todo)}
+          <>
+            {displayedTodayTodos.map((todo) => (
+              <ListItemCard
+                key={todo.instanceId}
+                title={todo.title}
+                subtitle={renderTodoSubtitle(todo)}
+                right={
+                  <TodoCompleteButton
+                    onClick={() =>
+                      handleOpenCompleteSheet(todo.instanceId, todo.title)
+                    }
+                  />
+                }
+                onClick={() => onTodoClick?.(todo.instanceId)}
+              />
+            ))}
+
+            <SectionActionButtons
+              hasNextPage={hasNextToday}
+              isFetchingNextPage={isFetchingNextToday}
+              onLoadMore={() => {
+                if (collapsed.today) {
+                  setCollapsed((prev) => ({ ...prev, today: false }));
+                  return;
+                }
+                void fetchNextToday();
+              }}
+              isCollapsed={collapsed.today}
+              canToggleCollapse={visibleTodayTodos.length > SECTION_PAGE_SIZE}
+              onToggleCollapse={() =>
+                setCollapsed((prev) => ({ ...prev, today: !prev.today }))
+              }
             />
-          ))
+          </>
         )}
       </ListSection>
 
       {upcomingTodos.length > 0 && (
         <ListSection title="예정된 할 일">
-          {upcomingTodos.map((todo) => (
+          {displayedUpcomingTodos.map((todo) => (
             <ListItemCard
-              key={todo.id}
+              key={todo.instanceId}
               title={todo.title}
-              subtitle={formatDueDateLabel(todo.dueAt)}
-              right={<TodoCompleteButton />}
-              onClick={() => onTodoClick?.(todo)}
+              subtitle={renderTodoSubtitle(todo)}
+              right={
+                <TodoCompleteButton
+                  onClick={() =>
+                    handleOpenCompleteSheet(todo.instanceId, todo.title)
+                  }
+                />
+              }
+              onClick={() => onTodoClick?.(todo.instanceId)}
             />
           ))}
+
+          <SectionActionButtons
+            hasNextPage={hasNextUpcoming}
+            isFetchingNextPage={isFetchingNextUpcoming}
+            onLoadMore={() => {
+              if (collapsed.upcoming) {
+                setCollapsed((prev) => ({ ...prev, upcoming: false }));
+                return;
+              }
+              void fetchNextUpcoming();
+            }}
+            isCollapsed={collapsed.upcoming}
+            canToggleCollapse={upcomingTodos.length > SECTION_PAGE_SIZE}
+            onToggleCollapse={() =>
+              setCollapsed((prev) => ({ ...prev, upcoming: !prev.upcoming }))
+            }
+          />
         </ListSection>
       )}
+
+      <TodoCompleteSheet
+        open={completeSheetOpen}
+        onOpenChange={(open) => {
+          setCompleteSheetOpen(open);
+          if (!open) setCompleteTargetInstanceId(null);
+        }}
+        onConfirmComplete={handleConfirmComplete}
+        isSubmitting={isCompleting}
+      />
     </div>
   );
 };

@@ -12,6 +12,17 @@ export const formatDate = (date: Date) => {
   return `${year}.${month}.${day}`;
 };
 
+// Date 객체를 'YYYY-MM-DD' 형식 문자열로 변환
+export const toDateString = (date: Date | null) => {
+  if (!date) return null;
+
+  const year = date.getFullYear();
+  const month = padTwo(date.getMonth() + 1);
+  const day = padTwo(date.getDate());
+
+  return `${year}-${month}-${day}`;
+};
+
 export const formatDueDateLabel = (dateString: string) => {
   const date = new Date(dateString);
 
@@ -26,6 +37,12 @@ export const formatStatusDateLabel = (dateString: string) => {
   const day = padTwo(date.getDate());
 
   return `${year}.${month}.${day} (${WEEKDAY_LABELS_SUN_FIRST[date.getDay()]})`;
+};
+
+export const formatKoreanDateLabel = (dateString: string) => {
+  const date = new Date(dateString);
+
+  return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
 };
 
 // ISO datetime -> 오늘 오전 9:00
