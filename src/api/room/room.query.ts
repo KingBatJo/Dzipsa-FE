@@ -1,7 +1,12 @@
+import type {
+  GetRoomMembersParams,
+  UseRoomMembersQueryOptions,
+} from '@/api/room/room.types';
 import {
   createRoom,
   getInvitationCode,
   getMyRoom,
+  getRoomMembers,
   joinRoom,
   leaveRoom,
   reissueInvitationCode,
@@ -28,6 +33,21 @@ export const useInvitationCodeQuery = () => {
     queryKey: queryKeys.room.invitationCode,
     queryFn: getInvitationCode,
     staleTime: 1000 * 60,
+  });
+};
+
+// 방 구성원 조회
+export const useRoomMembersQuery = (
+  params?: GetRoomMembersParams,
+  options: UseRoomMembersQueryOptions = {}
+) => {
+  const { enabled = true } = options;
+
+  return useQuery({
+    queryKey: queryKeys.room.members(params),
+    queryFn: () => getRoomMembers(params),
+    staleTime: 1000 * 60 * 5,
+    enabled,
   });
 };
 
@@ -66,8 +86,11 @@ export const useLeaveRoomMutation = () => {
         (prev: MeResponse | undefined) =>
           prev ? { ...prev, hasRoom: false } : prev
       );
+
       queryClient.removeQueries({ queryKey: queryKeys.room.myRoom });
       queryClient.removeQueries({ queryKey: queryKeys.room.invitationCode });
+      queryClient.removeQueries({ queryKey: queryKeys.rule.all });
+      queryClient.removeQueries({ queryKey: queryKeys.todo.all });
     },
   });
 };

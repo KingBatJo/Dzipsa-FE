@@ -32,10 +32,12 @@ const ListItemCard = ({
       onClick();
     }}
     className={cn(
-      'group flex items-center rounded-2xl p-4 shadow-none transition-colors',
-      isDelayed ? 'border-none bg-red-200' : 'border-zinc-200 bg-white',
+      'group flex items-center rounded-2xl border p-4 shadow-none transition-colors',
+      isDelayed ? 'border-transparent bg-red-200' : 'border-zinc-200 bg-white',
       onClick &&
-        'hover:cursor-pointer hover:border-zinc-300 hover:bg-zinc-200 active:border-zinc-400 active:bg-zinc-300 has-[button:active]:border-zinc-200 has-[button:active]:bg-white has-[button:hover]:border-zinc-200 has-[button:hover]:bg-white',
+        (isDelayed
+          ? 'hover:cursor-pointer hover:border-red-300 hover:bg-red-200 active:bg-red-300 has-[button:active]:border-none has-[button:active]:bg-red-200 has-[button:hover]:border-none has-[button:hover]:bg-red-200'
+          : 'hover:cursor-pointer hover:border-zinc-300 hover:bg-zinc-200 active:border-zinc-400 active:bg-zinc-300 has-[button:active]:border-zinc-200 has-[button:active]:bg-white has-[button:hover]:border-zinc-200 has-[button:hover]:bg-white'),
       className
     )}
   >
@@ -48,16 +50,16 @@ const ListItemCard = ({
         {(badge || subtitle) && (
           <div className="flex items-center gap-[9px]">
             {isDelayed && badge && (
-              <RoundedBadge className="bg-red-400 text-red-50">
+              <RoundedBadge className="bg-red-400 text-red-50 group-active:bg-red-500">
                 {badge}
               </RoundedBadge>
             )}
             {subtitle && (
               <div
                 className={cn(
-                  'border-l-2 pl-1 text-xs font-medium',
+                  'border-l-2 pl-1 text-xs font-medium transition-colors',
                   isDelayed
-                    ? 'border-red-400 font-semibold text-red-400'
+                    ? 'border-red-400 font-semibold text-red-400 group-active:border-red-500 group-active:text-red-500'
                     : 'border-zinc-400 text-zinc-400'
                 )}
               >

@@ -50,6 +50,11 @@ apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const { accessToken } = useAuthStore.getState();
 
+    // FormData 요청은 브라우저가 boundary를 포함한 Content-Type을 자동 설정하도록 위임
+    if (config.data instanceof FormData) {
+      config.headers.delete('Content-Type');
+    }
+
     if (accessToken) {
       config.headers.set('Authorization', `Bearer ${accessToken}`);
     }

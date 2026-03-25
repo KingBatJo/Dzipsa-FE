@@ -1,28 +1,31 @@
-﻿import {
-  getTodoDetailViewState,
-  getTodoStatusLabel,
-  getTodoStatusSubLabel,
-} from '@/utils/todos';
+import {
+  getTodoRecurringInfoText,
+  getTodoStatusTexts,
+} from '@/api/todo/todo.utils';
+import {
+  useCompleteTodoMutation,
+  useResetTodoStatusMutation,
+  useTodoDetailQuery,
+} from '@/api/todo/todo.query';
+import { useEffect, useState } from 'react';
 
 import AppButton from '@/components/common/AppButton';
 import BottomSheet from '@/components/common/BottomSheet';
-import { MOCK_TODAY } from '@/mocks/mockData';
-import { PencilLine } from 'lucide-react';
-import TodoCompleteSheet from '@/pages/todos/components/TodoCompleteSheet';
 import type { ReactNode } from 'react';
-import type { TodoWithLocal } from '@/types/todo';
+import { TODO_STATUS } from '@/constants/todos';
+import TodoCompleteSheet from '@/pages/todos/components/TodoCompleteSheet';
+import type { TodoInstanceId } from '@/api/todo/todo.types';
 import UserAvatar from '@/components/common/UserAvatar';
+import editIcon from '@/assets/icon/edit.svg';
 import { formatDueDateLabel } from '@/utils/date';
+import { getProfileOptionById } from '@/api/room/room.utils';
+import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
 
 type TodoDetailSheetProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  todo: TodoWithLocal | null;
-  myId: number;
-  assigneeName?: string;
-  assigneeImage?: string;
+  instanceId: number | null;
 };
 
 export const DetailRow = ({
@@ -47,68 +50,166 @@ export const DetailRow = ({
 const TodoDetailSheet = ({
   open,
   onOpenChange,
-  todo,
-  myId,
-  assigneeName,
-  assigneeImage,
+  instanceId,
 }: TodoDetailSheetProps) => {
-  const viewState = todo ? getTodoDetailViewState(todo, myId) : null;
   const navigate = useNavigate();
   const [completeSheetOpen, setCompleteSheetOpen] = useState(false);
+  const [completeTargetInstanceId, setCompleteTargetInstanceId] =
+    useState<TodoInstanceId | null>(null);
+  const [isPortraitProofImage, setIsPortraitProofImage] = useState(false);
+
+  const { data: todoDetail, isError } = useTodoDetailQuery(instanceId);
+  const { mutate: completeTodo, isPending: isCompleting } =
+    useCompleteTodoMutation();
+  const { mutate: resetTodoStatus, isPending: isResetting } =
+    useResetTodoStatusMutation();
+
+  const assigneeProfile = getProfileOptionById(todoDetail?.profileImageUrl);
+
+  const isCompleted = todoDetail?.status === TODO_STATUS.COMPLETED;
+  const hasProofImage = Boolean(todoDetail?.imageUrl);
+  const statusTexts = getTodoStatusTexts(
+    todoDetail?.status,
+    todoDetail?.delayDays ?? 0,
+    todoDetail?.completedAt
+  );
+  const recurringInfoText = getTodoRecurringInfoText(
+    todoDetail?.recurringType,
+    todoDetail?.repeatDays
+  );
+  const isRecurringUnset = recurringInfoText === '설정 안 함';
+
+  const isOwner = todoDetail?.owner;
+
+  useEffect(() => {
+    if (!open || !isError) return;
+
+    toast('이미 삭제된 항목입니다.');
+
+    onOpenChange(false);
+  }, [isError, open, onOpenChange]);
+
+  useEffect(() => {
+    setIsPortraitProofImage(false);
+  }, [todoDetail?.imageUrl]);
 
   const handleOpenCompleteSheet = () => {
+    if (instanceId == null) return;
+
+    setCompleteTargetInstanceId(instanceId);
+    onOpenChange(false);
     setCompleteSheetOpen(true);
+  };
+
+  const handleConfirmComplete = (proofImageFile?: File) => {
+    if (completeTargetInstanceId == null) return;
+
+    completeTodo(
+      { instanceId: completeTargetInstanceId, image: proofImageFile ?? null },
+      {
+        onSuccess: () => {
+          const title = todoDetail?.title?.trim();
+
+          toast(
+            title
+              ? `[${title}]이 완료되었습니다 ! 수고하셨어요 !`
+              : '할 일이 완료되었습니다 ! 수고하셨어요 !'
+          );
+
+          setCompleteSheetOpen(false);
+          setCompleteTargetInstanceId(null);
+        },
+      }
+    );
+  };
+
+  const handleResetStatus = () => {
+    if (instanceId == null) return;
+
+    resetTodoStatus({ instanceId });
     onOpenChange(false);
   };
+
+  if (isError) {
+    return null;
+  }
 
   return (
     <>
       <BottomSheet open={open} onOpenChange={onOpenChange}>
         <div className="flex items-center justify-between px-5 pt-8 pb-[15px]">
           <h2 className="text-xl font-semibold text-black">
-            {todo?.title ?? '-'}
+            {todoDetail?.title ?? '-'}
           </h2>
 
-          {viewState?.canEdit && (
+          {isOwner && (
             <button
               type="button"
               onClick={() => {
-                navigate(`/todos/${todo?.id}/edit`, { state: { todo } });
+                if (!todoDetail) return;
+                navigate(`/todos/${todoDetail.instanceId}/edit`, {
+                  state: {
+                    todoId: todoDetail.todoId,
+                    title: todoDetail.title,
+                    memo: todoDetail.memo,
+                    targetDate: todoDetail.targetDate,
+                    assigneeId: todoDetail.assigneeId,
+                    isRandom: todoDetail.isRandom,
+                    recurringType: todoDetail.recurringType,
+                    repeatDays: todoDetail.repeatDays,
+                    startDate: todoDetail.startDate,
+                    endDate: todoDetail.endDate,
+                  },
+                });
               }}
-              className="text-zinc-400"
+              className="shrink-0"
             >
-              <PencilLine className="h-6 w-6 transition-colors hover:text-black" />
+              <img src={editIcon} alt="편집" className="h-6 w-6" />
             </button>
           )}
         </div>
 
-        {/* 스크롤 영역 */}
         <div className="min-h-0 flex-1 gap-8 overflow-y-auto p-5">
           <div className="flex flex-col gap-6">
             <DetailRow
               label="마감일"
-              value={todo ? formatDueDateLabel(todo.dueAt) : '-'}
+              value={
+                todoDetail ? formatDueDateLabel(todoDetail.targetDate) : '-'
+              }
             />
 
             <DetailRow
               label="담당자"
               value={
                 <span className="inline-flex items-center gap-1">
-                  <UserAvatar size="sm" src={assigneeImage} alt={assigneeName} />
-                  <span>{assigneeName ?? '-'}</span>
+                  <UserAvatar
+                    size="sm"
+                    src={assigneeProfile.imageUrl}
+                    alt={todoDetail?.assigneeNickname}
+                  />
+                  <span>{todoDetail?.assigneeNickname ?? '-'}</span>
                 </span>
               }
             />
 
-            <DetailRow label="반복" value="반복 없음" />
+            <DetailRow
+              label="반복"
+              value={
+                <span
+                  className={isRecurringUnset ? 'text-zinc-400' : undefined}
+                >
+                  {recurringInfoText}
+                </span>
+              }
+            />
 
             <DetailRow
               label="메모"
               value={
-                todo?.memo ? (
-                  <span className="break-keep">{todo.memo}</span>
+                todoDetail?.memo ? (
+                  todoDetail.memo
                 ) : (
-                  '-'
+                  <span className="text-zinc-400">작성된 메모가 없습니다</span>
                 )
               }
               alignTop
@@ -118,62 +219,63 @@ const TodoDetailSheet = ({
               label="상태"
               value={
                 <div className="flex flex-col items-end gap-1">
-                  <span>{todo ? getTodoStatusLabel(todo, MOCK_TODAY) : '-'}</span>
-
-                  {todo && (
-                    <span className="text-zinc-300">
-                      {getTodoStatusSubLabel(todo, MOCK_TODAY)}
-                    </span>
-                  )}
+                  <span>{statusTexts.label}</span>
+                  <span className="text-zinc-400">{statusTexts.detail}</span>
                 </div>
               }
               alignTop
             />
 
-            {/* 인증 사진 */}
-            {viewState?.isCompleted && todo?.proofImageUrl && (
+            {hasProofImage && todoDetail?.status === 'COMPLETED' && (
               <div className="flex justify-end">
-                <div className="h-37.5 w-50 rounded-[20px] bg-zinc-200" />
+                <img
+                  src={todoDetail?.imageUrl ?? undefined}
+                  alt="인증 사진"
+                  onLoad={(event) => {
+                    const { naturalWidth, naturalHeight } = event.currentTarget;
+                    setIsPortraitProofImage(naturalHeight > naturalWidth);
+                  }}
+                  className={`rounded-[20px] object-cover ${
+                    isPortraitProofImage ? 'h-50 w-37.5' : 'h-37.5 w-50'
+                  }`}
+                />
               </div>
             )}
           </div>
         </div>
 
-        {/* 하단 버튼 */}
-        {viewState?.isMine && (
+        {isOwner && (
           <div className="flex items-center justify-between gap-1 p-5">
             <div className="flex flex-1 items-center gap-1">
-              {!viewState.isCompleted && viewState.canConfirmComplete && (
+              {!isCompleted && (
                 <AppButton
                   className="flex-1 bg-black text-white"
                   onClick={handleOpenCompleteSheet}
+                  disabled={isCompleting}
                 >
                   완료하기
                 </AppButton>
               )}
 
-              {viewState.isCompleted && viewState.canRevertToInProgress && (
+              {isCompleted && (
                 <AppButton
-                  className={`flex-1 ${
-                    viewState.hasProofImage
-                      ? 'bg-black text-white'
-                      : 'border border-zinc-400'
-                  }`}
+                  className="flex-1 border border-zinc-400"
+                  onClick={handleResetStatus}
+                  disabled={isResetting}
                 >
                   진행 중으로 변경
                 </AppButton>
               )}
 
-              {viewState.isCompleted &&
-                !viewState.hasProofImage &&
-                viewState.canAddProofImage && (
-                  <AppButton
-                    className="flex-1 bg-black text-white"
-                    onClick={handleOpenCompleteSheet}
-                  >
-                    인증 사진 추가
-                  </AppButton>
-                )}
+              {isCompleted && !hasProofImage && (
+                <AppButton
+                  className="flex-1 bg-black text-white"
+                  onClick={handleOpenCompleteSheet}
+                  disabled={isCompleting}
+                >
+                  인증 사진 추가
+                </AppButton>
+              )}
             </div>
           </div>
         )}
@@ -182,9 +284,8 @@ const TodoDetailSheet = ({
       <TodoCompleteSheet
         open={completeSheetOpen}
         onOpenChange={setCompleteSheetOpen}
-        onConfirmComplete={() => {
-          setCompleteSheetOpen(false);
-        }}
+        onConfirmComplete={handleConfirmComplete}
+        isSubmitting={isCompleting}
       />
     </>
   );

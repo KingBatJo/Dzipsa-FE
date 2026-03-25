@@ -1,30 +1,27 @@
-import { MOCK_TODAY, mockMembers, mockTodoList } from '@/mocks/mockData';
-import {
-  addLocalToTodos,
-  getTodoSections,
-  getTodoStatusLabel,
-} from '@/utils/todos';
-
 import { Card } from '@/components/ui/card';
 import EmptyState from '@/components/common/EmptyState';
 import ListSection from '@/components/common/ListSection';
 import RoundedBadge from '@/components/common/RoundedBadge';
-import type { TodoWithLocal } from '@/types/todo';
+import type { TodoInstanceId } from '@/api/todo/todo.types';
 import UserAvatar from '@/components/common/UserAvatar';
+import checkedTodoEmptyImage from '@/assets/image/todo/checked-todo-empty.png';
 import { cn } from '@/lib/utils';
-import dzipsaDefault from '@/assets/dzipsa/dzipsa-default.svg';
-import { formatStatusDateLabel } from '@/utils/date';
+import { formatKoreanDateLabel } from '@/utils/date';
+import { getProfileOptionById } from '@/api/room/room.utils';
+import { useInfiniteCompletedTodosQuery } from '@/api/todo/todo.query';
+import { useInfiniteScrollObserver } from '@/hooks/useInfiniteScrollObserver';
 
 type CompletedTodosTabProps = {
-  onTodoClick?: (todo: TodoWithLocal) => void;
+  onTodoClick?: (instanceId: TodoInstanceId) => void;
 };
 
 type CompletedTodoFeedCardProps = {
   userName: string;
   todoTitle: string;
   completedDate: string;
-  proofImageUrl?: string;
-  statusLabel: '완료' | '지연 완료';
+  proofImageUrl?: string | null;
+  statusLabel: string;
+  isDelayed: boolean;
   onClick?: () => void;
 };
 
@@ -37,8 +34,20 @@ const CompletedTodoFeedCard = ({
   completedDate,
   proofImageUrl,
   statusLabel,
+  isDelayed,
   onClick,
 }: CompletedTodoFeedCardProps) => {
+  const statusBadge = (
+    <RoundedBadge
+      className={cn(
+        'w-fit shrink-0 font-bold whitespace-nowrap',
+        isDelayed ? 'bg-red-400 text-red-50' : 'bg-neutral-400 text-neutral-200'
+      )}
+    >
+      {statusLabel}
+    </RoundedBadge>
+  );
+
   return (
     <Card
       role={onClick ? 'button' : undefined}
@@ -51,38 +60,34 @@ const CompletedTodoFeedCard = ({
       )}
     >
       <div className="flex items-center justify-between">
-        <div className="flex flex-col gap-3">
-          <div className="flex flex-col gap-2">
-            <p className="text-primary text-base leading-[19px] font-semibold">
-              {todoTitle}
-            </p>
-
-            {/* 완료된 날짜 */}
-            <div className="flex gap-1">
-              <div className="w-0.5 bg-zinc-400" />
-              <p className="text-xs font-medium text-zinc-400">
-                {completedDate}
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2">
+              <p className="text-primary line-clamp-2 text-base leading-[19px] font-semibold break-keep">
+                {todoTitle}
               </p>
-            </div>
-          </div>
 
-          {statusLabel === '지연 완료' && (
-            <RoundedBadge className="w-fit bg-red-400 font-bold text-red-50">
-              기한 후 완료
-            </RoundedBadge>
-          )}
+              <div className="flex gap-1">
+                <div className="w-0.5 bg-zinc-400" />
+                <p className="text-xs font-medium text-zinc-400">
+                  {completedDate}
+                </p>
+              </div>
+            </div>
+
+            {proofImageUrl && statusBadge}
+          </div>
         </div>
 
-        <div>
+        <div className="ml-3 shrink-0">
           {proofImageUrl ? (
-            // 임시 (추후 img로 교체)
-            <div className="bg-accent h-25 w-25 rounded-xl"></div>
+            <img
+              src={proofImageUrl}
+              alt="인증 사진"
+              className="h-25 w-25 rounded-xl object-cover"
+            />
           ) : (
-            statusLabel === '완료' && (
-              <RoundedBadge className="bg-neutral-400 font-bold text-neutral-200">
-                기한 내 완료
-              </RoundedBadge>
-            )
+            statusBadge
           )}
         </div>
       </div>
@@ -100,7 +105,7 @@ const CompletedTodoFeedItem = ({
         <UserAvatar src={profileImage} />
 
         <p className="text-primary text-sm font-semibold">
-          {props.userName}님이 할 일을 완료하였어요 !
+          {props.userName}님이 할 일을 완료하셨어요 !
         </p>
       </div>
 
@@ -114,51 +119,77 @@ const CompletedTodoFeedItem = ({
 };
 
 const CompletedTodosTab = ({ onTodoClick }: CompletedTodosTabProps) => {
-  const todosWithLocal = addLocalToTodos(mockTodoList);
+  const { data, isPending, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteCompletedTodosQuery();
+  const completedTodos = data?.pages.flatMap((page) => page.content) ?? [];
 
-  const { completedTodos } = getTodoSections(todosWithLocal, MOCK_TODAY);
+  const loadMoreRef = useInfiniteScrollObserver<HTMLDivElement>({
+    hasNextPage,
+    isFetching: isFetchingNextPage || isPending,
+    onLoadMore: fetchNextPage,
+    rootMargin: '0px 0px 40px 0px',
+    threshold: 0,
+  });
 
   return (
     <ListSection title="TimeLine">
-      {completedTodos.length === 0 ? (
+      {isPending && completedTodos.length === 0 ? (
+        <div className="flex min-h-[240px] animate-pulse items-center justify-center text-sm font-medium text-zinc-400">
+          할 일을 불러오고 있어요
+        </div>
+      ) : completedTodos.length === 0 ? (
         <EmptyState
           variant="minimal"
           image={
             <img
-              src={dzipsaDefault}
-              alt="집사 캐릭터"
-              className="h-26 w-26 object-contain"
+              src={checkedTodoEmptyImage}
+              alt="완료된 할 일 없음"
+              className="h-47.5 w-47.5 object-contain"
             />
           }
           title="완료된 할 일이 없어요 !"
-          description="하나만 끝내도 우리집 기록이 쌓이기 시작해요."
+          description={
+            <span>
+              하나만 끝내도 우리집 기록이
+              <br />
+              쌓이기 시작해요.
+            </span>
+          }
         />
       ) : (
         <div className="flex flex-col">
           {completedTodos.map((todo) => {
-            const member = mockMembers.find((m) => m.id === todo.assigneeId);
-            const statusLabel = getTodoStatusLabel(todo, MOCK_TODAY);
-            const completedDateLabel = todo.completedAt
-              ? formatStatusDateLabel(todo.completedAt)
-              : '';
-
-            if (statusLabel !== '완료' && statusLabel !== '지연 완료') {
-              return null;
-            }
+            const isDelayed = todo.delayDays > 0;
+            const statusLabel = isDelayed ? '기한 후 완료' : '기한 내 완료';
+            const assigneeProfile = getProfileOptionById(todo.profileImageUrl);
 
             return (
               <CompletedTodoFeedItem
-                key={todo.id}
-                onClick={() => onTodoClick?.(todo)}
-                userName={member?.name ?? '알 수 없음'}
-                profileImage={member?.profileImage}
+                key={todo.instanceId}
+                onClick={() => onTodoClick?.(todo.instanceId)}
+                userName={todo.assigneeNickname}
+                profileImage={assigneeProfile.imageUrl}
                 todoTitle={todo.title}
-                completedDate={completedDateLabel}
+                completedDate={formatKoreanDateLabel(todo.completedAt)}
                 statusLabel={statusLabel}
-                proofImageUrl={todo.proofImageUrl}
+                isDelayed={isDelayed}
+                proofImageUrl={todo.imageUrl}
               />
             );
           })}
+
+          {completedTodos.length > 0 && (
+            <div
+              ref={loadMoreRef}
+              className="flex h-12 items-center justify-center"
+            >
+              {isFetchingNextPage ? (
+                <div className="py-3 text-center text-sm text-zinc-500">
+                  집사가 더 가져오고 있어요...
+                </div>
+              ) : null}
+            </div>
+          )}
         </div>
       )}
     </ListSection>

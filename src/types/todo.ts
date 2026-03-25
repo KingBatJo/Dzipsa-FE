@@ -41,6 +41,7 @@ export type RepeatValue = {
   enabled: boolean;
   type: RepeatType;
   days: WeekDay[];
+  monthlyDay: number;
   startDate: Date;
   endDate: Date | null;
 };
@@ -50,6 +51,7 @@ export type TodoFormValues = {
   memo: string;
   dueDate: Date | null;
   assigneeId: number;
+  isRandom: boolean;
   repeatValue: RepeatValue;
 };
 

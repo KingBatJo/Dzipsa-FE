@@ -3,6 +3,7 @@ import type { RepeatType, RepeatValue } from '@/types/todo';
 import { useEffect, useRef, useState } from 'react';
 
 import DateWheelDialog from '@/pages/todos/components/DateWheelDialog';
+import MonthlyDayWheelDialog from '@/pages/todos/components/MonthlyDayWheelDialog';
 import { REPEAT_TYPE_OPTIONS } from '@/constants/todos';
 import ToggleSwitch from '@/components/common/ToggleSwitch';
 import type { WeekDay } from '@/constants/weekdays';
@@ -10,7 +11,10 @@ import WeekdaySelector from '@/components/form/WeekdaySelector';
 import { cn } from '@/lib/utils';
 import { formatDate } from '@/utils/date';
 
-type DateFieldType = 'start' | 'end';
+type DateFieldType = 'start' | 'end' | 'monthlyDay';
+
+const WEEKLY_REPEAT_TYPE = REPEAT_TYPE_OPTIONS[0];
+const MONTHLY_REPEAT_TYPE = REPEAT_TYPE_OPTIONS[1];
 
 type RepeatSectionProps = {
   value: RepeatValue;
@@ -87,9 +91,17 @@ const RepeatSection = ({
   const handleChangeType = (type: RepeatType) => {
     if (disabled) return;
 
-    onChange({
+    const nextValue: RepeatValue = {
       ...value,
       type,
+    };
+
+    if (type === MONTHLY_REPEAT_TYPE) {
+      nextValue.monthlyDay = 1;
+    }
+
+    onChange({
+      ...nextValue,
     });
     setIsRepeatMenuOpen(false);
   };
@@ -123,6 +135,16 @@ const RepeatSection = ({
       });
       setActiveDateField(null);
     }
+  };
+
+  const handleConfirmMonthlyDay = (day: number) => {
+    if (disabled) return;
+
+    onChange({
+      ...value,
+      monthlyDay: day,
+    });
+    setActiveDateField(null);
   };
 
   return (
@@ -194,12 +216,39 @@ const RepeatSection = ({
               )}
             </div>
 
-            {value.type === '매주' && (
+            {value.type === WEEKLY_REPEAT_TYPE && (
               <WeekdaySelector
                 value={value.days}
                 onChange={handleChangeDays}
                 disabled={disabled}
               />
+            )}
+
+            {value.type === MONTHLY_REPEAT_TYPE && (
+              <div className="flex flex-col items-end gap-2">
+                <div className="flex w-full items-center justify-between">
+                  <p>실행일</p>
+
+                  <button
+                    type="button"
+                    disabled={disabled}
+                    className="flex items-center gap-1 text-zinc-500 disabled:opacity-50"
+                    onClick={() => setActiveDateField('monthlyDay')}
+                  >
+                    <span>매월 {value.monthlyDay}일</span>
+                    <ChevronDown
+                      className={cn(
+                        'h-6 w-6 transition-transform',
+                        activeDateField === 'monthlyDay' && 'rotate-180'
+                      )}
+                    />
+                  </button>
+                </div>
+
+                <p className="text-right text-xs font-medium text-zinc-400">
+                  29-31일 선택 시 해당 월의 말일로 자동 설정됩니다.
+                </p>
+              </div>
             )}
 
             <div className="flex flex-col gap-[15px]">
@@ -209,7 +258,7 @@ const RepeatSection = ({
                 <button
                   type="button"
                   disabled={disabled}
-                  className="flex items-center gap-1 disabled:opacity-50"
+                  className="flex items-center gap-1 text-zinc-500 disabled:opacity-50"
                   onClick={() => setActiveDateField('start')}
                 >
                   <span>{formatDate(value.startDate)}</span>
@@ -228,7 +277,7 @@ const RepeatSection = ({
                 <button
                   type="button"
                   disabled={disabled}
-                  className="flex items-center gap-1 disabled:opacity-50"
+                  className="flex items-center gap-1 text-zinc-500 disabled:opacity-50"
                   onClick={() => setActiveDateField('end')}
                 >
                   <span>
@@ -248,7 +297,7 @@ const RepeatSection = ({
       </section>
 
       <DateWheelDialog
-        open={activeDateField !== null}
+        open={activeDateField === 'start' || activeDateField === 'end'}
         value={activeDialogDate}
         onOpenChange={(open) => {
           if (!open) {
@@ -256,6 +305,17 @@ const RepeatSection = ({
           }
         }}
         onConfirm={handleConfirmDate}
+      />
+
+      <MonthlyDayWheelDialog
+        open={activeDateField === 'monthlyDay'}
+        value={value.monthlyDay}
+        onOpenChange={(open) => {
+          if (!open) {
+            setActiveDateField(null);
+          }
+        }}
+        onConfirm={handleConfirmMonthlyDay}
       />
     </>
   );
