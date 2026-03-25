@@ -1,5 +1,6 @@
 import AppButton from '@/components/common/AppButton';
 import AppDialog from '@/components/common/AppDialog';
+import SpeechBubble from '@/components/common/SpeechBubble';
 import notiWarningImage from '@/assets/image/noti/noti-warining.png';
 
 type RuleNotifyConfirmDialogProps = {
@@ -24,19 +25,18 @@ const RuleNotifyConfirmDialog = ({
     >
       <div className="flex flex-col items-center gap-2 bg-white px-4 pt-8 pb-4">
         <div className="flex w-full flex-col items-center pb-10">
-          <div className="relative flex w-[233px] flex-col items-center gap-2 rounded-2xl bg-white p-2.5 text-center shadow-[0_0_10px_0_rgba(189,189,189,0.3)]">
+          <SpeechBubble className="w-[233px]">
             <p className="text-base leading-[1.3] font-semibold text-black">
               규칙이 지켜지지 않고 있나요?
               <br />
               디집사가 우리집에 전해드릴게요.
             </p>
             <p className="text-xs leading-[1.3] font-medium text-[#BCBCBC]">
-              모두에게 규칙 리마인드 알림을 보내며
+              모두에게 규칙 리마인드 알림을 보내며,
               <br />
               익명으로 전달되니 부담 갖지 않으셔도 돼요
             </p>
-          </div>
-          <div className="h-0 w-0 border-x-[16px] border-t-[20px] border-x-transparent border-t-white drop-shadow-[0_3px_3px_rgba(189,189,189,0.25)]" />
+          </SpeechBubble>
         </div>
 
         <div className="relative w-full pt-10">
