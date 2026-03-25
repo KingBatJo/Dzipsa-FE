@@ -5,7 +5,7 @@ import {
   validateTextMaxLength,
 } from '@/utils/validators';
 
-import { Card } from '@/components/ui/card';
+import AppButton from '@/components/common/AppButton';
 import EditableInputSection from '@/components/form/EditableInputSection';
 import { cn } from '@/lib/utils';
 
@@ -38,38 +38,40 @@ const MottoStep = ({ motto, onChangeMotto }: MottoStepProps) => {
   };
 
   return (
-    <div className="pt-4">
-      <section className="flex flex-col gap-2 px-2 pb-10">
-        <h1 className="text-xl leading-8 font-semibold">
-          우리집만의 약속이 필요해요
+    <div>
+      <section className="flex flex-col gap-1 p-7.5">
+        <h1 className="text-xl leading-[1.4] font-semibold">
+          우리집만의 약속이 필요해요.
           <br />
-          함께 지키고 싶은 가훈을 골라보세요
+          함께 지키고 싶은 가훈을 골라보세요.
         </h1>
 
-        <p className="text-sm font-medium text-[#BCBCBC]">
+        <p className="text-sm font-medium text-zinc-400">
           가훈은 다시 설정할 수 있어요!
         </p>
       </section>
 
       {/* 가훈 입력 */}
-      <EditableInputSection
-        id="motto"
-        value={motto}
-        placeholder="우리집의 가훈을 정해보세요"
-        maxLength={MOTTO_MAX_LENGTH}
-        errorMessage={errorMessage}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        inputRef={inputRef}
-      />
+      <div className="px-[15px] pt-[15px] pb-7.5">
+        <EditableInputSection
+          id="motto"
+          value={motto}
+          placeholder="우리집 가훈을 입력하세요"
+          maxLength={MOTTO_MAX_LENGTH}
+          errorMessage={errorMessage}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          inputRef={inputRef}
+        />
+      </div>
 
       {/* 가훈 템플릿 */}
-      <section className="flex flex-col gap-2 pt-5">
-        <h2 className="text-xs font-semibold text-[#888888]">가훈 템플릿</h2>
+      <section className="flex flex-col gap-3 p-[15px]">
+        <h2 className="text-xs font-semibold text-zinc-400">가훈 템플릿</h2>
 
         <div className="flex flex-col gap-2.5">
           {MOTTO_TEMPLATES.map((template) => (
-            <Card
+            <AppButton
               key={template}
               onClick={() => {
                 onChangeMotto(template);
@@ -77,14 +79,14 @@ const MottoStep = ({ motto, onChangeMotto }: MottoStepProps) => {
                 inputRef.current?.focus();
               }}
               className={cn(
-                'flex h-12 cursor-pointer items-center rounded-[10px] px-4 text-sm font-medium shadow-xs transition-all duration-200',
+                'border-border flex items-center border px-4 py-2 shadow-xs transition-all duration-200',
                 motto === template
-                  ? 'border-neutral-900 bg-neutral-100'
-                  : 'border-neutral-200 hover:bg-neutral-50'
+                  ? 'border-zinc-500 bg-zinc-300'
+                  : 'hover:border-zinc-400 hover:bg-zinc-200 active:border-zinc-500 active:bg-zinc-300'
               )}
             >
               {template}
-            </Card>
+            </AppButton>
           ))}
         </div>
       </section>

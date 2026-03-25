@@ -4,7 +4,7 @@ import { Toaster } from '@/components/ui/sonner';
 
 const RootLayout = () => {
   return (
-    <div className="min-h-dvh bg-zinc-100">
+    <div className="min-h-dvh">
       <div
         className={`mx-auto min-h-dvh w-full shadow-[0_4px_20px_rgba(0,0,0,0.05)] ${MOBILE_MAX_WIDTH}`}
       >

@@ -1,4 +1,4 @@
-type SocialProvider = 'kakao' | 'naver';
+﻿type SocialProvider = 'kakao' | 'naver';
 
 type SocialLoginButtonProps = {
   provider: SocialProvider;
@@ -12,6 +12,11 @@ const providerStyles: Record<SocialProvider, string> = {
   naver: 'bg-[#03A94D] text-white',
 };
 
+const providerIconSizeStyles: Record<SocialProvider, string> = {
+  kakao: 'h-[18px] w-[18px]',
+  naver: 'h-4 w-4',
+};
+
 const SocialLoginButton = ({
   provider,
   iconSrc,
@@ -21,12 +26,12 @@ const SocialLoginButton = ({
   return (
     <button
       type="button"
-      className={`flex h-[54px] w-full items-center justify-center gap-[15px] rounded-[6px] ${providerStyles[provider]} hover:brightness-95 active:brightness-90`}
+      className={`flex h-[54px] w-full min-w-[330px] items-center justify-center gap-[15px] rounded-[10px] ${providerStyles[provider]} hover:brightness-95 active:brightness-90`}
       onClick={onClick}
     >
       <img
-        alt={`${provider} 로고`}
-        className="h-4 w-4"
+        alt={`${provider} logo`}
+        className={providerIconSizeStyles[provider]}
         src={iconSrc}
         onContextMenu={(e) => e.preventDefault()}
       />

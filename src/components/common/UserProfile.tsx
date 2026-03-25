@@ -19,7 +19,7 @@ const UserProfile = ({ src, alt, name }: UserProfileProps) => {
 
       <span
         className={cn(
-          'max-w-[50px] text-center text-[10px] font-semibold text-[#BCBCBC]'
+          'max-w-[60px] truncate text-center text-[10px] font-semibold text-[#BCBCBC]'
         )}
       >
         {name}님

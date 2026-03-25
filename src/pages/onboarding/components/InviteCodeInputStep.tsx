@@ -19,16 +19,16 @@ const InviteCodeInputStep = ({
   onChangeInviteCode,
 }: InviteCodeInputStepProps) => {
   return (
-    <div className="pt-4">
-      <section className="flex flex-col gap-2 px-2 pb-[188px]">
-        <h1 className="text-xl leading-8 font-semibold">
-          공유받은 초대코드를
+    <div className="flex flex-col gap-[155px]">
+      <section className="flex flex-col gap-2 p-7.5">
+        <h1 className="text-xl font-semibold">
+          공유받은 초대 코드를
           <br />
-          입력해주세요
+          입력해 주세요
         </h1>
       </section>
 
-      <section className="flex justify-center px-2">
+      <section className="flex justify-center px-5 py-2.5">
         <InputOTP
           maxLength={OTP_LENGTH}
           value={inviteCode}
@@ -50,11 +50,6 @@ const InviteCodeInputStep = ({
           </InputOTPGroup>
         </InputOTP>
       </section>
-
-      {/* 임시 (테스트용 안내 문구) */}
-      <p className="pt-4 text-center text-xs text-neutral-400">
-        테스트용 초대코드: 123456
-      </p>
     </div>
   );
 };

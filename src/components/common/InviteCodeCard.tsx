@@ -1,14 +1,17 @@
 import { APP_URL } from '@/constants/onboarding';
 import { Card } from '@/components/ui/card';
 import { Copy } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
 type InviteCodeCardProps = {
   inviteCode: string;
+  className?: string;
 };
 
-const InviteCodeCard = ({ inviteCode }: InviteCodeCardProps) => {
+const InviteCodeCard = ({ inviteCode, className }: InviteCodeCardProps) => {
   const inviteMessage = `[디집사] 룸메이트가 당신을 초대했어요!
+코드는 24시간동안 유효합니다.
 입장 코드: ${inviteCode}
 서비스 링크: ${APP_URL}`;
 
@@ -34,7 +37,10 @@ const InviteCodeCard = ({ inviteCode }: InviteCodeCardProps) => {
       role="button"
       tabIndex={0}
       onClick={handleCopy}
-      className="group bg-secondary flex h-[70px] cursor-pointer items-center border-none pr-4 shadow-none"
+      className={cn(
+        'group bg-secondary flex h-[70px] cursor-pointer items-center border-none pr-4 shadow-none',
+        className
+      )}
     >
       <div className="flex gap-[5px]">
         {inviteCode.split('').map((digit, index) => (

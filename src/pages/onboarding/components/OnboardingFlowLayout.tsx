@@ -1,6 +1,7 @@
+import { FORM_HEADER_HEIGHT, MOBILE_MAX_WIDTH } from '@/constants/layout';
+
 import AppButton from '@/components/common/AppButton';
 import BackHeader from '@/components/layout/BackHeader';
-import { MOBILE_MAX_WIDTH } from '@/constants/layout';
 
 type OnboardingFlowLayoutProps = {
   children: React.ReactNode;
@@ -23,14 +24,18 @@ const OnboardingFlowLayout = ({
     <div>
       <BackHeader onBack={onBack} />
 
-      <div className="px-4 pb-40">{children}</div>
+      <div className="pb-[108px]" style={{ paddingTop: FORM_HEADER_HEIGHT }}>
+        {children}
+      </div>
 
-      <footer className={`fixed bottom-0 ${MOBILE_MAX_WIDTH} w-full pb-9`}>
-        <div className="flex flex-col gap-6 px-4">
+      <footer
+        className={`fixed bottom-0 ${MOBILE_MAX_WIDTH} w-full bg-white px-[15px] pt-2.5 pb-12.5`}
+      >
+        <div className="flex flex-col gap-[10px]">
           <AppButton
             onClick={onNext}
             disabled={isNextDisabled}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 h-12 w-full rounded-[10px]"
+            className="bg-zinc-800 text-zinc-100 hover:bg-zinc-900"
           >
             {nextLabel}
           </AppButton>
