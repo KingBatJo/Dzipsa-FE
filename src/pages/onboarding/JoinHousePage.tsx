@@ -2,17 +2,20 @@
 import type { RoomMemberResponse, RoomResponse } from '@/api/room/room.types';
 import { useMeQuery, useUpdateMeMutation } from '@/api/auth/auth.query';
 
-import { Button } from '@/components/ui/button';
 import HouseConfirmStep from '@/pages/onboarding/components/HouseConfirmStep';
 import InviteCodeInputStep from '@/pages/onboarding/components/InviteCodeInputStep';
 import OnboardingFlowLayout from '@/pages/onboarding/components/OnboardingFlowLayout';
 import ProfileStep from '@/pages/onboarding/components/ProfileStep';
-import { getApiErrorMessage } from '@/api/error';
+import { getApiErrorInfo, getApiErrorMessage } from '@/api/error';
 import { toast } from 'sonner';
 import { useJoinRoomMutation } from '@/api/room/room.query';
 import { useNavigate } from 'react-router-dom';
 import { useOnboardingStore } from '@/stores/onboarding.store';
 import { useState } from 'react';
+
+const JOIN_ROOM_ERROR_TOAST_MESSAGE: Record<number, string> = {
+  340001: '존재하지 않는 집입니다. 코드를 다시 입력해 보세요.',
+};
 
 const JoinHousePage = () => {
   const navigate = useNavigate();
@@ -126,12 +129,16 @@ const JoinHousePage = () => {
         setHasError(false);
         setJoinStep('confirm');
       } catch (error) {
+        const apiError = getApiErrorInfo(error);
         const message = getApiErrorMessage(error);
+        const toastMessage = apiError?.code
+          ? JOIN_ROOM_ERROR_TOAST_MESSAGE[apiError.code] ?? message
+          : message;
 
         console.error('방 입장 실패: ', message, error);
 
         setHasError(true);
-        toast(message, {
+        toast(toastMessage, {
           id: 'invalid-invite-code',
           duration: 2000,
         });
@@ -170,15 +177,6 @@ const JoinHousePage = () => {
     }
   };
 
-  const handleSkip = async () => {
-    if (step !== 'profile') return;
-
-    updateJoinFlow({
-      nickname: getSafeNickname(nickname),
-    });
-    await handleComplete();
-  };
-
   const buttonLabel =
     step === 'invite'
       ? '집 찾기'
@@ -191,28 +189,12 @@ const JoinHousePage = () => {
     (step === 'invite' ? inviteCode.length !== OTP_LENGTH : false) ||
     (step === 'profile' && !nickname.trim());
 
-  const bottomSlot =
-    step === 'profile' ? (
-      <div className="flex items-center justify-center">
-        <Button
-          variant="link"
-          onClick={handleSkip}
-          className="h-fit p-0 font-semibold text-[#888888]"
-        >
-          Skip
-        </Button>
-      </div>
-    ) : (
-      <div className="h-5" />
-    );
-
   return (
     <OnboardingFlowLayout
       onBack={handleBack}
       onNext={handleNext}
       isNextDisabled={isNextDisabled}
       nextLabel={buttonLabel}
-      bottomSlot={bottomSlot}
     >
       {step === 'invite' && (
         <InviteCodeInputStep

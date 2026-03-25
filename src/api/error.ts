@@ -14,7 +14,5 @@ export const getApiErrorInfo = (error: unknown): ApiErrorInfo | null => {
 };
 
 export const getApiErrorMessage = (error: unknown) => {
-  return (
-    getApiErrorInfo(error)?.message ?? '요청 처리 중 오류가 발생했어요.'
-  );
+  return getApiErrorInfo(error)?.message ?? '요청 처리 중 오류가 발생했어요.';
 };
