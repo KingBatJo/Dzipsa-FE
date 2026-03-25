@@ -20,7 +20,9 @@ import { useEffect } from 'react';
 import { useMyRoomQuery } from '@/api/room/room.query';
 
 const HomePage = () => {
-  const { data: room, isError, error } = useMyRoomQuery();
+  const { data: room, isError, error, isPending } = useMyRoomQuery();
+
+  const isInitialLoading = !room && isPending;
 
   const myId = MOCK_MY_ID;
   const today = MOCK_TODAY;
@@ -44,15 +46,20 @@ const HomePage = () => {
     <div className="pb-[15px]">
       <MottoSection
         motto={room?.motto ?? '우리 집 가훈을 다같이 정해볼까요?'}
+        isLoading={isInitialLoading}
       />
-      <MembersSection members={room?.members ?? []} />
+      <MembersSection
+        members={room?.members ?? []}
+        isLoading={isInitialLoading}
+      />
       <DashboardSection
         score={room?.score ?? 3}
         delayTaskCount={room?.delayTaskCount ?? 0}
         ruleWarningCount={room?.ruleWarningCount ?? 0}
+        isLoading={isInitialLoading}
       />
 
-      <ListSection title="오늘 할 일">
+      <ListSection title="오늘 할 일" className="px-4 pt-5 pb-5">
         {visibleTodayTodos.length === 0 ? (
           <EmptyState>오늘 할 일이 없어요.</EmptyState>
         ) : (

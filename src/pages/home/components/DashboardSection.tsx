@@ -1,4 +1,7 @@
+﻿import { useEffect, useState } from 'react';
+
 import RoundedBadge from '@/components/common/RoundedBadge';
+import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import level1Image from '@/assets/image/home/level-1.png';
 import level2Image from '@/assets/image/home/level-2.png';
@@ -10,6 +13,7 @@ type DashboardSectionProps = {
   score: number;
   delayTaskCount: number;
   ruleWarningCount: number;
+  isLoading?: boolean;
 };
 
 type HouseLevel = 1 | 2 | 3 | 4 | 5;
@@ -18,6 +22,8 @@ type HouseLevelInfo = {
   imageSrc: string;
   message: string;
 };
+
+const LOADED_LEVEL_IMAGE_SRC = new Set<string>();
 
 const HOUSE_LEVEL_INFO: Record<HouseLevel, HouseLevelInfo> = {
   1: {
@@ -57,44 +63,99 @@ type HouseStatusCardProps = {
   score: number;
   delayTaskCount: number;
   ruleWarningCount: number;
+  isLoading: boolean;
 };
 
 const HouseStatusCard = ({
   score,
   delayTaskCount,
   ruleWarningCount,
+  isLoading,
 }: HouseStatusCardProps) => {
   const level = getLevelByScore(score);
   const levelInfo = HOUSE_LEVEL_INFO[level];
+  const [isImageLoaded, setIsImageLoaded] = useState(
+    LOADED_LEVEL_IMAGE_SRC.has(levelInfo.imageSrc)
+  );
+  const shouldShowImageSkeleton = isLoading || !isImageLoaded;
+
+  useEffect(() => {
+    if (LOADED_LEVEL_IMAGE_SRC.has(levelInfo.imageSrc)) {
+      setIsImageLoaded(true);
+      return;
+    }
+
+    setIsImageLoaded(false);
+
+    const image = new Image();
+    image.src = levelInfo.imageSrc;
+    image.onload = () => {
+      LOADED_LEVEL_IMAGE_SRC.add(levelInfo.imageSrc);
+      setIsImageLoaded(true);
+    };
+    image.onerror = () => setIsImageLoaded(true);
+  }, [levelInfo.imageSrc]);
 
   return (
-    <div className="relative">
-      <div className="absolute inset-0 flex flex-col gap-2 p-5">
-        <div className="flex gap-2">
-          <RoundedBadge className="bg-[rgba(45,0,0,0.2)] font-bold text-white">
-            놓친 할 일 {delayTaskCount}건
-          </RoundedBadge>
-          <RoundedBadge className="bg-[rgba(45,0,0,0.2)] font-bold text-white">
-            놓친 규칙 {ruleWarningCount}건
-          </RoundedBadge>
-        </div>
-
-        <p
-          className={cn(
-            'text-base font-bold break-keep whitespace-pre-line',
-            level <= 2 ? 'text-zinc-200' : 'text-zinc-800'
-          )}
-        >
-          {levelInfo.message}
-        </p>
-      </div>
+    <div className="relative aspect-345/365 w-full overflow-hidden rounded-[24px]">
+      {shouldShowImageSkeleton && (
+        <Skeleton className="absolute inset-0 z-3 rounded-[24px] bg-zinc-300/70" />
+      )}
 
       <img
         src={levelInfo.imageSrc}
         alt={`우리집 ${level}단계 이미지`}
-        className="h-full w-full object-contain"
+        className={cn(
+          'h-full w-full object-contain transition-opacity duration-200',
+          shouldShowImageSkeleton ? 'opacity-0' : 'opacity-100'
+        )}
         draggable={false}
+        onLoad={() => {
+          LOADED_LEVEL_IMAGE_SRC.add(levelInfo.imageSrc);
+          setIsImageLoaded(true);
+        }}
       />
+
+      <div
+        className={cn(
+          'absolute inset-0 z-[2] flex flex-col gap-2 p-5 transition-opacity duration-200',
+          isImageLoaded ? 'opacity-100' : 'opacity-0'
+        )}
+      >
+        <div className="flex gap-2">
+          {isLoading ? (
+            <>
+              <Skeleton className="h-[22px] w-20 rounded-[8px] bg-black/15" />
+              <Skeleton className="h-[22px] w-20 rounded-[8px] bg-black/15" />
+            </>
+          ) : (
+            <>
+              <RoundedBadge className="bg-[rgba(45,0,0,0.2)] font-bold text-white">
+                놓친 할 일 {delayTaskCount}건
+              </RoundedBadge>
+              <RoundedBadge className="bg-[rgba(45,0,0,0.2)] font-bold text-white">
+                놓친 규칙 {ruleWarningCount}건
+              </RoundedBadge>
+            </>
+          )}
+        </div>
+
+        {isLoading ? (
+          <div className="space-y-2">
+            <Skeleton className="h-6 w-[72%] bg-black/15" />
+            <Skeleton className="h-6 w-[68%] bg-black/15" />
+          </div>
+        ) : (
+          <p
+            className={cn(
+              'text-base font-bold break-keep whitespace-pre-line',
+              level <= 2 ? 'text-zinc-200' : 'text-zinc-800'
+            )}
+          >
+            {levelInfo.message}
+          </p>
+        )}
+      </div>
     </div>
   );
 };
@@ -103,6 +164,7 @@ const DashboardSection = ({
   score,
   delayTaskCount,
   ruleWarningCount,
+  isLoading = false,
 }: DashboardSectionProps) => {
   return (
     <section className="p-[15px]">
@@ -110,6 +172,7 @@ const DashboardSection = ({
         score={score}
         delayTaskCount={delayTaskCount}
         ruleWarningCount={ruleWarningCount}
+        isLoading={isLoading}
       />
     </section>
   );
