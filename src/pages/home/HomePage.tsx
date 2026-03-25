@@ -1,4 +1,8 @@
-﻿import { useEffect, useState } from 'react';
+﻿import {
+  useCompleteTodoMutation,
+  useInfiniteMyTodayTodosQuery,
+} from '@/api/todo/todo.query';
+import { useEffect, useState } from 'react';
 
 import AppButton from '@/components/common/AppButton';
 import DashboardSection from '@/pages/home/components/DashboardSection';
@@ -6,11 +10,12 @@ import EmptyState from '@/components/common/EmptyState';
 import MembersSection from '@/pages/home/components/MembersSection';
 import MottoSection from '@/pages/home/components/MottoSection';
 import { Skeleton } from '@/components/ui/skeleton';
+import TodoDetailSheet from '@/pages/todos/components/TodoDetailSheet';
+import type { TodoInstanceId } from '@/api/todo/todo.types';
 import { cn } from '@/lib/utils';
 import { formatDueDateLabel } from '@/utils/date';
 import { getApiErrorMessage } from '@/api/error';
 import { toast } from 'sonner';
-import { useInfiniteMyTodayTodosQuery } from '@/api/todo/todo.query';
 import { useInfiniteScrollObserver } from '@/hooks/useInfiniteScrollObserver';
 import { useMeQuery } from '@/api/auth/auth.query';
 import { useMyRoomQuery } from '@/api/room/room.query';
@@ -22,9 +27,15 @@ const HomePage = () => {
   const { data: room, isError, error, isPending } = useMyRoomQuery();
   const { data: me } = useMeQuery();
   const todayTodosQuery = useInfiniteMyTodayTodosQuery();
+  const { mutate: completeTodo, isPending: isCompleting } =
+    useCompleteTodoMutation();
   const [todayListRoot, setTodayListRoot] = useState<HTMLDivElement | null>(
     null
   );
+
+  const [selectedInstanceId, setSelectedInstanceId] =
+    useState<TodoInstanceId | null>(null);
+  const [detailOpen, setDetailOpen] = useState(false);
 
   const isInitialLoading = !room && isPending;
 
@@ -49,6 +60,36 @@ const HomePage = () => {
     console.error('우리 방 조회 실패:', message, error);
     toast(message);
   }, [isError, error]);
+
+  const handleTodoClick = (instanceId: TodoInstanceId) => {
+    setSelectedInstanceId(instanceId);
+    setDetailOpen(true);
+  };
+
+  const handleDetailOpenChange = (open: boolean) => {
+    setDetailOpen(open);
+    if (!open) setSelectedInstanceId(null);
+  };
+
+  const handleCompleteTodo = (instanceId: TodoInstanceId, title: string) => {
+    completeTodo(
+      { instanceId, image: null },
+      {
+        onSuccess: () => {
+          const trimmedTitle = title.trim();
+
+          toast(
+            trimmedTitle
+              ? `[${trimmedTitle}]이 완료되었습니다! 수고하셨어요!`
+              : '할 일이 완료되었습니다! 수고하셨어요!'
+          );
+        },
+        onError: (error) => {
+          toast(getApiErrorMessage(error));
+        },
+      }
+    );
+  };
 
   return (
     <div>
@@ -103,11 +144,21 @@ const HomePage = () => {
                 className="scrollbar-hide flex snap-x snap-mandatory gap-2 overflow-x-auto pb-1"
               >
                 {visibleTodayTodos.map((todo) => (
-                  <article
+                  <div
                     key={todo.instanceId}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => handleTodoClick(todo.instanceId)}
+                    onKeyDown={(event) => {
+                      if (event.key !== 'Enter' && event.key !== ' ') return;
+                      event.preventDefault();
+                      handleTodoClick(todo.instanceId);
+                    }}
                     className={cn(
-                      'flex h-fit w-[145px] shrink-0 snap-start flex-col gap-8 rounded-[8px] border border-zinc-100 bg-zinc-50 p-3',
-                      'hover:border-zinc-300 hover:bg-zinc-200 active:border-zinc-400 active:bg-zinc-300'
+                      'flex h-fit w-[145px] shrink-0 cursor-pointer snap-start flex-col gap-8 rounded-[8px] border border-zinc-100 bg-zinc-50 p-3',
+                      'hover:border-zinc-300 hover:bg-zinc-200 active:border-zinc-400 active:bg-zinc-300',
+                      'has-[button:hover]:border-zinc-100 has-[button:hover]:bg-zinc-50',
+                      'has-[button:active]:border-zinc-100 has-[button:active]:bg-zinc-50'
                     )}
                   >
                     <div className="flex w-full min-w-0 flex-col items-stretch gap-2">
@@ -124,11 +175,16 @@ const HomePage = () => {
 
                     <button
                       type="button"
-                      className="h-[34px] rounded-[12px] bg-zinc-800 px-4 text-sm font-medium text-zinc-100"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        handleCompleteTodo(todo.instanceId, todo.title);
+                      }}
+                      disabled={isCompleting}
+                      className="h-[34px] rounded-[12px] bg-zinc-800 px-4 text-sm font-medium text-zinc-100 hover:opacity-95 active:opacity-90"
                     >
                       완료 체크
                     </button>
-                  </article>
+                  </div>
                 ))}
 
                 {todayTodosQuery.isFetchingNextPage && (
@@ -148,6 +204,12 @@ const HomePage = () => {
           )}
         </div>
       </section>
+
+      <TodoDetailSheet
+        open={detailOpen}
+        onOpenChange={handleDetailOpenChange}
+        instanceId={selectedInstanceId}
+      />
     </div>
   );
 };
