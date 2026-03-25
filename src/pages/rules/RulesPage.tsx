@@ -93,7 +93,7 @@ const RulesPage = () => {
 
   return (
     <div
-      className="min-h-dvh bg-zinc-100 px-[15px] pb-[15px]"
+      className="bg-zinc-100 px-[15px] pb-[15px]"
       style={{
         marginTop: -HEADER_HEIGHT,
         paddingTop: HEADER_HEIGHT,
