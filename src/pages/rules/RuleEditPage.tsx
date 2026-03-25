@@ -44,7 +44,9 @@ const RuleEditPage = () => {
       },
       {
         onSuccess: () => {
-          toast('규칙이 수정되었어요.');
+          const title = values.title?.trim();
+
+          toast(title ? `[${title}] 규칙이 수정되었어요.` : '규칙이 수정되었어요.');
           navigate('/rules');
         },
         onError: () => {
@@ -57,7 +59,9 @@ const RuleEditPage = () => {
   const handleDelete = () => {
     deleteRule(ruleId, {
       onSuccess: () => {
-        toast('규칙이 삭제되었어요.');
+        const title = rule.title?.trim();
+
+        toast(title ? `[${title}] 규칙이 삭제되었어요.` : '규칙이 삭제되었어요.');
         navigate('/rules');
       },
       onError: () => {
