@@ -87,8 +87,7 @@ export const useLeaveRoomMutation = () => {
           prev ? { ...prev, hasRoom: false } : prev
       );
 
-      queryClient.removeQueries({ queryKey: queryKeys.room.myRoom });
-      queryClient.removeQueries({ queryKey: queryKeys.room.invitationCode });
+      queryClient.removeQueries({ queryKey: ['room'] });
       queryClient.removeQueries({ queryKey: queryKeys.rule.all });
       queryClient.removeQueries({ queryKey: queryKeys.todo.all });
     },

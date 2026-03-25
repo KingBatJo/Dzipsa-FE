@@ -39,7 +39,7 @@ export const logout = async (): Promise<void> => {
 
 // 회원탈퇴
 export const deleteMe = async (): Promise<void> => {
-  await apiClient.delete('/api/users/me');
+  await apiClient.delete('/api/auth/withdraw');
 };
 
 // 내 정보 수정

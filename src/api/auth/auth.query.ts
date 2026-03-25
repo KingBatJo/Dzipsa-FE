@@ -1,4 +1,10 @@
-import { agreeToTerms, getMe, logout, updateMe } from '@/api/auth/auth.api';
+import {
+  agreeToTerms,
+  deleteMe,
+  getMe,
+  logout,
+  updateMe,
+} from '@/api/auth/auth.api';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import type { MeResponse } from '@/api/auth/auth.types';
@@ -7,6 +13,13 @@ import { queryKeys } from '@/lib/queryKeys';
 
 type UseMeQueryParams = {
   enabled?: boolean;
+};
+
+const clearUserScopedCaches = () => {
+  queryClient.removeQueries({ queryKey: queryKeys.auth.me });
+  queryClient.removeQueries({ queryKey: ['room'] });
+  queryClient.removeQueries({ queryKey: queryKeys.rule.all });
+  queryClient.removeQueries({ queryKey: queryKeys.todo.all });
 };
 
 // Queries
@@ -50,7 +63,16 @@ export const useLogoutMutation = () => {
   return useMutation({
     mutationFn: logout,
     onSuccess: () => {
-      queryClient.removeQueries({ queryKey: queryKeys.auth.me });
+      clearUserScopedCaches();
+    },
+  });
+};
+
+export const useDeleteMeMutation = () => {
+  return useMutation({
+    mutationFn: deleteMe,
+    onSuccess: () => {
+      clearUserScopedCaches();
     },
   });
 };
