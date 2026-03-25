@@ -1,5 +1,4 @@
 import { Button } from '@/components/ui/button';
-import DzipsaCharacter from '@/components/common/DzipsaCharacter';
 import { useNavigate } from 'react-router-dom';
 
 const SignupCompletePage = () => {
@@ -8,8 +7,6 @@ const SignupCompletePage = () => {
   return (
     <div className="flex min-h-dvh flex-col">
       <div className="flex flex-1 flex-col items-center justify-center">
-        <DzipsaCharacter />
-
         <h1 className="pt-15 text-center text-xl font-semibold">
           환영합니다!
           <br />

@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 
 import { BASE_URL } from '@/api/client';
-import DzipsaCharacter from '@/components/common/DzipsaCharacter';
 import SocialLoginButton from '@/pages/login/components/SocialLoginButton';
 import type { SocialProvider } from '@/api/auth/auth.types';
+import dzipsaLogo from '@/assets/logo/dzipsa-logo.png';
 import kakaoSymbol from '@/assets/kakao_symbol.svg';
+import login from '@/assets/image/login/login.png';
+import loginStartText from '@/assets/image/login/login-start-text.png';
 import naverSymbol from '@/assets/naver_symbol.svg';
 import { toast } from 'sonner';
 import { useLocation } from 'react-router-dom';
@@ -42,25 +44,44 @@ const LoginPage = () => {
   }, [loginErrorMessage]);
 
   return (
-    <div className="flex min-h-dvh flex-col items-center justify-center gap-3 px-4">
-      <div className="flex flex-col items-center gap-4 pb-40">
-        <DzipsaCharacter />
-        <p className="text-lg font-semibold">디집사</p>
+    <div className="relative flex min-h-dvh flex-col items-center justify-center gap-3">
+      <img src={login} alt="" className="absolute top-[5%] w-full" />
+
+      <div className="flex w-full flex-col items-start gap-2 pt-[10%] pl-[15%]">
+        <h1 className="text-xl font-bold text-[#ACACAC]">
+          우리집만의
+          <br />
+          디지털 집사
+        </h1>
+
+        <img src={dzipsaLogo} alt="디집사 로고" />
       </div>
 
-      <SocialLoginButton
-        provider="kakao"
-        iconSrc={kakaoSymbol}
-        label="카카오로 시작하기"
-        onClick={() => handleSocialLogin('kakao')}
-      />
+      <div className="flex w-full flex-col pt-[230px]">
+        <div className="flex items-center justify-center">
+          <img src={loginStartText} alt="" className="h-[35px] w-[39px]" />
+          <p className="text-sm font-semibold text-[#BCBCBC]">
+            지금 가입하고 평화로운 공동생활 시작하기
+          </p>
+        </div>
 
-      <SocialLoginButton
-        provider="naver"
-        iconSrc={naverSymbol}
-        label="네이버로 시작하기"
-        onClick={() => handleSocialLogin('naver')}
-      />
+        <div className="flex justify-center px-[15%] py-[5px]">
+          <SocialLoginButton
+            provider="kakao"
+            iconSrc={kakaoSymbol}
+            label="카카오로 시작하기"
+            onClick={() => handleSocialLogin('kakao')}
+          />
+        </div>
+        <div className="flex justify-center px-[15%] py-[5px]">
+          <SocialLoginButton
+            provider="naver"
+            iconSrc={naverSymbol}
+            label="네이버로 시작하기"
+            onClick={() => handleSocialLogin('naver')}
+          />
+        </div>
+      </div>
     </div>
   );
 };
