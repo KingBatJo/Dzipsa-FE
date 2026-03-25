@@ -40,7 +40,7 @@ const CompletedTodoFeedCard = ({
   const statusBadge = (
     <RoundedBadge
       className={cn(
-        'w-fit font-bold',
+        'w-fit shrink-0 font-bold whitespace-nowrap',
         isDelayed ? 'bg-red-400 text-red-50' : 'bg-neutral-400 text-neutral-200'
       )}
     >
@@ -59,25 +59,27 @@ const CompletedTodoFeedCard = ({
         proofImageUrl ? 'py-2 pr-2 pl-6' : 'px-6 py-4'
       )}
     >
-      <div className="flex items-center justify-between">
-        <div className="flex flex-col gap-3">
-          <div className="flex flex-col gap-2">
-            <p className="text-primary text-base leading-[19px] font-semibold">
-              {todoTitle}
-            </p>
-
-            <div className="flex gap-1">
-              <div className="w-0.5 bg-zinc-400" />
-              <p className="text-xs font-medium text-zinc-400">
-                {completedDate}
+      <div className="flex items-start justify-between">
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2">
+              <p className="text-primary line-clamp-2 text-base leading-[19px] font-semibold break-keep">
+                {todoTitle}
               </p>
-            </div>
-          </div>
 
-          {proofImageUrl && statusBadge}
+              <div className="flex gap-1">
+                <div className="w-0.5 bg-zinc-400" />
+                <p className="text-xs font-medium text-zinc-400">
+                  {completedDate}
+                </p>
+              </div>
+            </div>
+
+            {proofImageUrl && statusBadge}
+          </div>
         </div>
 
-        <div>
+        <div className="ml-3 shrink-0">
           {proofImageUrl ? (
             <img
               src={proofImageUrl}

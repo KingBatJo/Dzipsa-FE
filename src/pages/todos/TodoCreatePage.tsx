@@ -14,7 +14,12 @@ const TodoCreatePage = () => {
 
     createTodo(payload, {
       onSuccess: () => {
-        toast('할 일이 등록되었어요.');
+        const title = values.title.trim();
+        toast(
+          title
+            ? `[${title}] 할 일이 등록되었어요 !`
+            : '할 일이 등록되었습니다 !'
+        );
         navigate('/todos/my');
       },
       onError: () => {

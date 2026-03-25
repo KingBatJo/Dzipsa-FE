@@ -18,6 +18,7 @@ import UserAvatar from '@/components/common/UserAvatar';
 import editIcon from '@/assets/icon/edit.svg';
 import { formatDueDateLabel } from '@/utils/date';
 import { getProfileOptionById } from '@/api/room/room.utils';
+import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
@@ -94,6 +95,14 @@ const TodoDetailSheet = ({
       { instanceId: completeTargetInstanceId, image: proofImageFile ?? null },
       {
         onSuccess: () => {
+          const title = todoDetail?.title?.trim();
+
+          toast(
+            title
+              ? `[${title}]이 완료되었습니다 ! 수고하셨어요 !`
+              : '할 일이 완료되었습니다 ! 수고하셨어요 !'
+          );
+
           setCompleteSheetOpen(false);
           setCompleteTargetInstanceId(null);
         },

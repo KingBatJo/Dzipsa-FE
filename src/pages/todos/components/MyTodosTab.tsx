@@ -17,6 +17,7 @@ import TodoCompleteSheet from '@/pages/todos/components/TodoCompleteSheet';
 import TodoSubtitle from '@/pages/todos/components/TodoSubtitle';
 import dzipsaCharacter from '@/assets/dzipsa.svg';
 import { getTodoSubtitleInfo } from '@/api/todo/todo.utils';
+import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
@@ -43,6 +44,7 @@ const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
   const [completeSheetOpen, setCompleteSheetOpen] = useState(false);
   const [completeTargetInstanceId, setCompleteTargetInstanceId] =
     useState<TodoInstanceId | null>(null);
+  const [completeTargetTitle, setCompleteTargetTitle] = useState<string>('');
 
   const { mutate: completeTodo, isPending: isCompleting } =
     useCompleteTodoMutation();
@@ -92,8 +94,12 @@ const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
 
   const isPending = isMissedPending || isTodayPending || isUpcomingPending;
 
-  const handleOpenCompleteSheet = (instanceId: TodoInstanceId) => {
+  const handleOpenCompleteSheet = (
+    instanceId: TodoInstanceId,
+    title: string
+  ) => {
     setCompleteTargetInstanceId(instanceId);
+    setCompleteTargetTitle(title);
     setCompleteSheetOpen(true);
   };
 
@@ -104,8 +110,17 @@ const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
       { instanceId: completeTargetInstanceId, image: proofImageFile ?? null },
       {
         onSuccess: () => {
+          const title = completeTargetTitle.trim();
+
+          toast(
+            title
+              ? `[${title}]이 완료되었습니다 ! 수고하셨어요 !`
+              : '할 일이 완료되었습니다 ! 수고하셨어요 !'
+          );
+
           setCompleteSheetOpen(false);
           setCompleteTargetInstanceId(null);
+          setCompleteTargetTitle('');
         },
       }
     );
@@ -131,7 +146,9 @@ const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
               right={
                 <TodoCompleteButton
                   isDelayed={todo.delayDays > 0}
-                  onClick={() => handleOpenCompleteSheet(todo.instanceId)}
+                  onClick={() =>
+                    handleOpenCompleteSheet(todo.instanceId, todo.title)
+                  }
                 />
               }
               onClick={() => onTodoClick?.(todo.instanceId)}
@@ -189,7 +206,9 @@ const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
                 subtitle={renderTodoSubtitle(todo)}
                 right={
                   <TodoCompleteButton
-                    onClick={() => handleOpenCompleteSheet(todo.instanceId)}
+                    onClick={() =>
+                      handleOpenCompleteSheet(todo.instanceId, todo.title)
+                    }
                   />
                 }
                 onClick={() => onTodoClick?.(todo.instanceId)}
@@ -225,7 +244,9 @@ const MyTodosTab = ({ onTodoClick }: MyTodosTabProps) => {
               subtitle={renderTodoSubtitle(todo)}
               right={
                 <TodoCompleteButton
-                  onClick={() => handleOpenCompleteSheet(todo.instanceId)}
+                  onClick={() =>
+                    handleOpenCompleteSheet(todo.instanceId, todo.title)
+                  }
                 />
               }
               onClick={() => onTodoClick?.(todo.instanceId)}

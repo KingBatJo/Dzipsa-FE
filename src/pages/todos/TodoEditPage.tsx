@@ -1,17 +1,17 @@
-﻿import { toCreateTodoPayload, toPrefilledRepeatValue } from '@/utils/todoForm';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-
-import TodoForm from '@/pages/todos/components/TodoForm';
-import type { TodoFormValues } from '@/types/todo';
-import type {
+﻿import type {
   DeleteRecurringTodoScope,
   TodoRecurringType,
 } from '@/api/todo/todo.types';
-import { toast } from 'sonner';
+import { toCreateTodoPayload, toPrefilledRepeatValue } from '@/utils/todoForm';
 import {
   useDeleteRecurringTodoMutation,
   useUpdateTodoMutation,
 } from '@/api/todo/todo.query';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+
+import TodoForm from '@/pages/todos/components/TodoForm';
+import type { TodoFormValues } from '@/types/todo';
+import { toast } from 'sonner';
 
 type EditTodoLocationState = {
   todoId: number;
@@ -68,8 +68,11 @@ const TodoEditPage = () => {
         todoId: todo.todoId,
         payload,
       });
+      const title = values.title?.trim();
 
-      toast('할 일이 수정되었어요.');
+      toast(
+        title ? `[${title}] 할 일이 수정되었어요.` : '할 일이 수정되었어요.'
+      );
       navigate(-1);
     } catch {
       toast('할 일 수정에 실패했어요. 다시 시도해주세요.');
@@ -86,7 +89,11 @@ const TodoEditPage = () => {
       { instanceId, scope },
       {
         onSuccess: () => {
-          toast('할 일이 삭제되었어요.');
+          const title = todo.title?.trim();
+
+          toast(
+            title ? `[${title}] 할 일이 삭제되었어요.` : '할 일이 삭제되었어요.'
+          );
           navigate('/todos');
         },
         onError: () => {
