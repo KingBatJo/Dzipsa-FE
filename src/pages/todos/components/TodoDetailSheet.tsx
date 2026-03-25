@@ -58,7 +58,7 @@ const TodoDetailSheet = ({
     useState<TodoInstanceId | null>(null);
   const [isPortraitProofImage, setIsPortraitProofImage] = useState(false);
 
-  const { data: todoDetail } = useTodoDetailQuery(instanceId);
+  const { data: todoDetail, isError } = useTodoDetailQuery(instanceId);
   const { mutate: completeTodo, isPending: isCompleting } =
     useCompleteTodoMutation();
   const { mutate: resetTodoStatus, isPending: isResetting } =
@@ -80,6 +80,14 @@ const TodoDetailSheet = ({
   const isRecurringUnset = recurringInfoText === '설정 안 함';
 
   const isOwner = todoDetail?.owner;
+
+  useEffect(() => {
+    if (!open || !isError) return;
+
+    toast('이미 삭제된 항목입니다.');
+
+    onOpenChange(false);
+  }, [isError, open, onOpenChange]);
 
   useEffect(() => {
     setIsPortraitProofImage(false);
@@ -121,6 +129,10 @@ const TodoDetailSheet = ({
     resetTodoStatus({ instanceId });
     onOpenChange(false);
   };
+
+  if (isError) {
+    return null;
+  }
 
   return (
     <>
