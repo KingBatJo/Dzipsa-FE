@@ -28,10 +28,8 @@ const HomePage = () => {
   const todos = addLocalToTodos(mockTodoList);
   const myTodos = todos.filter((t) => t.assigneeId === myId);
 
-  const { todayTodos, missedTodos } = getTodoSections(myTodos, today);
-
+  const { todayTodos } = getTodoSections(myTodos, today);
   const visibleTodayTodos = todayTodos.filter((t) => !t.completed);
-  const missedCount = missedTodos.length;
 
   useEffect(() => {
     if (!isError) return;
@@ -48,7 +46,12 @@ const HomePage = () => {
         motto={room?.motto ?? '우리 집 가훈을 다같이 정해볼까요?'}
       />
       <MembersSection members={room?.members ?? []} />
-      <DashboardSection missedCount={missedCount} />
+      <DashboardSection
+        score={room?.score ?? 3}
+        delayTaskCount={room?.delayTaskCount ?? 0}
+        ruleWarningCount={room?.ruleWarningCount ?? 0}
+      />
+
       <ListSection title="오늘 할 일">
         {visibleTodayTodos.length === 0 ? (
           <EmptyState>오늘 할 일이 없어요.</EmptyState>
