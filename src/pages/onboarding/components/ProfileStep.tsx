@@ -67,26 +67,30 @@ const ProfileStep = ({
   };
 
   return (
-    <div className="pt-4">
-      <section className="flex flex-col gap-2 px-2 pb-10">
-        <h1 className="text-xl leading-8 font-semibold">
+    <div>
+      <section className="flex flex-col gap-1 p-7.5">
+        <h1 className="text-xl leading-[1.4] font-semibold">
           나를 표현할 프로필과
           <br />
-          닉네임을 설정해주세요
+          닉네임을 설정해주세요.
         </h1>
+
+        <p className="text-sm font-medium text-zinc-400">
+          설정하지 않으면 연동된 계정의 닉네임으로 적용됩니다.
+        </p>
       </section>
 
-      <section className="flex justify-center pb-14">
+      <section className="flex justify-center px-28 py-7.5">
         <div className="relative">
           <img
             src={selectedProfile.imageUrl}
             alt={selectedProfile.alt}
-            className="h-[140px] w-[140px]"
+            className="h-35 w-35"
           />
 
           <Button
             onClick={() => setIsProfileSheetOpen(true)}
-            className="absolute -right-3 bottom-0 h-fit rounded-xl p-[9px] outline-2 outline-white [&>svg]:h-6 [&>svg]:w-6"
+            className="absolute -right-3 bottom-0 h-fit rounded-xl bg-zinc-500 p-2.5 outline-2 outline-white [&>svg]:h-6 [&>svg]:w-6"
           >
             <RefreshCw />
           </Button>
@@ -104,13 +108,6 @@ const ProfileStep = ({
         onBlur={handleBlurNickname}
         className="px-10"
       />
-
-      {/* 임시 (테스트용) */}
-      {
-        <p className="flex justify-center text-xs">
-          선택 프로필(확인용): {selectedProfile.alt}
-        </p>
-      }
 
       {/* 프로필 설정 */}
       <ProfilePickerSheet

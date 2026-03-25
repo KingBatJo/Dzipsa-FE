@@ -1,6 +1,5 @@
 ﻿import { useMeQuery, useUpdateMeMutation } from '@/api/auth/auth.query';
 
-import { Button } from '@/components/ui/button';
 import HouseWelcomeDialog from '@/pages/onboarding/components/HouseWelcomeDialog';
 import InviteCodeStep from '@/pages/onboarding/components/InviteCodeStep';
 import MottoStep from '@/pages/onboarding/components/MottoStep';
@@ -108,37 +107,6 @@ const CreateHousePage = () => {
     setIsCompleteOpen(true);
   };
 
-  const handleSkip = async () => {
-    if (step === 'motto') {
-      setCreateStep('profile');
-      return;
-    }
-
-    if (step === 'profile') {
-      updateCreateFlow({
-        nickname: getSafeNickname(nickname),
-      });
-
-      try {
-        setIsSubmitting(true);
-
-        await submitProfile();
-        await moveToInvite();
-      } catch (error) {
-        const message = getApiErrorMessage(error);
-
-        console.error('프로필 설정 또는 방 생성 실패:', message, error);
-
-        toast(message, {
-          id: 'create-house-profile-error',
-          duration: 2000,
-        });
-      } finally {
-        setIsSubmitting(false);
-      }
-    }
-  };
-
   const handleConfirm = async () => {
     await queryClient.invalidateQueries({ queryKey: queryKeys.auth.me });
 
@@ -146,30 +114,18 @@ const CreateHousePage = () => {
     navigate('/home', { replace: true });
   };
 
-  const buttonLabel = step === 'invite' ? '집 입장하기' : '다음';
+  const buttonLabel = step === 'invite' ? '우리집 입장하기' : '다음';
 
   const isNextDisabled =
     isSubmitting ||
     (step === 'motto' && !motto.trim()) ||
     (step === 'profile' && !nickname.trim());
 
-  const bottomSlot =
-    step !== 'invite' ? (
-      <div className="flex items-center justify-center">
-        <Button
-          variant="link"
-          onClick={handleSkip}
-          disabled={isSubmitting}
-          className="h-fit p-0 font-semibold text-[#888888]"
-        >
-          Skip
-        </Button>
-      </div>
-    ) : (
-      <div className="h-5 text-center text-xs font-semibold text-[#888888]">
-        코드는 홈에서도 복사할 수 있어요!
-      </div>
-    );
+  const bottomSlot = step === 'invite' && (
+    <div className="h-5 text-center text-sm font-medium text-zinc-400">
+      코드는 마이페이지에서도 언제든 확인할 수 있어요!
+    </div>
+  );
 
   return (
     <>
@@ -204,11 +160,7 @@ const CreateHousePage = () => {
         )}
       </OnboardingFlowLayout>
 
-      <HouseWelcomeDialog
-        open={isCompleteOpen}
-        userName={getSafeNickname(nickname)}
-        onConfirm={handleConfirm}
-      />
+      <HouseWelcomeDialog open={isCompleteOpen} onConfirm={handleConfirm} />
     </>
   );
 };

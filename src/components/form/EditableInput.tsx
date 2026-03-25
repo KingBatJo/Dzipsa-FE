@@ -1,7 +1,7 @@
 import { forwardRef, useRef, useState } from 'react';
 
 import ClearX from '@/assets/icon/clear_x.svg';
-import { Edit3 } from 'lucide-react';
+import Edit from '@/assets/icon/edit.svg';
 import ErrorToolTip from '@/components/form/ErrorToolTip';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
@@ -59,7 +59,7 @@ const EditableInput = forwardRef<HTMLInputElement, EditableInputProps>(
       <ErrorToolTip message={isFocused ? errorMessage : undefined}>
         <div
           className={cn(
-            'flex h-12 items-center gap-1 rounded-[12px] border bg-zinc-100 px-4 shadow-xs transition-all duration-200',
+            'flex h-12 items-center gap-1 rounded-[12px] border bg-zinc-100 px-4 py-2 shadow-xs transition-all duration-200',
             errorMessage
               ? 'border-red-500'
               : 'border-zinc-200 focus-within:border-zinc-600',
@@ -95,9 +95,9 @@ const EditableInput = forwardRef<HTMLInputElement, EditableInputProps>(
             aria-label={isFocused ? '입력값 지우기' : '수정'}
           >
             {isFocused ? (
-              <img src={ClearX} alt="" className="h-4 w-4" />
+              <img src={ClearX} alt="" className="h-[19px] w-[19px]" />
             ) : (
-              <Edit3 className="h-4 w-4 text-zinc-400" />
+              <img src={Edit} alt="" className="h-[19px] w-[19px]" />
             )}
           </button>
         </div>

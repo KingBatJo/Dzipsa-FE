@@ -1,6 +1,5 @@
-import { Button } from '@/components/ui/button';
 import { ChevronLeft } from 'lucide-react';
-import { HEADER_HEIGHT_CLASS } from '@/constants/layout';
+import { FORM_HEADER_HEIGHT_CLASS } from '@/constants/layout';
 
 type BackHeaderProps = {
   onBack: () => void;
@@ -11,17 +10,16 @@ type BackHeaderProps = {
 const BackHeader = ({ onBack, title, rightSlot }: BackHeaderProps) => {
   return (
     <header
-      className={`${HEADER_HEIGHT_CLASS} flex items-center justify-between p-4`}
+      className={`${FORM_HEADER_HEIGHT_CLASS} fixed top-0 flex w-full items-center justify-between bg-white p-[15px]`}
     >
-      <Button
+      <button
         type="button"
         onClick={onBack}
         aria-label="뒤로가기"
-        variant="ghost"
-        className="h-fit p-1.5"
+        className="h-6 w-6"
       >
-        <ChevronLeft />
-      </Button>
+        <ChevronLeft className="h-6 w-6" />
+      </button>
 
       <h1 className="text-lg font-semibold">{title}</h1>
 

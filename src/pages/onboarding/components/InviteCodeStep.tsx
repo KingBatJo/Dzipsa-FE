@@ -1,5 +1,5 @@
 import InviteCodeCard from '@/components/common/InviteCodeCard';
-import dzipsaCharacter from '@/assets/dzipsa.svg';
+import codeGenerate from '@/assets/image/onboarding/code-gernerate.png';
 
 type InviteCodeStepProps = {
   inviteCode: string;
@@ -7,27 +7,31 @@ type InviteCodeStepProps = {
 
 const InviteCodeStep = ({ inviteCode }: InviteCodeStepProps) => {
   return (
-    <div className="pt-30">
-      <section className="flex flex-1 flex-col items-center">
-        <section className="text-center text-lg leading-6 font-semibold">
-          <p>우리집이 생성되었어요</p>
-          <p>우리집 비밀코드를 알려드릴게요!</p>
-          <p>다른 멤버들에게 코드를 공유해보세요</p>
+    <div>
+      <section className="flex flex-col gap-5.5 p-7.5">
+        <section className="flex flex-col gap-[5px] text-xl font-semibold">
+          <p>우리집이 생성되었어요 !</p>
+          <p>입장 코드를 공유하고 초대해보세요.</p>
+          <p className="text-sm text-zinc-400">
+            발급받은 코드는 24시간동안 유효합니다.
+          </p>
         </section>
 
-        <section className="px-9 pt-9">
-          <div className="relative pt-[130px]">
+        <section className="px-[15px] pt-[65px]">
+          <div className="relative flex flex-col items-center">
             <img
-              src={dzipsaCharacter}
+              src={codeGenerate}
               alt="디집사 캐릭터"
-              className="pointer-events-none absolute top-8 left-1/2 h-[120px] -translate-x-1/2"
+              className="pointer-events-none h-31.5 w-30"
             />
 
-            <InviteCodeCard inviteCode={inviteCode} />
+            <InviteCodeCard
+              inviteCode={inviteCode}
+              className="absolute -bottom-14"
+            />
           </div>
-
-          <p className="pt-2 text-center text-xs font-semibold text-[#888888]">
-            코드를 클릭하면 복사됩니다
+          <p className="pt-16.5 text-center text-sm font-medium text-zinc-400">
+            코드를 터치해서 복사해 보세요
           </p>
         </section>
       </section>
