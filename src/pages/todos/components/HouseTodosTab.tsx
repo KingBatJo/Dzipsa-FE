@@ -1,4 +1,6 @@
-﻿import { ChevronRight } from 'lucide-react';
+﻿import AppButton from '@/components/common/AppButton';
+import { ChevronRight } from 'lucide-react';
+import EmptyState from '@/components/common/EmptyState';
 import ListItemCard from '@/components/common/ListItemCard';
 import ListSection from '@/components/common/ListSection';
 import ReportBubble from '@/components/common/ReportBubble';
@@ -7,6 +9,7 @@ import dzipsaCharacter from '@/assets/dzipsa.svg';
 import { getProfileOptionById } from '@/api/room/room.utils';
 import { useHouseTodoStatsQuery } from '@/api/todo/todo.query';
 import { useMeQuery } from '@/api/auth/auth.query';
+import { useNavigate } from 'react-router-dom';
 
 export type HouseTodoListCategory = 'today' | 'delayed' | 'all';
 
@@ -115,6 +118,8 @@ const HouseTodosTab = ({
   onCategoryClick,
   onMemberClick,
 }: HouseTodosTabProps) => {
+  const navigate = useNavigate();
+
   const { data: me } = useMeQuery();
   const { data: houseStats, isPending } = useHouseTodoStatsQuery();
 
@@ -165,25 +170,41 @@ const HouseTodosTab = ({
       </ListSection>
 
       <ListSection title="구성원 할 일">
-        {houseStats?.memberStats.map((member) => (
-          <ListItemCard
-            key={member.userId}
-            title={member.nickname}
-            right={<CountIndicator count={member.remainingCount} />}
-            left={
-              <UserAvatar
-                size="xs"
-                src={getProfileOptionById(member.profileImageUrl).imageUrl}
-              />
-            }
-            onClick={() =>
-              onMemberClick?.(member.userId, {
-                nickname: member.nickname,
-                profileImageUrl: member.profileImageUrl,
-              })
-            }
-          />
-        ))}
+        {houseStats?.memberStats.length === 0 ? (
+          <EmptyState>
+            <p className="text-center text-sm font-semibold text-zinc-500">
+              우리집 구성원이 아직 안 왔어요 !
+              <br />
+              초대하여 함께 기록을 만들어 가세요
+            </p>
+            <AppButton
+              onClick={() => navigate('/mypage/invitation')}
+              className="rounded-[10px] bg-zinc-800 text-white"
+            >
+              구성원 초대하기
+            </AppButton>
+          </EmptyState>
+        ) : (
+          houseStats?.memberStats.map((member) => (
+            <ListItemCard
+              key={member.userId}
+              title={member.nickname}
+              right={<CountIndicator count={member.remainingCount} />}
+              left={
+                <UserAvatar
+                  size="xs"
+                  src={getProfileOptionById(member.profileImageUrl).imageUrl}
+                />
+              }
+              onClick={() =>
+                onMemberClick?.(member.userId, {
+                  nickname: member.nickname,
+                  profileImageUrl: member.profileImageUrl,
+                })
+              }
+            />
+          ))
+        )}
       </ListSection>
     </div>
   );
