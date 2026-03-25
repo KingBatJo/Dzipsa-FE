@@ -127,6 +127,7 @@ export const useCreateRuleWarningMutation = () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.rule.detail(ruleId),
       });
+      queryClient.invalidateQueries({ queryKey: queryKeys.room.myRoom });
     },
   });
 };

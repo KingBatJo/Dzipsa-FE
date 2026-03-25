@@ -1,24 +1,27 @@
-﻿import {
+import {
   ControlledEditableInputSection,
   ControlledTextareaSection,
 } from '@/components/form/ControlledTextSections';
-import FormPageLayout from '@/components/form/FormPageLayout';
-import WeekdaySelector from '@/components/form/WeekdaySelector';
-import RuleSettingCard from '@/pages/rules/components/RuleSettingCard';
-import TimeWheelDialog from '@/pages/rules/components/TimeWheelDialog';
 import {
   RULE_MEMO_MAX_LENGTH,
   RULE_TITLE_MAX_LENGTH,
 } from '@/schemas/ruleCreateSchema';
+import { useState } from 'react';
+
+import AppButton from '@/components/common/AppButton';
+import ConfirmDialog from '@/components/common/ConfirmDialog';
+import FormPageLayout from '@/components/form/FormPageLayout';
+import RuleSettingCard from '@/pages/rules/components/RuleSettingCard';
+import TimeWheelDialog from '@/pages/rules/components/TimeWheelDialog';
+import WeekdaySelector from '@/components/form/WeekdaySelector';
 import { ChevronRight } from 'lucide-react';
+import type { CreateRuleRequest } from '@/api/rule/rule.types';
+import { formatKoreanTime } from '@/utils/ruleForm';
 import {
   type RuleFormInitialValues,
   type RuleFormMode,
   useRuleFormModel,
 } from '@/pages/rules/hooks/useRuleFormModel';
-import type { CreateRuleRequest } from '@/api/rule/rule.types';
-import { formatKoreanTime } from '@/utils/ruleForm';
-import AppButton from '@/components/common/AppButton';
 
 type RuleFormProps = {
   mode: RuleFormMode;
@@ -35,6 +38,7 @@ const RuleForm = ({
   onDelete,
   isSubmitting = false,
 }: RuleFormProps) => {
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const model = useRuleFormModel({
     initialValues,
     onSubmit,
@@ -151,8 +155,8 @@ const RuleForm = ({
 
           {mode === 'edit' && (
             <AppButton
-              onClick={onDelete}
-              className="bg-red-500 text-base font-semibold text-white"
+              onClick={() => setIsDeleteDialogOpen(true)}
+              className="bg-red-500 text-base font-semibold text-white hover:bg-red-600 active:bg-red-700"
             >
               규칙 삭제
             </AppButton>
@@ -173,6 +177,17 @@ const RuleForm = ({
           }
         }}
         onConfirm={model.actions.handleConfirmTime}
+      />
+
+      <ConfirmDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        title="규칙 삭제 확인"
+        message="규칙을 삭제하시겠습니까?"
+        onConfirm={() => {
+          setIsDeleteDialogOpen(false);
+          onDelete?.();
+        }}
       />
     </FormPageLayout>
   );

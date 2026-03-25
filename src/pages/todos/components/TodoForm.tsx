@@ -9,7 +9,7 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 
 import AppButton from '@/components/common/AppButton';
-import AppDialog from '@/components/common/AppDialog';
+import ConfirmDialog from '@/components/common/ConfirmDialog';
 import DateWheelDialog from '@/pages/todos/components/DateWheelDialog';
 import type { DeleteRecurringTodoScope } from '@/api/todo/todo.types';
 import FormPageLayout from '@/components/form/FormPageLayout';
@@ -257,37 +257,16 @@ const TodoForm = ({
         />
       )}
 
-      <AppDialog
+      <ConfirmDialog
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
         title="할 일 삭제 확인"
-        contentClassName="w-[300px] p-4 pt-8 pb-4"
-      >
-        <div className="flex flex-col items-center gap-10">
-          <h2 className="text-center text-base font-semibold text-black">
-            할 일을 삭제하시겠습니까?
-          </h2>
-
-          <div className="flex w-full items-center justify-between">
-            <AppButton
-              onClick={() => setIsDeleteDialogOpen(false)}
-              className="w-32 border border-zinc-800 text-zinc-800"
-            >
-              취소
-            </AppButton>
-
-            <AppButton
-              onClick={() => {
-                setIsDeleteDialogOpen(false);
-                onDelete?.('ONLY_THIS');
-              }}
-              className="w-32 bg-zinc-800 text-zinc-100"
-            >
-              확인
-            </AppButton>
-          </div>
-        </div>
-      </AppDialog>
+        message="할 일을 삭제하시겠습니까?"
+        onConfirm={() => {
+          setIsDeleteDialogOpen(false);
+          onDelete?.('ONLY_THIS');
+        }}
+      />
 
       <TodoDeleteScopeSheet
         open={isDeleteScopeSheetOpen}

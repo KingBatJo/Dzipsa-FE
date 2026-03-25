@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
-import { LucideUserPlus2 } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 type UserAvatarProps = {
@@ -29,24 +29,18 @@ const UserAvatar = ({
   const isAdd = variant === 'add';
 
   return (
-    <Avatar
-      className={cn(
-        'border-[0.4px] border-zinc-300',
-        avatarSizes[size],
-        className
-      )}
-    >
+    <Avatar className={cn(avatarSizes[size], className)}>
       {!isAdd && <AvatarImage src={src} alt={alt ?? '유저 프로필'} />}
 
-      <AvatarFallback className="flex items-center justify-center bg-inherit text-[#9C9C9C]">
+      <AvatarFallback className="flex items-center justify-center">
         {isAdd ? (
           // 유저 추가 아이콘
-          <LucideUserPlus2
-            className={cn(
-              avatarSizes[size],
-              'rounded-full border-2 border-dashed'
-            )}
-          />
+          <button
+            type="button"
+            className="flex h-8 w-8 items-center justify-center rounded-full border border-dashed border-zinc-400 bg-zinc-200 p-1 transition-colors hover:bg-zinc-300"
+          >
+            <Plus className="h-4.5 w-4.5 text-zinc-400" />
+          </button>
         ) : (
           // 유저 기본 fallback
           <div className="bg-secondary h-full w-full"></div>

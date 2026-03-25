@@ -11,7 +11,13 @@ const RuleCreatePage = () => {
   const handleCreate = (payload: CreateRuleRequest) => {
     createRule(payload, {
       onSuccess: () => {
-        toast('규칙이 등록되었어요.');
+        const title = payload.title?.trim();
+
+        toast(
+          title
+            ? `[${title}] 규칙이 등록되었습니다 !`
+            : '규칙이 등록되었습니다 !'
+        );
         navigate('/rules');
       },
       onError: () => {

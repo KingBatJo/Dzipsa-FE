@@ -19,6 +19,7 @@ import ListSection from '@/components/common/ListSection';
 import RuleDetailSheet from '@/pages/rules/components/RuleDetailSheet';
 import type { RuleId } from '@/api/rule/rule.types';
 import RuleNotifyButton from '@/pages/rules/components/RuleNotifyButton';
+import RuleNotifyConfirmDialog from '@/pages/rules/components/RuleNotifyConfirmDialog';
 import RulesReportSection from '@/pages/rules/components/RulesReportSection';
 import { getApiErrorInfo } from '@/api/error';
 import { toast } from 'sonner';
@@ -53,6 +54,9 @@ const RulesPage = () => {
   });
 
   const [selectedRuleId, setSelectedRuleId] = useState<RuleId | null>(null);
+  const [pendingNotifyRuleId, setPendingNotifyRuleId] = useState<RuleId | null>(
+    null
+  );
   const [notifyingRuleId, setNotifyingRuleId] = useState<RuleId | null>(null);
 
   const hasRules = rules.length > 0;
@@ -64,12 +68,22 @@ const RulesPage = () => {
       : 'linear-gradient(180deg, #e9f3fd 0%, #f4f4f5 37.3%)'
     : undefined;
 
+  const openNotifyDialog = (ruleId: RuleId) => {
+    setPendingNotifyRuleId(ruleId);
+  };
+
+  const closeNotifyDialog = () => {
+    if (notifyingRuleId !== null) return;
+    setPendingNotifyRuleId(null);
+  };
+
   const handleNotify = (ruleId: RuleId) => {
     setNotifyingRuleId(ruleId);
 
     createRuleWarning(ruleId, {
       onSuccess: () => {
-        toast('집사에게 알리기를 보냈어요.');
+        toast('디집사가 우리집 모두에게 규칙을 전달했어요 !');
+        setPendingNotifyRuleId(null);
 
         if (selectedRuleId === ruleId) {
           setSelectedRuleId(null);
@@ -93,7 +107,7 @@ const RulesPage = () => {
 
   return (
     <div
-      className="min-h-dvh bg-zinc-100 px-[15px] pb-[15px]"
+      className="bg-zinc-100 px-[15px] pb-[15px]"
       style={{
         marginTop: -HEADER_HEIGHT,
         paddingTop: HEADER_HEIGHT,
@@ -183,7 +197,7 @@ const RulesPage = () => {
                         disabled={
                           rule.warningDisabled || notifyingRuleId === rule.id
                         }
-                        onClick={() => handleNotify(rule.id)}
+                        onClick={() => openNotifyDialog(rule.id)}
                       />
                     }
                   />
@@ -215,10 +229,22 @@ const RulesPage = () => {
           }}
           ruleId={selectedRuleId}
           onNotify={() => {
-            handleNotify(selectedRuleId);
+            openNotifyDialog(selectedRuleId);
           }}
         />
       )}
+
+      <RuleNotifyConfirmDialog
+        open={pendingNotifyRuleId !== null}
+        onOpenChange={(open) => {
+          if (!open) closeNotifyDialog();
+        }}
+        isSubmitting={notifyingRuleId !== null}
+        onConfirm={() => {
+          if (pendingNotifyRuleId == null || notifyingRuleId !== null) return;
+          handleNotify(pendingNotifyRuleId);
+        }}
+      />
     </div>
   );
 };

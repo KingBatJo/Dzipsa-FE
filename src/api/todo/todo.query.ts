@@ -161,6 +161,7 @@ export const useCreateTodoMutation = () => {
     mutationFn: createTodo,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.todo.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.room.myRoom });
     },
   });
 };
@@ -171,6 +172,7 @@ export const useUpdateTodoMutation = () => {
     mutationFn: updateTodo,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.todo.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.room.myRoom });
     },
   });
 };
@@ -181,6 +183,7 @@ export const useCompleteTodoMutation = () => {
     mutationFn: completeTodo,
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.todo.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.room.myRoom });
       queryClient.invalidateQueries({
         queryKey: queryKeys.todo.detail(variables.instanceId),
       });
@@ -207,6 +210,7 @@ export const useDeleteRecurringTodoMutation = () => {
     mutationFn: deleteRecurringTodo,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.todo.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.room.myRoom });
     },
   });
 };
@@ -217,6 +221,7 @@ export const useResetTodoStatusMutation = () => {
     mutationFn: resetTodoStatus,
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.todo.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.room.myRoom });
       queryClient.invalidateQueries({
         queryKey: queryKeys.todo.detail(variables.instanceId),
       });

@@ -20,7 +20,7 @@ const ReportBubble = ({
 
   return (
     <div
-      className="relative h-fit w-[266px] rounded-2xl bg-white px-[18px] py-4 shadow-(--report-shadow)"
+      className="relative h-fit w-[266px] max-w-full rounded-2xl bg-white px-[18px] py-4 shadow-(--report-shadow)"
       style={mergedShadowStyle}
     >
       {showPointer && (

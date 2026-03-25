@@ -4,6 +4,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import BottomNavigation from '@/components/layout/BottomNavigation';
 import Header from '@/components/layout/Header';
 import { TODO_TABS } from '@/constants/todos';
+import dzipsaLogo from '@/assets/logo/dzipsa-logo.png';
 
 const AppLayout = () => {
   const { pathname } = useLocation();
@@ -14,10 +15,13 @@ const AppLayout = () => {
     pathname === `/todos/${TODO_TABS.HOUSE}` ||
     pathname === `/todos/${TODO_TABS.COMPLETED}`;
 
-  const getHeaderTitle = () => {
+  const getHeaderTitle = (): React.ReactNode => {
     if (pathname.startsWith('/todos')) return '할 일';
     if (pathname.startsWith('/rules')) return '우리집 규칙';
-    return 'Dzipsa';
+
+    return (
+      <img src={dzipsaLogo} alt="Dzipsa" className="h-7.5 w-24 shrink-0" />
+    );
   };
 
   return (
@@ -33,7 +37,7 @@ const AppLayout = () => {
       <main
         className={`relative min-h-dvh`}
         style={{
-          paddingBottom: BOTTOM_NAV_HEIGHT + 16,
+          paddingBottom: BOTTOM_NAV_HEIGHT + 33,
           paddingTop: HEADER_HEIGHT,
         }}
       >
