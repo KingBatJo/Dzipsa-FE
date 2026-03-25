@@ -7,7 +7,6 @@ import {
 
 import { HEADER_HEIGHT_CLASS } from '@/constants/layout';
 import MyPageActionDialog from '@/pages/mypage/components/MyPageActionDialog';
-import editIcon from '@/assets/icon/edit.svg';
 import { getProfileOptionById } from '@/api/room/room.utils';
 import { toast } from 'sonner';
 import { useAuthStore } from '@/stores/auth.store';
