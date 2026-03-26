@@ -54,7 +54,7 @@ const LoginPage = () => {
           디지털 집사
         </h1>
 
-        <img src={dzipsaLogo} alt="디집사 로고" />
+        <img src={dzipsaLogo} alt="디집사 로고" className="h-10 w-32" />
       </div>
 
       <div className="flex w-full flex-col pt-[230px]">
