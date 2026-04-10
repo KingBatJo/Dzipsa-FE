@@ -1,26 +1,6 @@
 import type { REPEAT_TYPE_OPTIONS } from '@/constants/todos';
 import type { WeekDay } from '@/constants/weekdays';
 
-// 임시
-export type Todo = {
-  id: number;
-  title: string;
-  dueAt: string;
-  createdAt: string;
-  assigneeId: number;
-  memo?: string;
-  completed: boolean;
-  completedAt?: string;
-  proofImageUrl?: string;
-};
-
-export type TodoWithLocal = Todo & {
-  local: {
-    dueDate: string;
-    completedDate?: string;
-  };
-};
-
 export type TodoStatusLabel = '진행중' | '지연' | '완료' | '지연 완료';
 
 export type TodoDetailViewState = {
